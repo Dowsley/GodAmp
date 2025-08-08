@@ -12,17 +12,23 @@ namespace GodAmp.Utils;
 
 public static class AudioUtils
 {
+    private static readonly Dictionary<string, Func<byte[], AudioStream>> StreamFactories =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { ".mp3", bytes => new AudioStreamMP3 { Data = bytes } },
+            { ".wav", bytes => AudioStreamWav.LoadFromBuffer(bytes) },
+            { ".ogg", AudioStreamOggVorbis.LoadFromBuffer },
+        };
+
     public const int SpectrumAnalyzerAudioEffectIndex = 0;
     public const int AmplifyAudioEffectIndex = 1;
     public const int Eq10AudioEffectIndex = 2;
     public const int PannerAudioEffectIndex = 3;
 
-    // Currently only supports MP3
     public static List<Track> LoadAllTracksFromDir(string directoryPath)
     {
         var result = new List<Track>();
         var dir = DirAccess.Open(directoryPath);
-
         if (dir == null)
         {
             GD.PrintErr("Directory not found: " + directoryPath);
@@ -52,10 +58,18 @@ public static class AudioUtils
         return result;
     }
 
+    // Overload that figures out the factory by extension and loads/creates the stream
     public static Track LoadTrack(string fullPath)
     {
-        try 
+        try
         {
+            var ext = Path.GetExtension(fullPath)?.ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !StreamFactories.TryGetValue(ext, out var factory))
+            {
+                GD.PrintErr("Unsupported audio extension for file: " + fullPath);
+                return null;
+            }
+
             var file = FileAccess.Open(fullPath, FileAccess.ModeFlags.Read);
             if (file == null)
             {
@@ -63,12 +77,12 @@ public static class AudioUtils
                 return null;
             }
 
-            var mp3Stream = new AudioStreamMP3();
             var data = file.GetBuffer((long)file.GetLength());
-            mp3Stream.Data = data;
             file.Close();
 
-            // For TagLib, we need to create a temporary file in the user's temp directory
+            AudioStream stream = factory(data);
+            
+            // TagLib needs a real file; write to temp, read tags, then clean up
             var tempDir = Path.GetTempPath();
             var tempFile = Path.Combine(tempDir, Path.GetFileName(fullPath));
             File.WriteAllBytes(tempFile, data);
@@ -77,31 +91,24 @@ public static class AudioUtils
             var tag = tagFile.Tag;
             var props = tagFile.Properties;
 
-            var fileName = Path.GetFileNameWithoutExtension(fullPath);
+            var fileNameNoExt = Path.GetFileNameWithoutExtension(fullPath);
             var useFileName = string.IsNullOrWhiteSpace(tag.Title);
+
             var t = new Track
             {
-                Name = useFileName ? fileName : tag.Title,
+                Name = useFileName ? fileNameNoExt : tag.Title,
                 Artist = tag.FirstPerformer ?? "Unknown",
                 Album = tag.Album,
                 TrackNumber = (int)tag.Track,
                 Duration = (float)props.Duration.TotalSeconds,
                 BitrateKbps = props.AudioBitrate,
                 SampleRateHz = props.AudioSampleRate,
-                Stream = mp3Stream,
+                Stream = stream,
                 UseFileName = useFileName,
             };
 
-            // Clean up the temporary file
-            try 
-            {
-                File.Delete(tempFile);
-            }
-            catch 
-            {
-                // Ignore cleanup errors
-            }
-            
+            try { File.Delete(tempFile); } catch { /* ignore */ }
+
             GD.Print("Loaded track: " + t.Name);
             return t;
         }
@@ -114,13 +121,23 @@ public static class AudioUtils
 
     public static List<Track> LoadTracksFromPathList(string[] pathList)
     {
-        return pathList.Where(p => p != null).Select(LoadTrack).Where(t => t != null).ToList();
+        return pathList.Where(p => !string.IsNullOrWhiteSpace(p))
+                       .Select(LoadTrack)
+                       .Where(t => t != null)
+                       .ToList();
     }
 
     public static string GetFullTrackTitle(Track track)
     {
         if (track == null)
             return "Unknown Track";
-        return track.UseFileName ? track.Name : $"{track.TrackNumber}. {track.Artist} - {track.Name}";
+        return track.UseFileName
+            ? track.Name
+            : $"{track.TrackNumber}. {track.Artist} - {track.Name}";
+    }
+
+    public static List<string> GetAllowedFileFilters()
+    {
+        return StreamFactories.Keys.Select(k => $"*{k.ToLowerInvariant()}").ToList();
     }
 }

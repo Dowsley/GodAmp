@@ -19,7 +19,7 @@ Songs by:
 3. [Fall of Envy - Wondering](https://www.reverbnation.com/fallofenvy) 
 4. [AMRPHIS - Metalcore](https://youtu.be/WhU461oCmD8?si=nSzPaObakaQ9qYIr)
 
-As far as I know they are royalty/copyright free, but please do let me know if not, and I'll take them down.
+As far as I know, they are royalty/copyright-free, but please do let me know if not, and I'll take them down.
 
 
 ## Features
@@ -28,9 +28,9 @@ As far as I know they are royalty/copyright free, but please do let me know if n
 2. Playlist functionality:
    - Toggle Shuffle & Repeat (playlists)
    - Adjust volume or ear balancing on top sliders 
-   - Click the "Load" (up arrow) button to load your own tracks (currently limited to MP3s). It will load into a new playlist.
-5. Double click any track on the playlist to start playing it.
-6. **Click "2x" to scale the UI**
+   - Click the "Load" (up arrow) button to load your own tracks (supports mp3, wav, ogg). It will load into a new playlist.
+3. Double click any track on the playlist to start playing it.
+4. **Click "2x" to scale the UI**
 
 ### Equalizer
 1. Amplifier (PreAmp)
@@ -42,9 +42,10 @@ As far as I know they are royalty/copyright free, but please do let me know if n
 3. More to be added...
 
 ## Roadmap
-- [ ] Add support for other file types.
-- [ ] Full theme support
+- [X] Add support for other file types.
+  - MP3, OGG, WAV
 - [ ] Actual windows
+- [ ] Full theme support
 - [ ] Functional playlists
 - [ ] Working Frequency panels
 - [ ] More visualizers (and flexibility for them)

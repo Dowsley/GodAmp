@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using GodAmp.Autoload;
 using GodAmp.Data;
 using GodAmp.Player;
@@ -224,7 +225,8 @@ public partial class Main : CenterContainer
 		FileDialog dialog = new();
 		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFiles);
 		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-		dialog.SetFilters(["*.mp3"]);
+		dialog.SetFilters(CollectionsMarshal.AsSpan(
+			AudioUtils.GetAllowedFileFilters()));
 		dialog.SetUseNativeDialog(true);
 		dialog.Connect(FileDialog.SignalName.FilesSelected, new Callable(this, nameof(LoadTracks)));
 		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));

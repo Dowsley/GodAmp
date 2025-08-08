@@ -11,6 +11,6 @@ public partial class Track : Resource
     public int TrackNumber;
     public int BitrateKbps;
     public int SampleRateHz;
-    public AudioStreamMP3 Stream;
+    public AudioStream Stream;
     public bool UseFileName; // We don't have relevant artist information
 }
