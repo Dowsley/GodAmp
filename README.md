@@ -44,7 +44,7 @@ As far as I know, they are royalty/copyright-free, but please do let me know if 
 ## Roadmap
 - [X] Add support for other file types.
   - MP3, OGG, WAV
-- [ ] Actual windows
+- [X] Actual window
 - [ ] Full theme support
 - [ ] Functional playlists
 - [ ] Working Frequency panels

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GodAmp.Autoload;
+using GodAmp.Controls.Equalizer;
+using GodAmp.Controls.MasterPanel;
+using GodAmp.Controls.Playlist;
 using GodAmp.Data;
 using GodAmp.Player;
 using GodAmp.Utils;
@@ -10,16 +13,18 @@ using Godot;
 
 namespace GodAmp;
 
-public partial class Main : CenterContainer
+public partial class Main : HBoxContainer
 {
 	[ExportGroup("Config")]
 	[Export] public string DefaultSongsPath;
 	
-	private Controls.Controls _controls;
+	private MasterPanel _masterPanel;
+	private Equalizer _equalizer;
+	private Playlist _playlist;
 	private Visualizer.Visualizer _visualizer;
 	private TrackPlayer _trackPlayer;
 
-	private List<Track> _playlist;
+	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
 
 	private bool _repeatMode = false;
@@ -33,21 +38,27 @@ public partial class Main : CenterContainer
 	
 	public override void _Ready()
 	{
-		_controls = GetNode<Controls.Controls>("%Controls");
+		_masterPanel = GetNode<MasterPanel>("%MasterPanel");
+		_equalizer = GetNode<Equalizer>("%Equalizer");
+		_playlist = GetNode<Playlist>("%Playlist");
 		_visualizer = GetNode<Visualizer.Visualizer>("%Visualizer");
 		_trackPlayer = GetNode<TrackPlayer>("%TrackPlayer");
 
-		_playlist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
-		if (_playlist.Count == 0)
+		_trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
+		if (_trackPlaylist.Count == 0)
 		{
 			GD.PrintErr("No tracks found in the default songs path.");
 		}
-		_playlist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
-		_trackPlayer.SetCurrentTrack(_playlist[_currentTrackIndex], false);
+		_trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
+		_trackPlayer.SetCurrentTrack(_trackPlaylist[_currentTrackIndex], false);
 		_visualizer.Pause();
 		
-		_controls.Setup(_trackPlayer, _playlist);
-		_controls.Refresh();
+		_masterPanel.ToggleEqualizerRequested += OnToggleEqualizerRequested;
+		_masterPanel.TogglePlaylistRequested += OnTogglePlaylistRequested;
+		_masterPanel.Setup(_trackPlayer);
+		_playlist.Setup(_trackPlayer, _trackPlaylist);
+		_masterPanel.Refresh();
+		_playlist.Refresh();
 		
 		SignalBus.Instance.NextTrackRequested += OnNextTrackRequested;
 		SignalBus.Instance.PreviousTrackRequested += OnPreviousTrackRequested;
@@ -71,7 +82,7 @@ public partial class Main : CenterContainer
 		
 		if (!_masterLabelLocked)
 		{
-			_controls.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack));
+			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack));
 		}
 	}
 
@@ -97,7 +108,7 @@ public partial class Main : CenterContainer
 		{
 			_randomizedTrackIndex = 0;
 			var random = new Random();
-			_randomizedTrackIndices = Enumerable.Range(0, _playlist.Count).OrderBy(_ => random.Next()).ToList();
+			_randomizedTrackIndices = Enumerable.Range(0, _trackPlaylist.Count).OrderBy(_ => random.Next()).ToList();
 		}
 		else
 		{
@@ -118,7 +129,7 @@ public partial class Main : CenterContainer
 
 	public void OnVolumeChanged(float volume)
 	{
-		_controls.SetMasterLabelText($"VOLUME: {Convert.ToInt64(volume * 100)}%");
+		_masterPanel.SetMasterLabelText($"VOLUME: {Convert.ToInt64(volume * 100)}%");
 	}
 	
 	public void OnPannerBalanceChanged(float value)
@@ -132,14 +143,14 @@ public partial class Main : CenterContainer
 		{
 			text = $"BALANCE: {Convert.ToInt64(float.Abs(value) * 100)}% " + (value < 0.0f ? "LEFT" : "RIGHT");
 		}
-		_controls.SetMasterLabelText(text);
+		_masterPanel.SetMasterLabelText(text);
 	}
 	
 	public void OnPositionSeekerChanged(float value)
 	{
 		var totalTimeSecs = _trackPlayer.CurrentTrack.Duration;
 		if (_masterLabelLocked && _masterLabelLockedByPositionSeeker)
-			_controls.SetMasterLabelText(
+			_masterPanel.SetMasterLabelText(
 				$"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(totalTimeSecs)} ({value / totalTimeSecs * 100:F0}%)");
 	}
 	
@@ -161,24 +172,25 @@ public partial class Main : CenterContainer
 		if (_shuffleMode)
 		{
 			_randomizedTrackIndex += 1;
-			if (_randomizedTrackIndex >= _playlist.Count)
+			if (_randomizedTrackIndex >= _trackPlaylist.Count)
 			{
-				_randomizedTrackIndex = _repeatMode ? 0 : _playlist.Count - 1;
+				_randomizedTrackIndex = _repeatMode ? 0 : _trackPlaylist.Count - 1;
 			}
 			index = _randomizedTrackIndices[_randomizedTrackIndex];
 		}
 		else
 		{
 			_currentTrackIndex += 1;
-			if (_currentTrackIndex >= _playlist.Count)
+			if (_currentTrackIndex >= _trackPlaylist.Count)
 			{
-				_currentTrackIndex = _repeatMode ? 0 : _playlist.Count - 1;
+				_currentTrackIndex = _repeatMode ? 0 : _trackPlaylist.Count - 1;
 			}
 			index = _currentTrackIndex;
 		}
 		
-		_trackPlayer.SetCurrentTrack(_playlist[index], autoplay || _trackPlayer.IsPlaying());
-		_controls.Refresh();
+		_trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
+		_masterPanel.Refresh();
+		_playlist.Refresh();
 	}
 	
 	private void PreviousTrack(bool autoplay = false)
@@ -189,7 +201,7 @@ public partial class Main : CenterContainer
 			_randomizedTrackIndex -= 1;
 			if (_randomizedTrackIndex < 0)
 			{
-				_randomizedTrackIndex = _repeatMode ? _playlist.Count - 1 : 0;
+				_randomizedTrackIndex = _repeatMode ? _trackPlaylist.Count - 1 : 0;
 			}
 			index = _randomizedTrackIndices[_randomizedTrackIndex];
 		}
@@ -198,13 +210,14 @@ public partial class Main : CenterContainer
 			_currentTrackIndex -= 1;
 			if (_currentTrackIndex < 0)
 			{
-				_currentTrackIndex = _repeatMode ? _playlist.Count - 1 : 0;
+				_currentTrackIndex = _repeatMode ? _trackPlaylist.Count - 1 : 0;
 			}
 			index = _currentTrackIndex;
 		}
 
-		_trackPlayer.SetCurrentTrack(_playlist[index], autoplay || _trackPlayer.IsPlaying());
-		_controls.Refresh();
+		_trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
+		_masterPanel.Refresh();
+		_playlist.Refresh();
 	}
 
 	private void ChangeToTrack(int index, bool autoplay = false)
@@ -216,8 +229,9 @@ public partial class Main : CenterContainer
 		}
 		
 		indexRef = index;
-		_trackPlayer.SetCurrentTrack(_playlist[index], autoplay || _trackPlayer.IsPlaying());
-		_controls.Refresh();
+		_trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
+		_masterPanel.Refresh();
+		_playlist.Refresh();
 	}
 
 	public void OnLoadTracksRequested()
@@ -239,12 +253,13 @@ public partial class Main : CenterContainer
 
 	public void LoadTracks(string[] paths)
 	{
-		_playlist.Clear();
-		_playlist.AddRange(AudioUtils.LoadTracksFromPathList(paths));
-		_playlist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
-		_trackPlayer.SetCurrentTrack(_playlist[0], false);
+		_trackPlaylist.Clear();
+		_trackPlaylist.AddRange(AudioUtils.LoadTracksFromPathList(paths));
+		_trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
+		_trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
 		_visualizer.Pause();
-		_controls.Refresh();
+		_masterPanel.Refresh();
+		_playlist.Refresh();
 		
 		OnFileDialogClosed();
 	}
@@ -255,5 +270,25 @@ public partial class Main : CenterContainer
 			return;
 		_lastUsedFileDialog.QueueFree();
 		_lastUsedFileDialog = null;
+	}
+	
+	public void OnToggleEqualizerRequested()
+	{
+		_equalizer.Visible = !_equalizer.Visible;
+	}
+
+	public void OnTogglePlaylistRequested()
+	{
+		_playlist.Visible = !_playlist.Visible;
+	}
+	
+	public void OnEqualizerCloseButtonClicked()
+	{
+		_masterPanel.ToggleEqualizerButton.ButtonPressed = false;
+	}
+
+	public void OnPlaylistCloseButtonClicked()
+	{
+		_masterPanel.TogglePlaylistButton.ButtonPressed = false;
 	}
 }

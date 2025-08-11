@@ -26,10 +26,7 @@ SignalBus="*res://src/Autoload/SignalBus.cs"
 [display]
 
 window/size/borderless=true
-window/size/transparent=true
 window/stretch/mode="canvas_items"
-window/per_pixel_transparency/allowed=true
-window/transparent_background=true
 
 [dotnet]
 
