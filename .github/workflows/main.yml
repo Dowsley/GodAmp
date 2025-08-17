@@ -3,32 +3,32 @@ on: push
 env:
   GODOT_VERSION: 4.4.1
 jobs:
-  # export-windows:
-  #   name: Windows Export
-  #   runs-on: ubuntu-22.04
-  #   container:
-  #     image: barichello/godot-ci:mono-4.4.1
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Setup
-  #       run: |
-  #         mkdir -v -p ~/.local/share/godot/export_templates/
-  #         mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
-  #     - name: Windows Build
-  #       run: |
-  #         mkdir -v -p build/windows
-  #         godot --headless --verbose --export-release "Windows Desktop" build/windows/GodAmp.exe
-  #         if [ ! -f "build/windows/GodAmp.exe" ]; then
-  #           echo "ERROR: Windows build failed - GodAmp.exe not created"
-  #           exit 1
-  #         fi
-  #         ls -la build/windows/
-  #     - name: Upload Windows Build
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: GodAmp-Windows
-  #         path: build/windows/
+  export-windows:
+    name: Windows Export
+    runs-on: ubuntu-22.04
+    container:
+      image: barichello/godot-ci:mono-4.4.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
+      - name: Windows Build
+        run: |
+          mkdir -v -p build/windows
+          godot --headless --verbose --export-release "Windows Desktop" build/windows/GodAmp.exe
+          if [ ! -f "build/windows/GodAmp.exe" ]; then
+            echo "ERROR: Windows build failed - GodAmp.exe not created"
+            exit 1
+          fi
+          ls -la build/windows/
+      - name: Upload Windows Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodAmp-Windows
+          path: build/windows/
 
   export-macos:
     name: macOS Export
@@ -64,29 +64,29 @@ jobs:
           name: GodAmp-macOS
           path: build/macos/
 
-  # export-linux:
-  #   name: Linux Export
-  #   runs-on: ubuntu-22.04
-  #   container:
-  #     image: barichello/godot-ci:mono-4.4.1
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Setup
-  #       run: |
-  #         mkdir -v -p ~/.local/share/godot/export_templates/
-  #         mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
-  #     - name: Linux Build
-  #       run: |
-  #         mkdir -v -p build/linux
-  #         godot --headless --verbose --export-release "Linux" build/linux/GodAmp.x86_64
-  #         if [ ! -f "build/linux/GodAmp.x86_64" ]; then
-  #           echo "ERROR: Linux build failed - GodAmp.x86_64 not created"
-  #           exit 1
-  #         fi
-  #         ls -la build/linux/
-  #     - name: Upload Linux Build
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: GodAmp-Linux
-  #         path: build/linux/
+  export-linux:
+    name: Linux Export
+    runs-on: ubuntu-22.04
+    container:
+      image: barichello/godot-ci:mono-4.4.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
+      - name: Linux Build
+        run: |
+          mkdir -v -p build/linux
+          godot --headless --verbose --export-release "Linux" build/linux/GodAmp.x86_64
+          if [ ! -f "build/linux/GodAmp.x86_64" ]; then
+            echo "ERROR: Linux build failed - GodAmp.x86_64 not created"
+            exit 1
+          fi
+          ls -la build/linux/
+      - name: Upload Linux Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodAmp-Linux
+          path: build/linux/
