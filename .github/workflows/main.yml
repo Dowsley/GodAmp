@@ -32,31 +32,69 @@ jobs:
 
   export-macos:
     name: macOS Export
-    runs-on: ubuntu-22.04
-    container:
-      image: barichello/godot-ci:mono-4.4.1
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup
+      - name: Setup Godot
         run: |
-          mkdir -v -p ~/.local/share/godot/export_templates/
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
-      - name: macOS Build
+          # Download and install Godot Mono
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_mono_macos.universal.zip
+          unzip -q Godot_v${GODOT_VERSION}-stable_mono_macos.universal.zip
+          sudo mv Godot_mono.app /Applications/
+          
+          # Create symlink for command line
+          sudo mkdir -p /usr/local/bin
+          sudo ln -sf /Applications/Godot_mono.app/Contents/MacOS/Godot /usr/local/bin/godot
+          
+          # Download export templates
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_mono_export_templates.tpz
+          mkdir -p ~/Library/Application\ Support/Godot/export_templates/
+          unzip -q Godot_v${GODOT_VERSION}-stable_mono_export_templates.tpz -d ~/Library/Application\ Support/Godot/export_templates/
+          mv ~/Library/Application\ Support/Godot/export_templates/templates ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}.stable.mono
+          
+      - name: Setup Code Signing
+        env:
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
-          mkdir -v -p build/macos
-          echo "Starting macOS universal export..."
-          # Create temp directories that Godot expects for universal builds
-          mkdir -p /tmp/godot-publish-dotnet
-          godot --headless --verbose --export-release "macOS" build/macos/GodAmp.app 2>&1 | tee export.log || true
-          # Check if the build succeeded despite potential cleanup errors
+          # Create certificates directory
+          mkdir -p ~/certificates
+          
+          # Decode certificate
+          echo "$APPLE_CERTIFICATE_BASE64" | base64 --decode > ~/certificates/certificate.p12
+          
+          # Create temporary keychain
+          security create-keychain -p "temppass" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "temppass" build.keychain
+          
+          # Import certificate
+          security import ~/certificates/certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "temppass" build.keychain
+          
+      - name: macOS Build and Sign
+        env:
+          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        run: |
+          mkdir -p build/macos
+          echo "Starting macOS universal export with signing..."
+          
+          # Export the app
+          godot --headless --verbose --export-release "macOS" build/macos/GodAmp.app
+          
+          # Verify the app was created
           if [ ! -d "build/macos/GodAmp.app" ]; then
             echo "ERROR: macOS build failed - GodAmp.app not created"
-            echo "Export log:"
-            cat export.log
             exit 1
           fi
-          echo "✅ macOS universal build completed successfully!"
+          
+          # Notarize the app
+          echo "Submitting for notarization..."
+          xcrun notarytool submit build/macos/GodAmp.app --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" --wait
+          
+          echo "✅ macOS universal build completed and notarized successfully!"
           ls -la build/macos/
       - name: Upload macOS Build
         uses: actions/upload-artifact@v4
