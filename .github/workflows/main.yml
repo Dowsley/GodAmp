@@ -94,8 +94,18 @@ jobs:
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         run: |
-          # Sign the app with proper entitlements
-          codesign --force --deep --sign "Joao Felipe Costa Dowsley (XM765775ZW)" --options runtime build/macos/GodAmp.app
+          # Get the signing identity from keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | grep -o '"[^"]*"' | tr -d '"')
+          echo "Using signing identity: $SIGNING_IDENTITY"
+          
+          # Sign all individual binaries and libraries first
+          echo "Signing all .NET runtime libraries..."
+          find build/macos/GodAmp.app/Contents/Resources -name "*.dylib" -exec codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp {} \;
+          find build/macos/GodAmp.app/Contents/Resources -name "createdump" -exec codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp {} \;
+          
+          # Sign the main app bundle
+          echo "Signing main app bundle..."
+          codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp build/macos/GodAmp.app
           
           # Verify signing
           codesign --verify --verbose build/macos/GodAmp.app
