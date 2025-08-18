@@ -94,8 +94,8 @@ jobs:
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         run: |
-          # Sign the app
-          codesign --force --deep --sign "Joao Felipe Costa Dowsley (XM765775ZW)" build/macos/GodAmp.app
+          # Sign the app with proper entitlements
+          codesign --force --deep --sign "Joao Felipe Costa Dowsley (XM765775ZW)" --options runtime build/macos/GodAmp.app
           
           # Verify signing
           codesign --verify --verbose build/macos/GodAmp.app
@@ -103,14 +103,28 @@ jobs:
           # Create zip for notarization
           ditto -c -k --keepParent build/macos/GodAmp.app build/macos/GodAmp.zip
           
-          # Submit for notarization
+          # Submit for notarization and capture submission ID
           echo "Submitting for notarization..."
-          xcrun notarytool submit build/macos/GodAmp.zip --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" --wait
+          SUBMISSION_ID=$(xcrun notarytool submit build/macos/GodAmp.zip --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" --wait --output-format json | jq -r '.id')
+          echo "Submission ID: $SUBMISSION_ID"
           
-          # Staple the notarization
-          xcrun stapler staple build/macos/GodAmp.app
+          # Get detailed info about the submission
+          xcrun notarytool info "$SUBMISSION_ID" --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW"
           
-          echo "✅ macOS app signed and notarized successfully!"
+          # Get the log to see what failed
+          echo "Getting notarization log..."
+          xcrun notarytool log "$SUBMISSION_ID" --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW"
+          
+          # Only staple if notarization succeeded
+          if xcrun notarytool info "$SUBMISSION_ID" --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" | grep -q "status: Accepted"; then
+            echo "Stapling notarization..."
+            xcrun stapler staple build/macos/GodAmp.app
+            echo "✅ macOS app signed and notarized successfully!"
+          else
+            echo "❌ Notarization failed - check logs above"
+            exit 1
+          fi
+          
           ls -la build/macos/
       - name: Upload Signed macOS Build
         uses: actions/upload-artifact@v4
