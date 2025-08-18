@@ -1,12 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://btjg3gj5nwcqw"]
+[gd_scene load_steps=2 format=3 uid="uid://btjg3gj5nwcqw"]
 
 [ext_resource type="Script" uid="uid://cqqxnfydcmiuw" path="res://src/Components/DraggablePanel.cs" id="1_7rr22"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y504q"]
-
-[node name="DraggablePanel" type="Panel"]
+[node name="DraggablePanel" type="Control"]
 custom_minimum_size = Vector2(0, 28)
+layout_mode = 3
+anchors_preset = 0
+offset_bottom = 28.0
 size_flags_vertical = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_y504q")
 script = ExtResource("1_7rr22")

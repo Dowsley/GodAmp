@@ -514,8 +514,19 @@ text = "16K"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DraggablePanel" parent="." instance=ExtResource("7_r0ulg")]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="DraggablePanel" parent="HBoxContainer" instance=ExtResource("7_r0ulg")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Control" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+mouse_filter = 2
 
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
@@ -531,4 +542,3 @@ layout_mode = 2
 [connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9/12KSlider" to="." method="On12KSliderValueChanged"]
 [connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10/14KSlider" to="." method="On14KSliderValueChanged"]
 [connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11/16KSlider" to="." method="On16KSliderValueChanged"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

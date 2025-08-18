@@ -121,4 +121,3 @@ layout_mode = 2
 
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

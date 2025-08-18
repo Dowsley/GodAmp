@@ -134,9 +134,19 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="DraggablePanel" parent="." instance=ExtResource("7_pgi81")]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="DraggablePanel" parent="HBoxContainer" instance=ExtResource("7_pgi81")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Control" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+mouse_filter = 2
 
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]
