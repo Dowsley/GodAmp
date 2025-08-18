@@ -30,29 +30,45 @@ jobs:
           name: GodAmp-Windows
           path: build/windows/
 
-  export-macos:
-    name: macOS Export
-    runs-on: macos-latest
+  build-macos:
+    name: Build macOS (Unsigned)
+    runs-on: ubuntu-22.04
+    container:
+      image: barichello/godot-ci:mono-4.4.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Godot
+      - name: Setup
         run: |
-          # Download and install Godot Mono
-          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_mono_macos.universal.zip
-          unzip -q Godot_v${GODOT_VERSION}-stable_mono_macos.universal.zip
-          sudo mv Godot_mono.app /Applications/
-          
-          # Create symlink for command line
-          sudo mkdir -p /usr/local/bin
-          sudo ln -sf /Applications/Godot_mono.app/Contents/MacOS/Godot /usr/local/bin/godot
-          
-          # Download export templates
-          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_mono_export_templates.tpz
-          mkdir -p ~/Library/Application\ Support/Godot/export_templates/
-          unzip -q Godot_v${GODOT_VERSION}-stable_mono_export_templates.tpz -d ~/Library/Application\ Support/Godot/export_templates/
-          mv ~/Library/Application\ Support/Godot/export_templates/templates ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}.stable.mono
-          
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
+      - name: macOS Build (Unsigned)
+        run: |
+          mkdir -v -p build/macos
+          echo "Starting macOS universal export..."
+          godot --headless --verbose --export-release "macOS" build/macos/GodAmp.app
+          if [ ! -d "build/macos/GodAmp.app" ]; then
+            echo "ERROR: macOS build failed - GodAmp.app not created"
+            exit 1
+          fi
+          echo "✅ macOS universal build completed!"
+          ls -la build/macos/
+      - name: Upload Unsigned App
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodAmp-macOS-Unsigned
+          path: build/macos/
+
+  sign-macos:
+    name: Sign & Notarize macOS
+    runs-on: macos-latest
+    needs: build-macos
+    steps:
+      - name: Download Unsigned App
+        uses: actions/download-artifact@v4
+        with:
+          name: GodAmp-macOS-Unsigned
+          path: build/macos/
       - name: Setup Code Signing
         env:
           APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
@@ -73,34 +89,34 @@ jobs:
           security import ~/certificates/certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k "temppass" build.keychain
           
-      - name: macOS Build and Sign
+      - name: Sign and Notarize
         env:
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         run: |
-          mkdir -p build/macos
-          echo "Starting macOS universal export with signing..."
+          # Sign the app
+          codesign --force --deep --sign "Joao Felipe Costa Dowsley (XM765775ZW)" build/macos/GodAmp.app
           
-          # Export the app
-          godot --headless --verbose --disable-render-loop --audio-driver Dummy --export-release "macOS" build/macos/GodAmp.app
+          # Verify signing
+          codesign --verify --verbose build/macos/GodAmp.app
           
-          # Verify the app was created
-          if [ ! -d "build/macos/GodAmp.app" ]; then
-            echo "ERROR: macOS build failed - GodAmp.app not created"
-            exit 1
-          fi
+          # Create zip for notarization
+          ditto -c -k --keepParent build/macos/GodAmp.app build/macos/GodAmp.zip
           
-          # Notarize the app
+          # Submit for notarization
           echo "Submitting for notarization..."
-          xcrun notarytool submit build/macos/GodAmp.app --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" --wait
+          xcrun notarytool submit build/macos/GodAmp.zip --apple-id "$APPLE_ID_USERNAME" --password "$APPLE_ID_PASSWORD" --team-id "XM765775ZW" --wait
           
-          echo "✅ macOS universal build completed and notarized successfully!"
+          # Staple the notarization
+          xcrun stapler staple build/macos/GodAmp.app
+          
+          echo "✅ macOS app signed and notarized successfully!"
           ls -la build/macos/
-      - name: Upload macOS Build
+      - name: Upload Signed macOS Build
         uses: actions/upload-artifact@v4
         with:
           name: GodAmp-macOS
-          path: build/macos/
+          path: build/macos/GodAmp.app
 
   export-linux:
     name: Linux Export
