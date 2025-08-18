@@ -82,7 +82,7 @@ jobs:
           echo "Starting macOS universal export with signing..."
           
           # Export the app
-          godot --headless --verbose --export-release "macOS" build/macos/GodAmp.app
+          godot --headless --verbose --disable-render-loop --audio-driver Dummy --export-release "macOS" build/macos/GodAmp.app
           
           # Verify the app was created
           if [ ! -d "build/macos/GodAmp.app" ]; then
