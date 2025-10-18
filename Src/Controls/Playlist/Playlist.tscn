@@ -1,0 +1,142 @@
+[gd_scene load_steps=12 format=3 uid="uid://diw508vd3gr8k"]
+
+[ext_resource type="Script" uid="uid://35td6b067wck" path="res://Src/Controls/Playlist/Playlist.cs" id="1_qbsw1"]
+[ext_resource type="PackedScene" uid="uid://b0lgw7guxv7tw" path="res://Src/Controls/Playlist/PlaylistTrackEntry.tscn" id="2_ecqcu"]
+[ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="3_3ikr0"]
+[ext_resource type="PackedScene" uid="uid://dmdlnoh3xy7gs" path="res://Src/Components/BlackNinePatchRect.tscn" id="4_a5fbu"]
+[ext_resource type="Texture2D" uid="uid://cgx6yr1rwv6qc" path="res://Assets/Winamp/bars_2x.png" id="5_emg1u"]
+[ext_resource type="Texture2D" uid="uid://br3476egyf47m" path="res://Assets/Winamp/titlebar_2x.png" id="6_iswna"]
+[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_pgi81"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pgi81"]
+atlas = ExtResource("6_iswna")
+region = Rect2(0, 36, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fnbme"]
+atlas = ExtResource("6_iswna")
+region = Rect2(18, 0, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ddc7i"]
+atlas = ExtResource("6_iswna")
+region = Rect2(36, 0, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7n15"]
+atlas = ExtResource("6_iswna")
+region = Rect2(36, 18, 18, 18)
+
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("Contents")]
+anchors_preset = -1
+anchor_left = 0.3
+anchor_right = 0.7
+offset_left = -345.6
+offset_right = -345.6
+offset_bottom = 78.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_qbsw1")
+TrackLabelScene = ExtResource("2_ecqcu")
+Contents = NodePath("ContentContainer")
+
+[node name="Background" parent="." instance=ExtResource("3_3ikr0")]
+layout_mode = 2
+
+[node name="HeaderContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="NinePatchRect" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+size_flags_stretch_ratio = 1.1
+texture = ExtResource("5_emg1u")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 8
+
+[node name="Label" type="Label" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "PLAYLIST"
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = ExtResource("5_emg1u")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 8
+
+[node name="MinimizeButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_pgi81")
+texture_pressed = SubResource("AtlasTexture_fnbme")
+stretch_mode = 3
+
+[node name="CloseButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_ddc7i")
+texture_pressed = SubResource("AtlasTexture_m7n15")
+stretch_mode = 3
+
+[node name="ContentContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="BlackNinePatchRect" parent="ContentContainer/MarginContainer" instance=ExtResource("4_a5fbu")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ContentContainer/MarginContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 3
+
+[node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer/MarginContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DraggablePanel" parent="." instance=ExtResource("7_pgi81")]
+layout_mode = 2
+
+[connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

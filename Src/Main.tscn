@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://db6b3hi4hou7w"]
+
+[ext_resource type="Script" uid="uid://bmff2loty0s32" path="res://Src/Main.cs" id="1_gh0ne"]
+[ext_resource type="PackedScene" uid="uid://6yi01spga8fj" path="res://Src/Visualizer/Visualizer.tscn" id="3_5q4o7"]
+[ext_resource type="PackedScene" uid="uid://cpme6jm30nl1o" path="res://Src/Controls/MasterPanel/MasterPanel.tscn" id="3_rlaii"]
+[ext_resource type="PackedScene" uid="uid://bgre2g06eswwm" path="res://Src/Player/TrackPlayer.tscn" id="4_3cfgd"]
+[ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
+[ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
+
+[node name="Main" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gh0ne")
+DefaultSongsPath = "res://Data/SampleSongs"
+
+[node name="Controls" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="MasterPanel" parent="Controls" instance=ExtResource("3_rlaii")]
+unique_name_in_owner = true
+layout_mode = 2
+MoveGlobalWindow = true
+
+[node name="Equalizer" parent="Controls" instance=ExtResource("4_5mrjc")]
+unique_name_in_owner = true
+layout_mode = 2
+MoveGlobalWindow = true
+
+[node name="Playlist" parent="Controls" instance=ExtResource("5_kf8lf")]
+unique_name_in_owner = true
+layout_mode = 2
+MoveGlobalWindow = true
+
+[node name="Visualizer" parent="." instance=ExtResource("3_5q4o7")]
+unique_name_in_owner = true
+layout_mode = 2
+MoveGlobalWindow = true
+
+[node name="TrackPlayer" parent="." instance=ExtResource("4_3cfgd")]
+unique_name_in_owner = true
+
+[connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]

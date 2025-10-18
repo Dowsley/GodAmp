@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://chry3b6bcrbpm"]
+
+[ext_resource type="Script" uid="uid://conirsy88ed0m" path="res://Src/Controls/MasterPanel/MarqueeLabel.cs" id="1_i64vm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uubuy"]
+content_margin_left = 1.0
+content_margin_top = 1.0
+content_margin_right = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.0562916, 0.0562916, 0.0562916, 1)
+
+[node name="MarqueeLabel" type="Label"]
+theme_override_colors/font_color = Color(0, 0.811765, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uubuy")
+text = "1. LINKIN PARK - IN MY REMAINS"
+script = ExtResource("1_i64vm")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]

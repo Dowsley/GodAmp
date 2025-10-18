@@ -1,0 +1,544 @@
+[gd_scene load_steps=53 format=3 uid="uid://cpme6jm30nl1o"]
+
+[ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
+[ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="2_d0rpu"]
+[ext_resource type="PackedScene" uid="uid://chry3b6bcrbpm" path="res://Src/Controls/MasterPanel/MarqueeLabel.tscn" id="2_y6dre"]
+[ext_resource type="Texture2D" uid="uid://br3476egyf47m" path="res://Assets/Winamp/titlebar_2x.png" id="3_d0rpu"]
+[ext_resource type="Texture2D" uid="uid://cgx6yr1rwv6qc" path="res://Assets/Winamp/bars_2x.png" id="3_npeu0"]
+[ext_resource type="Texture2D" uid="uid://26fu0217yaqv" path="res://Assets/Winamp/clock_panel_2x.png" id="4_apwlw"]
+[ext_resource type="Texture2D" uid="uid://gcvlpih1sx1k" path="res://Assets/Winamp/volume.png" id="4_p37iv"]
+[ext_resource type="Texture2D" uid="uid://o5e8f3sf1nx4" path="res://Assets/Winamp/posbar_2x.png" id="4_x5ey5"]
+[ext_resource type="FontFile" uid="uid://bkj6siql58hlw" path="res://Assets/Fonts/pixel_lcd_7.ttf" id="5_w36oh"]
+[ext_resource type="Texture2D" uid="uid://evgjkr2ae3cl" path="res://Assets/Winamp/master_buttons_raw_2x.png" id="6_w36oh"]
+[ext_resource type="Texture2D" uid="uid://b37gunx25o2o2" path="res://Assets/Winamp/shufrep_buttons_2x.png" id="7_npeu0"]
+[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="12_x5ey5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_woh0y"]
+atlas = ExtResource("3_d0rpu")
+region = Rect2(0, 36, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dq8er"]
+atlas = ExtResource("3_d0rpu")
+region = Rect2(18, 0, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pksx3"]
+atlas = ExtResource("3_d0rpu")
+region = Rect2(36, 0, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ah0kg"]
+atlas = ExtResource("3_d0rpu")
+region = Rect2(36, 18, 18, 18)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_w36oh"]
+texture = ExtResource("4_apwlw")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uubuy"]
+content_margin_left = 1.0
+content_margin_top = 1.0
+content_margin_right = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.0562916, 0.0562916, 0.0562916, 1)
+
+[sub_resource type="ImageTexture" id="ImageTexture_y6dre"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_a0wsr"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_nyujp"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_wd4aj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51pqm"]
+atlas = ExtResource("4_p37iv")
+region = Rect2(0, 2, 65, 8)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p37iv"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+texture = SubResource("AtlasTexture_51pqm")
+texture_margin_left = 3.0
+texture_margin_top = 1.0
+texture_margin_right = 3.0
+texture_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_npeu0"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+texture = SubResource("AtlasTexture_51pqm")
+texture_margin_left = 3.0
+texture_margin_top = 1.0
+texture_margin_right = 3.0
+texture_margin_bottom = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yas16"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(0, 122, 46, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmpwg"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(0, 146, 46, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fccr"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(46, 122, 46, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wmjcb"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(46, 146, 46, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0rpu"]
+atlas = ExtResource("4_x5ey5")
+region = Rect2(496, 0, 58, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x5ey5"]
+atlas = ExtResource("4_x5ey5")
+region = Rect2(556, 0, 58, 20)
+
+[sub_resource type="ImageTexture" id="ImageTexture_x5ey5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p37iv"]
+atlas = ExtResource("4_x5ey5")
+region = Rect2(0, 0, 498, 20)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_oa2da"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = SubResource("AtlasTexture_p37iv")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mnxsc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oa2da"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(0, 0, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mnxsc"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(0, 36, 46, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ueg7m"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(46, 0, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6vhv"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(46, 36, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bxbh3"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(92, 0, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fnw3p"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(92, 36, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w36oh"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(138, 0, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5qdrm"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(138, 36, 46, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_apwlw"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(184, 0, 44, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_465rn"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(184, 36, 44, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npeu0"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(228, 0, 44, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3com"]
+atlas = ExtResource("6_w36oh")
+region = Rect2(228, 32, 44, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ty4nk"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(56, 0, 94, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plxd8"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(56, 60, 94, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1qudr"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(0, 0, 56, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5eu6"]
+atlas = ExtResource("7_npeu0")
+region = Rect2(0, 60, 56, 30)
+
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("Contents")]
+offset_right = 506.0
+offset_bottom = 220.0
+size_flags_vertical = 3
+script = ExtResource("1_wgfc2")
+Contents = NodePath("ContentContainer")
+
+[node name="Background" parent="." instance=ExtResource("2_d0rpu")]
+layout_mode = 2
+
+[node name="HeaderContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="NinePatchRect" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+size_flags_stretch_ratio = 1.1
+texture = ExtResource("3_npeu0")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 8
+
+[node name="Label" type="Label" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "CONTROLS"
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = ExtResource("3_npeu0")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 8
+
+[node name="MinimizeButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_woh0y")
+texture_pressed = SubResource("AtlasTexture_dq8er")
+stretch_mode = 3
+
+[node name="CloseButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_pksx3")
+texture_pressed = SubResource("AtlasTexture_ah0kg")
+stretch_mode = 3
+
+[node name="ContentContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(506, 220)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ClockPanel" type="PanelContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_w36oh")
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/ClockPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_right = 6
+
+[node name="ClockLabel" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/ClockPanel/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_fonts/font = ExtResource("5_w36oh")
+theme_override_font_sizes/font_size = 20
+text = "00:00"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="MasterLabel" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("2_y6dre")]
+unique_name_in_owner = true
+layout_mode = 2
+MaxLength = 40
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="BitrateLabel" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.811765, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uubuy")
+text = "128"
+
+[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "kbps"
+
+[node name="SampleRateLabel" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.811765, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uubuy")
+text = "44"
+
+[node name="Label2" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "kHz"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="1XZoomButton" type="CheckButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0, 0.847059, 0, 1)
+theme_override_icons/checked = SubResource("ImageTexture_y6dre")
+theme_override_icons/unchecked = SubResource("ImageTexture_a0wsr")
+text = "1x"
+
+[node name="2XZoomButton" type="CheckButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0, 0.847059, 0, 1)
+theme_override_icons/checked = SubResource("ImageTexture_nyujp")
+theme_override_icons/unchecked = SubResource("ImageTexture_wd4aj")
+text = "2x"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.4
+
+[node name="VolumeSlider" type="HSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 5
+size_flags_stretch_ratio = 2.0
+focus_mode = 1
+theme_override_styles/slider = SubResource("StyleBoxTexture_p37iv")
+max_value = 1.0
+step = 0.01
+value = 0.6
+
+[node name="PannerAudioSlider" type="HSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 5
+focus_mode = 1
+theme_override_styles/slider = SubResource("StyleBoxTexture_npeu0")
+min_value = -1.0
+max_value = 1.0
+step = 0.1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ToggleEqualizerButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+texture_normal = SubResource("AtlasTexture_yas16")
+texture_pressed = SubResource("AtlasTexture_qmpwg")
+stretch_mode = 5
+
+[node name="TogglePlaylistButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+texture_normal = SubResource("AtlasTexture_8fccr")
+texture_pressed = SubResource("AtlasTexture_wmjcb")
+stretch_mode = 5
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="PositionSeeker" type="HSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_icons/grabber = SubResource("AtlasTexture_d0rpu")
+theme_override_icons/grabber_highlight = SubResource("AtlasTexture_x5ey5")
+theme_override_icons/grabber_disabled = SubResource("ImageTexture_x5ey5")
+theme_override_styles/slider = SubResource("StyleBoxTexture_oa2da")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_mnxsc")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_ueg7m")
+value = 16.0
+scrollable = false
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="PreviousTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = SubResource("AtlasTexture_oa2da")
+texture_pressed = SubResource("AtlasTexture_mnxsc")
+stretch_mode = 5
+
+[node name="PlayTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_ueg7m")
+texture_pressed = SubResource("AtlasTexture_e6vhv")
+stretch_mode = 5
+
+[node name="PauseTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_bxbh3")
+texture_pressed = SubResource("AtlasTexture_fnw3p")
+stretch_mode = 5
+
+[node name="StopTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_w36oh")
+texture_pressed = SubResource("AtlasTexture_5qdrm")
+stretch_mode = 5
+
+[node name="NextTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_apwlw")
+texture_pressed = SubResource("AtlasTexture_465rn")
+stretch_mode = 5
+
+[node name="HBoxContainer2" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_right = 2
+
+[node name="LoadTracksButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer2"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_npeu0")
+texture_pressed = SubResource("AtlasTexture_s3com")
+stretch_mode = 5
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ShuffleModeButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3"]
+layout_mode = 2
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_ty4nk")
+texture_pressed = SubResource("AtlasTexture_plxd8")
+stretch_mode = 5
+
+[node name="RepeatModeButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_1qudr")
+texture_pressed = SubResource("AtlasTexture_u5eu6")
+stretch_mode = 5
+
+[node name="DraggablePanel" parent="." instance=ExtResource("12_x5ey5")]
+layout_mode = 2
+
+[connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer2/1XZoomButton" to="." method="Set1XZoomMode"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer2/2XZoomButton" to="." method="Set2XZoomMode"]
+[connection signal="drag_ended" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
+[connection signal="drag_ended" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
+[connection signal="drag_ended" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/PositionSeeker" to="." method="OnPositionSeekerDragEnded"]
+[connection signal="drag_started" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/PositionSeeker" to="." method="OnPositionSeekerDragStarted"]
+[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/PositionSeeker" to="." method="OnPositionSeekerValueChanged"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/PreviousTrackButton" to="." method="OnPreviousTrackButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/PlayTrackButton" to="." method="OnPlayTrackButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/PauseTrackButton" to="." method="OnPauseTrackButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/StopTrackButton" to="." method="OnStopTrackButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/NextTrackButton" to="." method="OnNextTrackButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer2/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
+[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]
+[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

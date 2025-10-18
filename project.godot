@@ -19,9 +19,13 @@ boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 0)
 boot_splash/show_image=false
 config/icon="uid://c0s3kbvufqavr"
 
+[audio]
+
+buses/default_bus_layout="res://DefaultBusLayout.tres"
+
 [autoload]
 
-SignalBus="*res://src/Autoload/SignalBus.cs"
+SignalBus="*res://Src/Autoload/SignalBus.cs"
 
 [display]
 
