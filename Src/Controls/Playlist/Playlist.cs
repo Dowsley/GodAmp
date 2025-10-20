@@ -29,6 +29,7 @@ public partial class Playlist : WindowPanelContainer
 	private VBoxContainer _trackEntryContainer;
 	private ScrollContainer _scrollContainer;
 
+	private HashSet<Track> _selectedTracks = [];
 	private List<Track> _playlistRef;
 	private TrackPlayer _trackPlayerRef;
 
@@ -46,14 +47,45 @@ public partial class Playlist : WindowPanelContainer
 
 	public void Refresh()
 	{
+		HashSet<Track> newSelectedTracks = [];
+		
 		_trackEntryContainer.GetChildren().ToList().ForEach(child => child.QueueFree());
 		for (int i = 0; i < _playlistRef.Count; i++)
 		{
 			var track = _playlistRef[i];
 			var label = TrackLabelScene.Instantiate<PlaylistTrackEntry>();
 			_trackEntryContainer.AddChild(label);
-			label.Setup(AudioUtils.GetFullTrackTitle(track, i+1), track.Duration, i, track == _trackPlayerRef.CurrentTrack);
+			label.Selected += OnTrackSelected;
+			var isSelected = _selectedTracks.Contains(track);
+			label.Setup(AudioUtils.GetFullTrackTitle(
+				track, i+1), 
+				track.Duration,
+				i,
+				isSelected,
+				track == _trackPlayerRef.CurrentTrack
+			);
+			
+			if (isSelected)
+				newSelectedTracks.Add(track);
 		}
+
+		_selectedTracks = newSelectedTracks;
+	}
+
+	private void OnTrackSelected(int index)
+	{
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			if (label.Index != index)
+			{
+				label.IsSelected = false;
+				_selectedTracks.Remove(_playlistRef[label.Index]);
+			}
+
+		}
+		
+		_selectedTracks.Add(_playlistRef[index]);
 	}
 
 	private void OnAddButtonPressed()

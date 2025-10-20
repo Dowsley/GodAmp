@@ -4,22 +4,40 @@ using Godot;
 
 namespace GodAmp.Controls.Playlist;
 
-public partial class PlaylistTrackEntry : HBoxContainer
+public partial class PlaylistTrackEntry : PanelContainer
 {
-    private Label _trackTitleLabel;
-    private Label _durationLabel;
-    private int _index;
+    [Signal] public delegate void SelectedEventHandler(int index);
+    
+    [Export] private Label _trackTitleLabel;
+    [Export] private Label _durationLabel;
+    [Export] private ColorRect _selectedBg;
+    
+    public int Index;
+
+    private bool _isSelected = false;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            _isSelected = value;
+            _selectedBg.Visible = _isSelected;
+            if (_isSelected)
+                EmitSignal(SignalName.Selected, Index);
+        }
+    }
 
     public override void _Ready()
     {
-        _trackTitleLabel = GetNode<Label>("TrackTitleLabel");
-        _durationLabel = GetNode<Label>("DurationLabel");
         MouseFilter = MouseFilterEnum.Stop;
     }
     
-    public void Setup(string title, float duration, int index, bool current = false)
+    public void Setup(string title, float duration, int index, bool selected, bool current = false)
     {
-        _index = index;
+        _isSelected = selected;
+        _selectedBg.Visible = _isSelected;
+        
+        Index = index;
         _trackTitleLabel.Text = title;
         _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
         if (!current)
@@ -34,11 +52,12 @@ public partial class PlaylistTrackEntry : HBoxContainer
         if (@event is not InputEventMouseButton eventMouseButton)
             return;
 
-        if (eventMouseButton.Pressed &&
-            eventMouseButton.ButtonIndex == MouseButton.Left &&
-            eventMouseButton.DoubleClick)
+        if (eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left) 
         {
-            SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, _index);
+            if (eventMouseButton.DoubleClick)
+                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
+            else
+                IsSelected = !IsSelected;
         }
     }
 }
