@@ -54,7 +54,66 @@ public partial class PlaylistTrackEntry : PanelContainer
             if (eventMouseButton.DoubleClick)
                 SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
             else
-                EmitSignal(SignalName.Selected, Index);
+            {
+                if (!_isSelected)
+                    EmitSignal(SignalName.Selected, Index);
+            }
         }
+    }
+
+    public override Variant _GetDragData(Vector2 atPosition)
+    {
+        // Build selection indices from siblings' visual state
+        var parent = GetParent();
+        var selectedIndices = new Godot.Collections.Array<int>();
+        foreach (var child in parent.GetChildren())
+        {
+            if (child is PlaylistTrackEntry { IsSelected: true } entry)
+                selectedIndices.Add(entry.Index);
+        }
+
+        if (selectedIndices.Count == 0)
+            selectedIndices.Add(Index);
+
+        var data = new Godot.Collections.Dictionary
+        {
+            { "type", "playlist-reorder" },
+            { "indices", selectedIndices }
+        };
+
+        var preview = new Label { Text = $"Move {selectedIndices.Count} track(s)" };
+        SetDragPreview(preview);
+        return data;
+    }
+
+    public override bool _CanDropData(Vector2 atPosition, Variant data)
+    {
+        if (data.VariantType != Variant.Type.Dictionary)
+            return false;
+        var dict = (Godot.Collections.Dictionary)data;
+        return dict.ContainsKey("type") && (string)dict["type"] == "playlist-reorder";
+    }
+
+    public override void _DropData(Vector2 atPosition, Variant data)
+    {
+        var dict = (Godot.Collections.Dictionary)data;
+        var arr = (Godot.Collections.Array<int>)dict["indices"];
+        var indices = new System.Collections.Generic.List<int>(arr);
+        bool insertAfter = atPosition.Y > Size.Y * 0.5f;
+
+        // Find ancestor Playlist
+        Node ancestor = GetParent();
+        Playlist playlist = null;
+        while (ancestor != null)
+        {
+            if (ancestor is Playlist p)
+            {
+                playlist = p;
+                break;
+            }
+            ancestor = ancestor.GetParent();
+        }
+
+        playlist?.ReorderSelectedTracks(indices, Index, insertAfter);
     }
 }

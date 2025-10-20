@@ -153,4 +153,53 @@ public partial class Playlist : WindowPanelContainer
 		ListOptionsButtonDropdown.Activate(
 			ListOptionsButton.GlobalPosition, ListOptionsButton.Size);
 	}
+
+	public void ReorderSelectedTracks(List<int> selectedIndices, int targetIndex, bool insertAfter)
+	{
+		if (_playlistRef is null || selectedIndices is null || selectedIndices.Count == 0)
+			return;
+
+		// normalize and validate indices
+		var normalized = selectedIndices
+			.Distinct()
+			.Where(i => i >= 0 && i < _playlistRef.Count)
+			.OrderBy(i => i)
+			.ToList();
+		if (normalized.Count == 0)
+			return;
+
+		// no-op if dropping inside the selected contiguous block
+		int minSel = normalized.First();
+		int maxSel = normalized.Last();
+		if ((!insertAfter && targetIndex >= minSel && targetIndex <= maxSel) ||
+			(insertAfter && targetIndex >= minSel && targetIndex < maxSel))
+			return;
+
+		int baseInsertIndex = insertAfter ? targetIndex + 1 : targetIndex;
+		if (baseInsertIndex < 0) baseInsertIndex = 0;
+		if (baseInsertIndex > _playlistRef.Count) baseInsertIndex = _playlistRef.Count;
+
+		int removedBefore = normalized.Count(i => i < baseInsertIndex);
+		int insertIndex = baseInsertIndex - removedBefore;
+		if (insertIndex < 0) insertIndex = 0;
+		if (insertIndex > _playlistRef.Count - normalized.Count)
+			insertIndex = _playlistRef.Count - normalized.Count;
+
+		// extract tracks to move in original order
+		var movedTracks = new List<Track>(normalized.Count);
+		movedTracks.AddRange(normalized.Select(idx => _playlistRef[idx]));
+
+		// remove from end to start to avoid shifting
+		for (int k = normalized.Count - 1; k >= 0; k--)
+			_playlistRef.RemoveAt(normalized[k]);
+
+		// insert block at computed index
+		_playlistRef.InsertRange(insertIndex, movedTracks);
+
+		// preserve selection of moved tracks
+		_selectedTracks = new HashSet<Track>(movedTracks);
+		_selectionAnchorIndex = insertIndex;
+
+		Refresh();
+	}
 }
