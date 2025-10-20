@@ -22,8 +22,6 @@ public partial class PlaylistTrackEntry : PanelContainer
         {
             _isSelected = value;
             _selectedBg.Visible = _isSelected;
-            if (_isSelected)
-                EmitSignal(SignalName.Selected, Index);
         }
     }
 
@@ -34,8 +32,7 @@ public partial class PlaylistTrackEntry : PanelContainer
     
     public void Setup(string title, float duration, int index, bool selected, bool current = false)
     {
-        _isSelected = selected;
-        _selectedBg.Visible = _isSelected;
+        IsSelected = selected;
         
         Index = index;
         _trackTitleLabel.Text = title;
@@ -57,7 +54,7 @@ public partial class PlaylistTrackEntry : PanelContainer
             if (eventMouseButton.DoubleClick)
                 SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
             else
-                IsSelected = !IsSelected;
+                EmitSignal(SignalName.Selected, Index);
         }
     }
 }

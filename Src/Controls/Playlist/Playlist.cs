@@ -32,6 +32,7 @@ public partial class Playlist : WindowPanelContainer
 	private HashSet<Track> _selectedTracks = [];
 	private List<Track> _playlistRef;
 	private TrackPlayer _trackPlayerRef;
+	private int? _selectionAnchorIndex;
 
 	public override void _Ready()
 	{
@@ -74,18 +75,57 @@ public partial class Playlist : WindowPanelContainer
 
 	private void OnTrackSelected(int index)
 	{
+		if (Input.IsActionPressed("MultipleSelection"))
+			MultipleSelection(index);
+		else
+			SingleSelection(index);
+	}
+
+	private void MultipleSelection(int index)
+	{
+		if (_selectionAnchorIndex is null)
+		{
+			int? topSelectedIndex = null;
+			foreach (var child in _trackEntryContainer.GetChildren())
+			{
+				var labelScan = (PlaylistTrackEntry)child;
+				if (labelScan.IsSelected)
+				{
+					if (topSelectedIndex is null || labelScan.Index < topSelectedIndex.Value)
+						topSelectedIndex = labelScan.Index;
+				}
+			}
+			_selectionAnchorIndex = topSelectedIndex ?? index;
+		}
+
+		int start = System.Math.Min(_selectionAnchorIndex.Value, index);
+		int end = System.Math.Max(_selectionAnchorIndex.Value, index);
+
+		_selectedTracks.Clear();
 		foreach (var child in _trackEntryContainer.GetChildren())
 		{
 			var label = (PlaylistTrackEntry)child;
-			if (label.Index != index)
+			bool inRange = label.Index >= start && label.Index <= end;
+			label.IsSelected = inRange;
+			if (inRange)
 			{
-				label.IsSelected = false;
-				_selectedTracks.Remove(_playlistRef[label.Index]);
+				_selectedTracks.Add(_playlistRef[label.Index]);
 			}
-
 		}
-		
+	}
+
+	private void SingleSelection(int index)
+	{
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			bool isCurrent = label.Index == index;
+			label.IsSelected = isCurrent;
+		}
+
+		_selectedTracks.Clear();
 		_selectedTracks.Add(_playlistRef[index]);
+		_selectionAnchorIndex = index;
 	}
 
 	private void OnAddButtonPressed()
