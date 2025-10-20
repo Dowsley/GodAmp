@@ -246,6 +246,6 @@ public partial class MasterPanel : WindowPanelContainer
 
 	public void OnLoadTracksButtonPressed()
 	{
-		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested);
+		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, true);
 	}
 }

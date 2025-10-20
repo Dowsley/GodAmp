@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://b2jb8pn7u1pk5"]
+
+[ext_resource type="Script" uid="uid://c0bx4fo4cmts3" path="res://Src/Controls/Playlist/ButtonDropdowns/ListOptionsButtonDropdown.cs" id="1_atgfb"]
+[ext_resource type="Script" uid="uid://cc7rp70vh5xc5" path="res://Src/Controls/Playlist/FocusManagedVBoxContainer.cs" id="1_bu3yo"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_atgfb"]
+load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gbhkh"]
+atlas = SubResource("CompressedTexture2D_atgfb")
+region = Rect2(408, 222, 44, 36)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3ubde"]
+load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjbxh"]
+atlas = SubResource("CompressedTexture2D_3ubde")
+region = Rect2(454, 222, 44, 36)
+
+[node name="ListOptionsButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
+script = ExtResource("1_atgfb")
+_container = NodePath("FocusButtonContainer")
+
+[node name="FocusButtonContainer" type="VBoxContainer" parent="."]
+offset_right = 44.0
+offset_bottom = 110.0
+focus_mode = 1
+theme_override_constants/separation = 0
+script = ExtResource("1_bu3yo")
+
+[node name="NewListButton" type="TextureButton" parent="FocusButtonContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = SubResource("AtlasTexture_gbhkh")
+texture_pressed = SubResource("AtlasTexture_qjbxh")
+stretch_mode = 5
+
+[node name="SaveListButton" type="TextureButton" parent="FocusButtonContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = SubResource("AtlasTexture_gbhkh")
+texture_pressed = SubResource("AtlasTexture_qjbxh")
+stretch_mode = 5
+
+[node name="LoadListButton" type="TextureButton" parent="FocusButtonContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = SubResource("AtlasTexture_gbhkh")
+texture_pressed = SubResource("AtlasTexture_qjbxh")
+stretch_mode = 5
+
+[connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
+[connection signal="pressed" from="FocusButtonContainer/NewListButton" to="." method="OnNewListButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/SaveListButton" to="." method="OnSaveListButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/LoadListButton" to="." method="OnLoadListButtonPressed"]

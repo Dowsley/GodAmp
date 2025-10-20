@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GodAmp.Autoload;
@@ -71,6 +72,7 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.PannerBalanceChanged += OnPannerBalanceChanged;
 		SignalBus.Instance.PositionSeekerChanged += OnPositionSeekerChanged;
 		SignalBus.Instance.LoadTracksRequested += OnLoadTracksRequested;
+		SignalBus.Instance.LoadTracksFromDirRequested += OnLoadTracksFromDirRequested;
 	}
 
 	public override void _Process(double delta)
@@ -82,26 +84,26 @@ public partial class Main : HBoxContainer
 		
 		if (!_masterLabelLocked)
 		{
-			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack));
+			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
 		}
 	}
 
-	public void OnNextTrackRequested()
+	private void OnNextTrackRequested()
 	{
 		NextTrack();
 	}
 
-	public void OnPreviousTrackRequested()
+	private void OnPreviousTrackRequested()
 	{
 		PreviousTrack();
 	}
 	
-	public void OnTrackPlayerFinished()
+	private void OnTrackPlayerFinished()
 	{
 		NextTrack(true);
 	}
 
-	public void OnShuffleModeRequested()
+	private void OnShuffleModeRequested()
 	{
 		_shuffleMode = !_shuffleMode;
 		if (_shuffleMode)
@@ -117,24 +119,24 @@ public partial class Main : HBoxContainer
 		}
 	}
 
-	public void OnRepeatModeRequested()
+	private void OnRepeatModeRequested()
 	{
 		_repeatMode = !_repeatMode;
 	}
 
-	public void OnChangeToTrackRequested(int index)
+	private void OnChangeToTrackRequested(int index)
 	{
 		ChangeToTrack(index, true);
 	}
 
-	public void OnVolumeChanged(float volume)
+	private void OnVolumeChanged(float volume)
 	{
 		_masterPanel.SetMasterLabelText($"VOLUME: {Convert.ToInt64(volume * 100)}%");
 	}
 	
-	public void OnPannerBalanceChanged(float value)
+	private void OnPannerBalanceChanged(float value)
 	{
-		var text = "";
+		string text;
 		if (Mathf.IsZeroApprox(value))
 		{
 			text = "BALANCE: CENTER";
@@ -146,7 +148,7 @@ public partial class Main : HBoxContainer
 		_masterPanel.SetMasterLabelText(text);
 	}
 	
-	public void OnPositionSeekerChanged(float value)
+	private void OnPositionSeekerChanged(float value)
 	{
 		var totalTimeSecs = _trackPlayer.CurrentTrack.Duration;
 		if (_masterLabelLocked && _masterLabelLockedByPositionSeeker)
@@ -154,13 +156,13 @@ public partial class Main : HBoxContainer
 				$"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(totalTimeSecs)} ({value / totalTimeSecs * 100:F0}%)");
 	}
 	
-	public void LockMasterLabel(bool byPositionSeeker = false)
+	private void LockMasterLabel(bool byPositionSeeker = false)
 	{
 		_masterLabelLocked = true;
 		_masterLabelLockedByPositionSeeker = byPositionSeeker;
 	}
 	
-	public void UnlockMasterLabel()
+	private void UnlockMasterLabel()
 	{
 		_masterLabelLocked = false;
 		_masterLabelLockedByPositionSeeker = false;
@@ -168,7 +170,7 @@ public partial class Main : HBoxContainer
 		
 	private void NextTrack(bool autoplay = false)
 	{
-		var index = 0;
+		int index;
 		if (_shuffleMode)
 		{
 			_randomizedTrackIndex += 1;
@@ -195,7 +197,7 @@ public partial class Main : HBoxContainer
 	
 	private void PreviousTrack(bool autoplay = false)
 	{
-		var index = 0;
+		int index;
 		if (_shuffleMode)
 		{
 			_randomizedTrackIndex -= 1;
@@ -233,16 +235,17 @@ public partial class Main : HBoxContainer
 		_masterPanel.Refresh();
 		_playlist.Refresh();
 	}
-
-	public void OnLoadTracksRequested()
+	
+	private void OnLoadTracksFromDirRequested(bool overridePlaylist = false)
 	{
 		FileDialog dialog = new();
-		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFiles);
+		dialog.SetFileMode(FileDialog.FileModeEnum.OpenDir);
 		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-		dialog.SetFilters(CollectionsMarshal.AsSpan(
-			AudioUtils.GetAllowedFileFilters()));
 		dialog.SetUseNativeDialog(true);
-		dialog.Connect(FileDialog.SignalName.FilesSelected, new Callable(this, nameof(LoadTracks)));
+		
+		// Connect to DirSelected instead of FilesSelected
+		var dirSelectedCallback = Callable.From((string dirPath) => LoadTracksFromDirectory(dirPath, overridePlaylist));
+		dialog.Connect(FileDialog.SignalName.DirSelected, dirSelectedCallback);
 		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
 		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
 		AddChild(dialog);
@@ -251,11 +254,72 @@ public partial class Main : HBoxContainer
 		_lastUsedFileDialog = dialog;
 	}
 
-	public void LoadTracks(string[] paths)
+	private void OnLoadTracksRequested(bool overridePlaylist = false)
 	{
-		_trackPlaylist.Clear();
-		_trackPlaylist.AddRange(AudioUtils.LoadTracksFromPathList(paths));
-		_trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
+		FileDialog dialog = new();
+		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFiles);
+		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+		dialog.SetFilters(CollectionsMarshal.AsSpan(
+			AudioUtils.GetAllowedFileFilters()));
+		dialog.SetUseNativeDialog(true);
+		var filesSelectedCallback = Callable.From((string[] paths) => LoadTracks(paths, overridePlaylist));
+		dialog.Connect(FileDialog.SignalName.FilesSelected, filesSelectedCallback);
+		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
+		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
+		AddChild(dialog);
+		dialog.PopupCenteredRatio();
+
+		_lastUsedFileDialog = dialog;
+	}
+	
+	public void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
+	{
+		var audioFiles = GetAudioFilesFromDirectory(directoryPath);
+		if (audioFiles.Length == 0)
+		{
+			GD.Print("No audio files found in directory");
+			OnFileDialogClosed();
+			return;
+		}
+    
+		LoadTracks(audioFiles, overridePlaylist);
+	}
+
+	private static string[] GetAudioFilesFromDirectory(string directoryPath)
+	{
+		var audioFiles = new List<string>();
+		var allowedExtensions = AudioUtils.GetAllowedFileExtensions();
+		using var dir = DirAccess.Open(directoryPath);
+
+		if (dir == null)
+			return [];
+
+		dir.ListDirBegin();
+		string fileName = dir.GetNext();
+
+		while (fileName != "")
+		{
+			if (!dir.CurrentIsDir())
+			{
+				string extension = $".{fileName.GetExtension().ToLower()}";
+				if (allowedExtensions.Contains(extension))
+				{
+					audioFiles.Add(Path.Combine(directoryPath, fileName));
+				}
+			}
+			fileName = dir.GetNext();
+		}
+
+		return audioFiles.ToArray();
+	}
+
+	private void LoadTracks(string[] paths, bool overridePlaylist = false)
+	{
+		if (overridePlaylist)
+			_trackPlaylist.Clear();
+		var tracks = AudioUtils.LoadTracksFromPathList(paths);
+		tracks.Sort((a, b) => a.TrackNumber - b.TrackNumber);
+		_trackPlaylist.AddRange(tracks);
 		_trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
 		_visualizer.Pause();
 		_masterPanel.Refresh();
@@ -272,22 +336,22 @@ public partial class Main : HBoxContainer
 		_lastUsedFileDialog = null;
 	}
 	
-	public void OnToggleEqualizerRequested()
+	private void OnToggleEqualizerRequested()
 	{
 		_equalizer.Visible = !_equalizer.Visible;
 	}
 
-	public void OnTogglePlaylistRequested()
+	private void OnTogglePlaylistRequested()
 	{
 		_playlist.Visible = !_playlist.Visible;
 	}
 	
-	public void OnEqualizerCloseButtonClicked()
+	private void OnEqualizerCloseButtonClicked()
 	{
 		_masterPanel.ToggleEqualizerButton.ButtonPressed = false;
 	}
 
-	public void OnPlaylistCloseButtonClicked()
+	private void OnPlaylistCloseButtonClicked()
 	{
 		_masterPanel.TogglePlaylistButton.ButtonPressed = false;
 	}
