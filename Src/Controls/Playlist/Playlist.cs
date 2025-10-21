@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Data;
 using GodAmp.Player;
@@ -38,6 +39,9 @@ public partial class Playlist : WindowPanelContainer
 	{
 		_trackEntryContainer = GetNode<VBoxContainer>("%PlaylistTrackEntryContainer");
 		_scrollContainer = GetNode<ScrollContainer>("%ScrollContainer");
+		SignalBus.Instance.InverseSelectionRequested += OnInverseSelectionRequested;
+		SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
+		SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;
 	}
 
 	public void Setup(TrackPlayer trackPlayerRef, List<Track> playlist)
@@ -169,6 +173,40 @@ public partial class Playlist : WindowPanelContainer
 	{
 		ListOptionsButtonDropdown.Activate(
 			ListOptionsButton.GlobalPosition, ListOptionsButton.Size);
+	}
+
+	private void OnInverseSelectionRequested()
+	{
+		_selectedTracks.Clear();
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			label.IsSelected = !label.IsSelected;
+			if (label.IsSelected)
+				_selectedTracks.Add(_playlistRef[label.Index]);
+		}
+	}
+
+	private void OnSelectZeroRequested()
+	{
+		_selectedTracks.Clear();
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			label.IsSelected = false;
+		}
+		_selectionAnchorIndex = null;
+	}
+
+	private void OnSelectAllRequested()
+	{
+		_selectedTracks = new HashSet<Track>(_playlistRef);
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			label.IsSelected = true;
+		}
+		_selectionAnchorIndex = 0;
 	}
 
 	public void ReorderSelectedTracks(List<int> selectedIndices, int targetIndex, bool insertAfter)

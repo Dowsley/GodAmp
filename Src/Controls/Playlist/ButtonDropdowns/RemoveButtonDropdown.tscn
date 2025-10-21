@@ -65,7 +65,7 @@ _container = NodePath("FocusButtonContainer")
 
 [node name="FocusButtonContainer" type="VBoxContainer" parent="."]
 offset_right = 44.0
-offset_bottom = 110.0
+offset_bottom = 144.0
 focus_mode = 1
 theme_override_constants/separation = 0
 script = ExtResource("1_2lw0h")

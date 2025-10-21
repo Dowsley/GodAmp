@@ -87,6 +87,6 @@ texture_pressed = SubResource("AtlasTexture_w6dcu")
 stretch_mode = 5
 
 [connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
-[connection signal="pressed" from="FocusButtonContainer/InverseSelectionButton" to="FocusButtonContainer" method="OnInverseSelectionButtonPressed"]
-[connection signal="pressed" from="FocusButtonContainer/SelectZeroButton" to="FocusButtonContainer" method="OnSelectZeroButtonPressed"]
-[connection signal="pressed" from="FocusButtonContainer/SelectAllButton" to="FocusButtonContainer" method="OnSelectAllButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/InverseSelectionButton" to="." method="OnInverseSelectionButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/SelectZeroButton" to="." method="OnSelectZeroButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/SelectAllButton" to="." method="OnSelectAllButtonPressed"]
