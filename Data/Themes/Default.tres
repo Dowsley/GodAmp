@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://gcvlpih1sx1k" path="res://Assets/Winamp/volume.png" id="2_nrhsl"]
 [ext_resource type="Texture2D" uid="uid://crh2eoxv0mpu1" path="res://Assets/Winamp/volume_vertical.png" id="3_51pqm"]
 [ext_resource type="Texture2D" uid="uid://dfkjcovt5e3d5" path="res://Assets/Winamp/volume_vertical_2x.png" id="3_aqe8w"]
+[ext_resource type="Texture2D" uid="uid://4705dvdp00oq" path="res://Assets/Winamp/playlist_2x.png" id="3_id0dp"]
 [ext_resource type="Texture2D" uid="uid://h7xq6lfs2b0p" path="res://Assets/Winamp/posbar_vertical.png" id="3_lfaim"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nrhsl"]
@@ -46,11 +47,9 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_aqe8w"]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ho7c"]
-atlas = SubResource("CompressedTexture2D_aqe8w")
-region = Rect2(0, 248, 10, 29)
+atlas = ExtResource("3_id0dp")
+region = Rect2(104, 106, 16, 36)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_is47l"]
 content_margin_left = 4.0
@@ -63,18 +62,19 @@ texture_margin_top = 4.0
 texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_lfaim"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_id0dp"]
+load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_is47l"]
-atlas = SubResource("CompressedTexture2D_lfaim")
-region = Rect2(0, 277, 10, 31)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydo3w"]
+atlas = SubResource("CompressedTexture2D_id0dp")
+region = Rect2(122, 106, 16, 36)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_agcvn"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_iku20"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
-texture = SubResource("AtlasTexture_is47l")
+texture = SubResource("AtlasTexture_ydo3w")
 texture_margin_left = 4.0
 texture_margin_top = 4.0
 texture_margin_right = 4.0
@@ -133,7 +133,7 @@ HSlider/styles/slider = SubResource("StyleBoxTexture_aqe8w")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_caqeb")
 VScrollBar/styles/grabber = SubResource("StyleBoxTexture_is47l")
 VScrollBar/styles/grabber_highlight = SubResource("StyleBoxTexture_is47l")
-VScrollBar/styles/grabber_pressed = SubResource("StyleBoxTexture_agcvn")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxTexture_iku20")
 VScrollBar/styles/scroll = SubResource("StyleBoxTexture_eupr3")
 VScrollBar/styles/scroll_focus = SubResource("StyleBoxTexture_eupr3")
 VSlider/icons/grabber = SubResource("AtlasTexture_lfaim")

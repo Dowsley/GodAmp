@@ -45,8 +45,9 @@ As far as I know, they are royalty/copyright-free, but please do let me know if 
 - [X] Add support for other file types.
   - MP3, OGG, WAV
 - [X] Actual window
+- [X] Functional playlists
 - [ ] Full theme support
-- [ ] Functional playlists
 - [ ] Working Frequency panels
 - [ ] More visualizers (and flexibility for them)
+- [ ] Multiple windows
 - [ ] Integration with special keys

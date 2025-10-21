@@ -96,6 +96,7 @@ public static class AudioUtils
 
             var t = new Track
             {
+                SourcePath = fullPath,
                 Name = useFileName ? fileNameNoExt : tag.Title,
                 Artist = tag.FirstPerformer ?? "Unknown",
                 Album = tag.Album,
@@ -127,17 +128,22 @@ public static class AudioUtils
                        .ToList();
     }
 
-    public static string GetFullTrackTitle(Track track)
+    public static string GetFullTrackTitle(Track track, int trackNumber)
     {
         if (track == null)
             return "Unknown Track";
         return track.UseFileName
             ? track.Name
-            : $"{track.TrackNumber}. {track.Artist} - {track.Name}";
+            : $"{trackNumber}. {track.Artist} - {track.Name}";
     }
 
     public static List<string> GetAllowedFileFilters()
     {
         return StreamFactories.Keys.Select(k => $"*{k.ToLowerInvariant()}").ToList();
+    }
+
+    public static List<string> GetAllowedFileExtensions()
+    {
+        return StreamFactories.Keys.ToList();
     }
 }

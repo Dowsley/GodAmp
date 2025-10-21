@@ -1,25 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0lgw7guxv7tw"]
+[gd_scene load_steps=3 format=3 uid="uid://b0lgw7guxv7tw"]
 
 [ext_resource type="Script" uid="uid://xedfic0nugl0" path="res://Src/Controls/Playlist/PlaylistTrackEntry.cs" id="1_s5djc"]
 
-[node name="PlaylistTrackEntry" type="HBoxContainer"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vfh5b"]
+
+[node name="PlaylistTrackEntry" type="PanelContainer" node_paths=PackedStringArray("_trackTitleLabel", "_durationLabel", "_selectedBg")]
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -11.5
-offset_bottom = 11.5
+offset_top = -8.0
+offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_vfh5b")
 script = ExtResource("1_s5djc")
+_trackTitleLabel = NodePath("HBoxContainer/TrackTitleLabel")
+_durationLabel = NodePath("HBoxContainer/DurationLabel")
+_selectedBg = NodePath("SelectedBg")
 
-[node name="TrackTitleLabel" type="Label" parent="."]
+[node name="SelectedBg" type="ColorRect" parent="."]
+visible = false
+layout_mode = 2
+color = Color(0, 0, 0.776471, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TrackTitleLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_colors/font_color = Color(0, 0.92549, 0, 1)
 text = "TRACK TITLE"
 
-[node name="DurationLabel" type="Label" parent="."]
+[node name="DurationLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_colors/font_color = Color(0, 1, 0, 1)

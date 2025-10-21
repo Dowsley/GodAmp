@@ -4,6 +4,7 @@ namespace GodAmp.Data;
 
 public partial class Track : Resource
 {
+    public string SourcePath;
     public string Name;
     public string Artist;
     public string Album;

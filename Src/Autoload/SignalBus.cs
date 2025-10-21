@@ -9,7 +9,16 @@ public partial class SignalBus : Node
 	[Signal] public delegate void ShuffleModeRequestedEventHandler();
 	[Signal] public delegate void RepeatModeRequestedEventHandler();
 	[Signal] public delegate void ChangeToTrackRequestedEventHandler(int index);
-	[Signal] public delegate void LoadTracksRequestedEventHandler();
+	[Signal] public delegate void LoadTracksRequestedEventHandler(bool overridePlaylist=false);
+	[Signal] public delegate void LoadTracksFromDirRequestedEventHandler(bool overridePlaylist=false);
+	[Signal] public delegate void RemoveSelectedTracksFromPlaylistRequestedEventHandler();
+	[Signal] public delegate void RemoveAllTracksFromPlaylistRequestedEventHandler();
+	[Signal] public delegate void CropPlaylistRequestedEventHandler();
+	[Signal] public delegate void InverseSelectionRequestedEventHandler();
+	[Signal] public delegate void SelectZeroRequestedEventHandler();
+	[Signal] public delegate void SelectAllRequestedEventHandler();
+	[Signal] public delegate void LoadPlaylistRequestedEventHandler();
+	[Signal] public delegate void SavePlaylistRequestedEventHandler();
 	
 	// For Master Label
 	[Signal] public delegate void LockMasterLabelEventHandler(bool byPositionSeeker=false);
@@ -20,11 +29,10 @@ public partial class SignalBus : Node
 
 	public static SignalBus Instance { get; private set; }
 
-	public override void _EnterTree(){
+	public override void _EnterTree()
+	{
 		if (Instance != null)
-		{
 			QueueFree();
-		}
 		Instance = this;
 	}
 }
