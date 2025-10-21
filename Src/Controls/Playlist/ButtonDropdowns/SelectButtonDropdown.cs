@@ -5,17 +5,17 @@ namespace GodAmp.Controls.Playlist.ButtonDropdowns;
 
 public partial class SelectButtonDropdown : ButtonDropdown
 {
-    private void OnInverseSelectionButtonPressed()
+    private static void OnInverseSelectionButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.InverseSelectionRequested);
     }
     
-    private void OnSelectZeroButtonPressed()
+    private static void OnSelectZeroButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectZeroRequested);
     }
     
-    private void OnSelectAllButtonPressed()
+    private static void OnSelectAllButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectAllRequested);
     }

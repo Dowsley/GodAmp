@@ -4,23 +4,23 @@ namespace GodAmp.Controls.Playlist.ButtonDropdowns;
 
 public partial class RemoveButtonDropdown : ButtonDropdown
 {
-    private void OnRemoveSelectionButtonPressed()
+    private static void OnRemoveSelectionButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.RemoveSelectedTracksFromPlaylistRequested);
     }
 
     // Removes everything that is not selected
-    private void OnCropButtonPressed()
+    private static void OnCropButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.CropPlaylistRequested);
     }
 
-    private void OnRemoveAllButtonPressed()
+    private static void OnRemoveAllButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.RemoveAllTracksFromPlaylistRequested);
     }
 
-    private void OnRemoveMiscButtonPressed()
+    private static void OnRemoveMiscButtonPressed()
     {
         // TODO Implement
     }

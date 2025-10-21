@@ -17,6 +17,8 @@ public partial class SignalBus : Node
 	[Signal] public delegate void InverseSelectionRequestedEventHandler();
 	[Signal] public delegate void SelectZeroRequestedEventHandler();
 	[Signal] public delegate void SelectAllRequestedEventHandler();
+	[Signal] public delegate void LoadPlaylistRequestedEventHandler();
+	[Signal] public delegate void SavePlaylistRequestedEventHandler();
 	
 	// For Master Label
 	[Signal] public delegate void LockMasterLabelEventHandler(bool byPositionSeeker=false);

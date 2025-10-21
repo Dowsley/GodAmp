@@ -96,6 +96,7 @@ public static class AudioUtils
 
             var t = new Track
             {
+                SourcePath = fullPath,
                 Name = useFileName ? fileNameNoExt : tag.Title,
                 Artist = tag.FirstPerformer ?? "Unknown",
                 Album = tag.Album,

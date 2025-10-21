@@ -76,6 +76,8 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.RemoveSelectedTracksFromPlaylistRequested += RemoveSelectedTracksFromPlaylist;
 		SignalBus.Instance.RemoveAllTracksFromPlaylistRequested += RemoveAllTracksFromPlaylist;
 		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
+		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
+		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
 	}
 
 	public override void _Process(double delta)
@@ -222,6 +224,9 @@ public partial class Main : HBoxContainer
 			}
 			index = _currentTrackIndex;
 		}
+		
+		if (!(index < _trackPlaylist.Count && index >= 0))
+			return;
 
 		_trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
 		_masterPanel.Refresh();
@@ -276,6 +281,66 @@ public partial class Main : HBoxContainer
 		dialog.PopupCenteredRatio();
 
 		_lastUsedFileDialog = dialog;
+	}
+
+	private void OnLoadPlaylistRequested()
+	{
+		FileDialog dialog = new();
+		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFile);
+		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+		dialog.SetFilters(new string[]{"*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"});
+		dialog.SetUseNativeDialog(true);
+		var fileSelectedCallback = Callable.From((string path) => LoadPlaylist(path));
+		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
+		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
+		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
+		AddChild(dialog);
+		dialog.PopupCenteredRatio();
+
+		_lastUsedFileDialog = dialog;
+	}
+
+	private void OnSavePlaylistRequested()
+	{
+		FileDialog dialog = new();
+		dialog.SetFileMode(FileDialog.FileModeEnum.SaveFile);
+		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+		dialog.SetFilters(new string[]{"*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"});
+		dialog.SetUseNativeDialog(true);
+		var fileSelectedCallback = Callable.From((string path) => SavePlaylist(path));
+		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
+		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
+		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
+		AddChild(dialog);
+		dialog.PopupCenteredRatio();
+
+		_lastUsedFileDialog = dialog;
+	}
+
+	private void SavePlaylist(string path)
+	{
+		var ext = System.IO.Path.GetExtension(path);
+		if (string.IsNullOrWhiteSpace(ext))
+			path += ".m3u";
+		var absolutePaths = _trackPlaylist
+			.Select(t => t?.SourcePath)
+			.Where(p => !string.IsNullOrWhiteSpace(p));
+		M3UParser.Write(path, absolutePaths, relativePaths: false);
+		OnFileDialogClosed();
+	}
+
+	private void LoadPlaylist(string path)
+	{
+		var resolved = M3UParser.Parse(path);
+		var tracks = AudioUtils.LoadTracksFromPathList(resolved);
+		_trackPlaylist.Clear();
+		_trackPlaylist.AddRange(tracks);
+		if (_trackPlaylist.Count > 0)
+			_trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
+		_visualizer.Pause();
+		_masterPanel.Refresh();
+		_playlist.Refresh();
+		OnFileDialogClosed();
 	}
 	
 	private void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
