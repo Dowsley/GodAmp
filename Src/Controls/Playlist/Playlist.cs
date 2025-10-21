@@ -73,6 +73,23 @@ public partial class Playlist : WindowPanelContainer
 		_selectedTracks = newSelectedTracks;
 	}
 
+	public HashSet<int> GetSelectedIndices()
+	{
+		var indices = new HashSet<int>();
+		foreach (var child in _trackEntryContainer.GetChildren())
+		{
+			var label = (PlaylistTrackEntry)child;
+			if (label.IsSelected)
+				indices.Add(label.Index);
+		}
+		return indices;
+	}
+
+	public HashSet<Track> GetSelectedTracks()
+	{
+		return new HashSet<Track>(_selectedTracks);
+	}
+
 	private void OnTrackSelected(int index)
 	{
 		if (Input.IsActionPressed("MultipleSelection"))

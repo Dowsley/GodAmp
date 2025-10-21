@@ -73,6 +73,9 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.PositionSeekerChanged += OnPositionSeekerChanged;
 		SignalBus.Instance.LoadTracksRequested += OnLoadTracksRequested;
 		SignalBus.Instance.LoadTracksFromDirRequested += OnLoadTracksFromDirRequested;
+		SignalBus.Instance.RemoveSelectedTracksFromPlaylistRequested += RemoveSelectedTracksFromPlaylist;
+		SignalBus.Instance.RemoveAllTracksFromPlaylistRequested += RemoveAllTracksFromPlaylist;
+		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
 	}
 
 	public override void _Process(double delta)
@@ -189,6 +192,9 @@ public partial class Main : HBoxContainer
 			}
 			index = _currentTrackIndex;
 		}
+
+		if (!(index < _trackPlaylist.Count && index >= 0))
+			return;
 		
 		_trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
 		_masterPanel.Refresh();
@@ -272,7 +278,7 @@ public partial class Main : HBoxContainer
 		_lastUsedFileDialog = dialog;
 	}
 	
-	public void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
+	private void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
 	{
 		var audioFiles = GetAudioFilesFromDirectory(directoryPath);
 		if (audioFiles.Length == 0)
@@ -283,6 +289,35 @@ public partial class Main : HBoxContainer
 		}
     
 		LoadTracks(audioFiles, overridePlaylist);
+	}
+
+	private void RemoveAllTracksFromPlaylist()
+	{
+		_trackPlaylist.Clear();
+		_playlist.Refresh();
+	}
+
+	private void CropPlaylist()
+	{
+		var selected = _playlist.GetSelectedIndices();
+		// avoid index shifts
+		for (int i = _trackPlaylist.Count - 1; i >= 0; i--)
+		{
+			if (!selected.Contains(i))
+				_trackPlaylist.RemoveAt(i);
+		}
+		_playlist.Refresh();
+	}
+	
+	private void RemoveSelectedTracksFromPlaylist()
+	{
+		var selected = _playlist.GetSelectedIndices();
+		// avoid index shifts
+		foreach (var i in selected.OrderByDescending(x => x))
+		{
+			_trackPlaylist.RemoveAt(i);
+		}
+		_playlist.Refresh();
 	}
 
 	private static string[] GetAudioFilesFromDirectory(string directoryPath)

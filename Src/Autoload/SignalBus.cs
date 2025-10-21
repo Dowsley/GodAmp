@@ -11,6 +11,9 @@ public partial class SignalBus : Node
 	[Signal] public delegate void ChangeToTrackRequestedEventHandler(int index);
 	[Signal] public delegate void LoadTracksRequestedEventHandler(bool overridePlaylist=false);
 	[Signal] public delegate void LoadTracksFromDirRequestedEventHandler(bool overridePlaylist=false);
+	[Signal] public delegate void RemoveSelectedTracksFromPlaylistRequestedEventHandler();
+	[Signal] public delegate void RemoveAllTracksFromPlaylistRequestedEventHandler();
+	[Signal] public delegate void CropPlaylistRequestedEventHandler();
 	
 	// For Master Label
 	[Signal] public delegate void LockMasterLabelEventHandler(bool byPositionSeeker=false);

@@ -15,6 +15,8 @@ public partial class PlaylistTrackEntry : PanelContainer
     public int Index;
 
     private bool _isSelected = false;
+    private bool _isPointerDown = false;
+    private bool _dragStarted = false;
     public bool IsSelected
     {
         get => _isSelected;
@@ -46,23 +48,34 @@ public partial class PlaylistTrackEntry : PanelContainer
 
     public override void _GuiInput(InputEvent @event)
     {
-        if (@event is not InputEventMouseButton eventMouseButton)
-            return;
-
-        if (eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left) 
+        if (@event is InputEventMouseButton eventMouseButton)
         {
-            if (eventMouseButton.DoubleClick)
-                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
+            if (eventMouseButton.ButtonIndex != MouseButton.Left)
+                return;
+
+            if (eventMouseButton.Pressed)
+            {
+                _isPointerDown = true;
+                _dragStarted = false;
+
+                if (eventMouseButton.DoubleClick)
+                    SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
+            }
             else
             {
-                if (!_isSelected)
-                    EmitSignal(SignalName.Selected, Index);
+                // Mouse released
+                if (_isPointerDown && !_dragStarted)
+                    EmitSignal(SignalName.Selected, Index); // plain click -> single select
+
+                _isPointerDown = false;
+                _dragStarted = false;
             }
         }
     }
 
     public override Variant _GetDragData(Vector2 atPosition)
     {
+        _dragStarted = true;
         // Build selection indices from siblings' visual state
         var parent = GetParent();
         var selectedIndices = new Godot.Collections.Array<int>();
