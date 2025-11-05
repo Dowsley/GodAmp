@@ -1,0 +1,147 @@
+using Godot;
+
+namespace GodAmp.Autoload;
+
+public partial class SettingsManager : Node
+{
+	private const string SettingsFileName = "godamp.ini";
+	private const string SettingsDir = "GodAmp";
+
+	private const string LastPlaylistPathKey = "last_playlist_path";
+	private const string ZoomModeKey = "zoom_mode";
+	private const string VolumeKey = "volume";
+
+	[Signal] public delegate void SettingChangedEventHandler(string key, Variant value);
+	[Signal] public delegate void LastPlaylistPathChangedEventHandler(string path);
+	[Signal] public delegate void ZoomModeChangedEventHandler(int zoomMode);
+	[Signal] public delegate void VolumeChangedEventHandler(float volume);
+
+	private ConfigFile _configFile;
+	private string _settingsFilePath;
+
+	public static SettingsManager Instance { get; private set; }
+
+	public override void _EnterTree()
+	{
+		if (Instance != null)
+			QueueFree();
+		Instance = this;
+		InitializeSettings();
+	}
+
+	private void InitializeSettings()
+	{
+		string dataDir = OS.GetDataDir();
+		string godampDir = System.IO.Path.Combine(dataDir, SettingsDir);
+		_settingsFilePath = System.IO.Path.Combine(godampDir, SettingsFileName);
+		if (!System.IO.Directory.Exists(godampDir))
+		{
+			System.IO.Directory.CreateDirectory(godampDir);
+		}
+
+		_configFile = new ConfigFile();
+
+		if (System.IO.File.Exists(_settingsFilePath))
+		{
+			Error error = _configFile.Load(_settingsFilePath);
+			if (error != Error.Ok)
+			{
+				GD.PrintErr($"Failed to load settings file: {error}");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets a setting value by key. Returns null if not found.
+	/// </summary>
+	private Variant GetSetting(string key, Variant defaultValue = default)
+	{
+		if (_configFile.HasSectionKey("settings", key))
+		{
+			return _configFile.GetValue("settings", key);
+		}
+		return defaultValue;
+	}
+
+	/// <summary>
+	/// Sets a setting in memory (does not save to disk immediately).
+	/// </summary>
+	private void SetSetting(string key, Variant value)
+	{
+		_configFile.SetValue("settings", key, value);
+		EmitSignal(SignalName.SettingChanged, key, value);
+
+		switch (key)
+		{
+			case LastPlaylistPathKey:
+				EmitSignal(SignalName.LastPlaylistPathChanged, (string)value);
+				break;
+			case ZoomModeKey:
+				EmitSignal(SignalName.ZoomModeChanged, (int)value);
+				break;
+			case VolumeKey:
+				EmitSignal(SignalName.VolumeChanged, (float)value);
+				break;
+		}
+	}
+
+	/// <summary>
+	/// Gets the last played playlist path.
+	/// </summary>
+	public string GetLastPlaylistPath()
+	{
+		return (string)GetSetting(LastPlaylistPathKey, "");
+	}
+
+	/// <summary>
+	/// Sets the last played playlist path.
+	/// </summary>
+	public void SetLastPlaylistPath(string path)
+	{
+		SetSetting(LastPlaylistPathKey, path);
+	}
+
+	/// <summary>
+	/// Gets the zoom mode (0 = 1x, 1 = 2x).
+	/// </summary>
+	public int GetZoomMode()
+	{
+		return (int)GetSetting(ZoomModeKey, 0);
+	}
+
+	/// <summary>
+	/// Sets the zoom mode (0 = 1x, 1 = 2x).
+	/// </summary>
+	public void SetZoomMode(int mode)
+	{
+		SetSetting(ZoomModeKey, mode);
+	}
+
+	/// <summary>
+	/// Gets the volume level (0.0 to 1.0).
+	/// </summary>
+	public float GetVolume()
+	{
+		return (float)GetSetting(VolumeKey, 0.8f);
+	}
+
+	/// <summary>
+	/// Sets the volume level (0.0 to 1.0).
+	/// </summary>
+	public void SetVolume(float volume)
+	{
+		SetSetting(VolumeKey, volume);
+	}
+
+	/// <summary>
+	/// Saves all settings to disk.
+	/// </summary>
+	public void SaveAllSettings()
+	{
+		Error error = _configFile.Save(_settingsFilePath);
+		if (error != Error.Ok)
+		{
+			GD.PrintErr($"Failed to save settings file: {error}");
+		}
+	}
+}

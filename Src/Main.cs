@@ -45,22 +45,41 @@ public partial class Main : HBoxContainer
 		_visualizer = GetNode<Visualizer.Visualizer>("%Visualizer");
 		_trackPlayer = GetNode<TrackPlayer>("%TrackPlayer");
 
-		_trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
+		// Try to load the last used playlist, fall back to default songs path
+		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
+		if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
+		{
+			try
+			{
+				var resolved = M3UParser.Parse(lastPlaylistPath);
+				_trackPlaylist = AudioUtils.LoadTracksFromPathList(resolved);
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"Failed to load last playlist: {ex.Message}. Falling back to default songs path.");
+				_trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
+			}
+		}
+		else
+		{
+			_trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
+		}
+
 		if (_trackPlaylist.Count == 0)
 		{
-			GD.PrintErr("No tracks found in the default songs path.");
+			GD.PrintErr("No tracks found.");
 		}
 		_trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
 		_trackPlayer.SetCurrentTrack(_trackPlaylist[_currentTrackIndex], false);
 		_visualizer.Pause();
-		
+
 		_masterPanel.ToggleEqualizerRequested += OnToggleEqualizerRequested;
 		_masterPanel.TogglePlaylistRequested += OnTogglePlaylistRequested;
 		_masterPanel.Setup(_trackPlayer);
 		_playlist.Setup(_trackPlayer, _trackPlaylist);
 		_masterPanel.Refresh();
 		_playlist.Refresh();
-		
+
 		SignalBus.Instance.NextTrackRequested += OnNextTrackRequested;
 		SignalBus.Instance.PreviousTrackRequested += OnPreviousTrackRequested;
 		SignalBus.Instance.ShuffleModeRequested += OnShuffleModeRequested;
@@ -78,6 +97,13 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
+
+		LoadSettingsState();
+	}
+
+	public override void _ExitTree()
+	{
+		SettingsManager.Instance.SaveAllSettings();
 	}
 
 	public override void _Process(double delta)
@@ -288,7 +314,7 @@ public partial class Main : HBoxContainer
 		FileDialog dialog = new();
 		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFile);
 		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-		dialog.SetFilters(new string[]{"*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"});
+		dialog.SetFilters(["*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"]);
 		dialog.SetUseNativeDialog(true);
 		var fileSelectedCallback = Callable.From((string path) => LoadPlaylist(path));
 		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
@@ -305,7 +331,7 @@ public partial class Main : HBoxContainer
 		FileDialog dialog = new();
 		dialog.SetFileMode(FileDialog.FileModeEnum.SaveFile);
 		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-		dialog.SetFilters(new string[]{"*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"});
+		dialog.SetFilters(["*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"]);
 		dialog.SetUseNativeDialog(true);
 		var fileSelectedCallback = Callable.From((string path) => SavePlaylist(path));
 		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
@@ -319,7 +345,7 @@ public partial class Main : HBoxContainer
 
 	private void SavePlaylist(string path)
 	{
-		var ext = System.IO.Path.GetExtension(path);
+		var ext = Path.GetExtension(path);
 		if (string.IsNullOrWhiteSpace(ext))
 			path += ".m3u";
 		var absolutePaths = _trackPlaylist
@@ -340,6 +366,10 @@ public partial class Main : HBoxContainer
 		_visualizer.Pause();
 		_masterPanel.Refresh();
 		_playlist.Refresh();
+
+		// Save the last loaded playlist path
+		SettingsManager.Instance.SetLastPlaylistPath(path);
+
 		OnFileDialogClosed();
 	}
 	
@@ -445,7 +475,14 @@ public partial class Main : HBoxContainer
 	{
 		_playlist.Visible = !_playlist.Visible;
 	}
-	
+
+	private void LoadSettingsState()
+	{
+		float savedVolume = SettingsManager.Instance.GetVolume();
+		_masterPanel.SetVolumeValue(savedVolume);
+		_trackPlayer.VolumeLinear = savedVolume;
+	}
+
 	private void OnEqualizerCloseButtonClicked()
 	{
 		_masterPanel.ToggleEqualizerButton.ButtonPressed = false;

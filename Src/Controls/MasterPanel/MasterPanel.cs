@@ -62,10 +62,22 @@ public partial class MasterPanel : WindowPanelContainer
 		_2XZoomButton.ToggleMode = true;
 
 		_initialSize = GetWindow().Size;
-		_1XZoomButton.ButtonPressed = true;
-		Set1XZoomMode();
+
+		// Load saved zoom mode from settings
+		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
+		if (savedZoomMode == 1)
+		{
+			_2XZoomButton.ButtonPressed = true;
+			Set2XZoomMode();
+		}
+		else
+		{
+			_1XZoomButton.ButtonPressed = true;
+			Set1XZoomMode();
+		}
+
 		_positionSeekerSlider.Value = 0.0f;
-		
+
 		UIUtils.SetSliderColor(
 			_volumeSlider, (float)_volumeSlider.Value, 0.0f, 1.0f);
 	}
@@ -124,13 +136,13 @@ public partial class MasterPanel : WindowPanelContainer
 		_masterLabel.SetValue(text);
 	}
 
-	public void OnPlayTrackButtonPressed()
+	private void OnPlayTrackButtonPressed()
 	{
 		_trackPlayerRef.Play(0.0f);
 		_hasStarted = true;
 	}
 	
-	public void OnPauseTrackButtonPressed()
+	private void OnPauseTrackButtonPressed()
 	{
 		_trackPlayerRef.StreamPaused = !_trackPlayerRef.StreamPaused;
 		if (_trackPlayerRef.StreamPaused)
@@ -143,24 +155,24 @@ public partial class MasterPanel : WindowPanelContainer
 		}
 	}
 
-	public void OnStopTrackButtonPressed()
+	private void OnStopTrackButtonPressed()
 	{
 		_trackPlayerRef.Stop();
 		_hasStarted = false;
 	}
 
-	public void OnPositionSeekerValueChanged(float value)
+	private static void OnPositionSeekerValueChanged(float value)
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.PositionSeekerChanged, value);
 	}
 
-	public void OnPositionSeekerDragStarted()
+	private void OnPositionSeekerDragStarted()
 	{
 		_dragging = true;
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, true);
 	}
 	
-	public void OnPositionSeekerDragEnded(bool valueChanged)
+	private void OnPositionSeekerDragEnded(bool valueChanged)
 	{
 		_dragging = false;
 		_resumeTrackAtPosition = (float)_positionSeekerSlider.Value;
@@ -171,24 +183,25 @@ public partial class MasterPanel : WindowPanelContainer
 		OnSliderDragEnded();
 	}
 	
-	public void OnVolumeSliderValueChanged(float value)
+	private void OnVolumeSliderValueChanged(float value)
 	{
 		_trackPlayerRef.VolumeLinear = value;
 		UIUtils.SetSliderColor(_volumeSlider, value, 0.0f, 1.0f);
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.VolumeChanged, value);
+		SettingsManager.Instance.SetVolume(value);
 	}
 
-	public void OnSliderDragStarted()
+	private static void OnSliderDragStarted()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, false);
 	}
 	
-	public void OnSliderDragEnded(float value = 0.0f)
+	private static void OnSliderDragEnded(float value = 0.0f)
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.UnlockMasterLabel);
 	}
 
-	public void OnPannerAudioSliderValueChanged(float value)
+	private void OnPannerAudioSliderValueChanged(float value)
 	{
 		var busIndex = AudioServer.GetBusIndex("Master");
 		if (AudioServer.GetBusEffect(busIndex, AudioUtils.PannerAudioEffectIndex) is AudioEffectPanner effect)
@@ -199,42 +212,49 @@ public partial class MasterPanel : WindowPanelContainer
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.PannerBalanceChanged, value);
 	}
 
-	public void Set1XZoomMode()
+	private void Set1XZoomMode()
 	{
 		GetWindow().Size = _initialSize;
+		SettingsManager.Instance.SetZoomMode(0);
 	}
 
-	public void Set2XZoomMode()
+	private void Set2XZoomMode()
 	{
 		GetWindow().Size = new Vector2I(_initialSize.X*2, _initialSize.Y*2);
+		SettingsManager.Instance.SetZoomMode(1);
 	}
 
-	public void OnNextTrackButtonPressed()
+	public void SetVolumeValue(float volume)
+	{
+		_volumeSlider.Value = volume;
+	}
+
+	private static void OnNextTrackButtonPressed()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.NextTrackRequested);
 	}
 	
-	public void OnPreviousTrackButtonPressed()
+	private static void OnPreviousTrackButtonPressed()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.PreviousTrackRequested);
 	}
 	
-	public void OnShuffleModeButtonPressed()
+	private static void OnShuffleModeButtonPressed()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ShuffleModeRequested);
 	}
 	
-	public void OnRepeatModeButtonPressed()
+	private static void OnRepeatModeButtonPressed()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.RepeatModeRequested);
 	}
 
-	public void OnToggleEqualizerButton()
+	private void OnToggleEqualizerButton()
 	{
 		EmitSignal(SignalName.ToggleEqualizerRequested);
 	}
 	
-	public void OnTogglePlaylistButton()
+	private void OnTogglePlaylistButton()
 	{
 		EmitSignal(SignalName.TogglePlaylistRequested);
 	}
@@ -244,7 +264,7 @@ public partial class MasterPanel : WindowPanelContainer
 		GetTree().Quit();
 	}
 
-	public void OnLoadTracksButtonPressed()
+	private static void OnLoadTracksButtonPressed()
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, true);
 	}
