@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://iqkq0rtuvb6y"]
+
+[ext_resource type="Texture2D" uid="uid://cq5w600vajbgx" path="res://Assets/Winamp/Raw/SHUFREP.png" id="1_1y608"]
+
+[resource]
+atlas = ExtResource("1_1y608")
+region = Rect2(0, 0, 28, 15)

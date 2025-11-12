@@ -89,4 +89,4 @@ stretch_mode = 5
 [connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
 [connection signal="pressed" from="FocusButtonContainer/SortListButton" to="." method="OnSortListButtonPressed"]
 [connection signal="pressed" from="FocusButtonContainer/FileInfoButton" to="." method="OnFileInfoButtonPressed"]
-[connection signal="pressed" from="FocusButtonContainer/MiscOptionsButton" to="." method="OnFileInfoButtonPressed"]
+[connection signal="pressed" from="FocusButtonContainer/MiscOptionsButton" to="." method="OnMiscOptsButtonPressed"]

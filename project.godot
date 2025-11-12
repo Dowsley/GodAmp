@@ -27,6 +27,7 @@ buses/default_bus_layout="res://DefaultBusLayout.tres"
 
 SignalBus="*res://Src/Autoload/SignalBus.cs"
 SettingsManager="*res://Src/Autoload/SettingsManager.cs"
+SkinLoader="*res://Src/Autoload/SkinLoader.cs"
 
 [display]
 

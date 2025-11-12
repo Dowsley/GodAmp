@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://cpme6jm30nl1o"]
+[gd_scene load_steps=51 format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
 [ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="2_d0rpu"]
@@ -9,9 +9,27 @@
 [ext_resource type="Texture2D" uid="uid://gcvlpih1sx1k" path="res://Assets/Winamp/volume.png" id="4_p37iv"]
 [ext_resource type="Texture2D" uid="uid://o5e8f3sf1nx4" path="res://Assets/Winamp/posbar_2x.png" id="4_x5ey5"]
 [ext_resource type="FontFile" uid="uid://bkj6siql58hlw" path="res://Assets/Fonts/pixel_lcd_7.ttf" id="5_w36oh"]
-[ext_resource type="Texture2D" uid="uid://evgjkr2ae3cl" path="res://Assets/Winamp/master_buttons_raw_2x.png" id="6_w36oh"]
-[ext_resource type="Texture2D" uid="uid://b37gunx25o2o2" path="res://Assets/Winamp/shufrep_buttons_2x.png" id="7_npeu0"]
+[ext_resource type="Texture2D" uid="uid://c36trldiqrjwr" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="9_m25c3"]
+[ext_resource type="Texture2D" uid="uid://7jj1x5twau4e" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="10_2gtsh"]
+[ext_resource type="Texture2D" uid="uid://ck2phyu241jwi" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="11_j1eng"]
+[ext_resource type="Texture2D" uid="uid://dw2hupkgvxcj5" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="11_pboy1"]
+[ext_resource type="Texture2D" uid="uid://bujh07cr8mncs" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="12_6x7f4"]
+[ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="12_umuss"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="12_x5ey5"]
+[ext_resource type="Texture2D" uid="uid://dsp2hooqm7hu1" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="13_umuss"]
+[ext_resource type="Texture2D" uid="uid://o1n3pn051fgy" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="14_4muab"]
+[ext_resource type="Texture2D" uid="uid://cejh2ucgorivr" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="15_81lhg"]
+[ext_resource type="Texture2D" uid="uid://767yrevn2quh" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="16_b6q8b"]
+[ext_resource type="Texture2D" uid="uid://cgcywfbr7bmo6" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="17_6nk5l"]
+[ext_resource type="Texture2D" uid="uid://cou0jaj38whh" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="18_b7f5n"]
+[ext_resource type="Texture2D" uid="uid://ii0nd3mxsvyq" path="res://Data/SkinResources/NextTrackButtonNormal.tres" id="19_0xpbf"]
+[ext_resource type="Texture2D" uid="uid://clxfppa4qfq43" path="res://Data/SkinResources/NextTrackButtonPressed.tres" id="20_wsc06"]
+[ext_resource type="Texture2D" uid="uid://d0i6n4f48l8aa" path="res://Data/SkinResources/LoadTracksButtonNormal.tres" id="21_b7f5n"]
+[ext_resource type="Texture2D" uid="uid://pyyuse41v3wi" path="res://Data/SkinResources/LoadTracksButtonPressed.tres" id="22_0xpbf"]
+[ext_resource type="Texture2D" uid="uid://ggl7b471cdw5" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="26_b8aew"]
+[ext_resource type="Texture2D" uid="uid://cvqxeibujqu01" path="res://Data/SkinResources/ShuffleModeButtonPressed.tres" id="27_jkbgf"]
+[ext_resource type="Texture2D" uid="uid://iqkq0rtuvb6y" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="28_bgj4f"]
+[ext_resource type="Texture2D" uid="uid://bdebbq0y5t8kf" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="29_oo7n4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_woh0y"]
 atlas = ExtResource("3_d0rpu")
@@ -79,22 +97,6 @@ texture_margin_top = 1.0
 texture_margin_right = 3.0
 texture_margin_bottom = 1.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yas16"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(0, 122, 46, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qmpwg"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(0, 146, 46, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8fccr"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(46, 122, 46, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wmjcb"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(46, 146, 46, 24)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_d0rpu"]
 atlas = ExtResource("4_x5ey5")
 region = Rect2(496, 0, 58, 20)
@@ -123,70 +125,6 @@ texture_margin_bottom = 1.0
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mnxsc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oa2da"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(0, 0, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mnxsc"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(0, 36, 46, 38)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ueg7m"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(46, 0, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_e6vhv"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(46, 36, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bxbh3"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(92, 0, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fnw3p"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(92, 36, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w36oh"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(138, 0, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5qdrm"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(138, 36, 46, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_apwlw"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(184, 0, 44, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_465rn"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(184, 36, 44, 36)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_npeu0"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(228, 0, 44, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_s3com"]
-atlas = ExtResource("6_w36oh")
-region = Rect2(228, 32, 44, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ty4nk"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(56, 0, 94, 30)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_plxd8"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(56, 60, 94, 30)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1qudr"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(0, 0, 56, 30)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u5eu6"]
-atlas = ExtResource("7_npeu0")
-region = Rect2(0, 60, 56, 30)
 
 [node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("Contents")]
 offset_right = 506.0
@@ -394,20 +332,22 @@ size_flags_horizontal = 10
 
 [node name="ToggleEqualizerButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(46, 24)
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
-texture_normal = SubResource("AtlasTexture_yas16")
-texture_pressed = SubResource("AtlasTexture_qmpwg")
+texture_normal = ExtResource("9_m25c3")
+texture_pressed = ExtResource("10_2gtsh")
 stretch_mode = 5
 
 [node name="TogglePlaylistButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(46, 24)
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
-texture_normal = SubResource("AtlasTexture_8fccr")
-texture_pressed = SubResource("AtlasTexture_wmjcb")
+texture_normal = ExtResource("11_j1eng")
+texture_pressed = ExtResource("12_6x7f4")
 stretch_mode = 5
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
@@ -436,47 +376,47 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="PreviousTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = SubResource("AtlasTexture_oa2da")
-texture_pressed = SubResource("AtlasTexture_mnxsc")
+texture_normal = ExtResource("11_pboy1")
+texture_pressed = ExtResource("12_umuss")
 stretch_mode = 5
 
 [node name="PlayTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_ueg7m")
-texture_pressed = SubResource("AtlasTexture_e6vhv")
+texture_normal = ExtResource("13_umuss")
+texture_pressed = ExtResource("14_4muab")
 stretch_mode = 5
 
 [node name="PauseTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_bxbh3")
-texture_pressed = SubResource("AtlasTexture_fnw3p")
+texture_normal = ExtResource("15_81lhg")
+texture_pressed = ExtResource("16_b6q8b")
 stretch_mode = 5
 
 [node name="StopTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_w36oh")
-texture_pressed = SubResource("AtlasTexture_5qdrm")
+texture_normal = ExtResource("17_6nk5l")
+texture_pressed = ExtResource("18_b7f5n")
 stretch_mode = 5
 
 [node name="NextTrackButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_apwlw")
-texture_pressed = SubResource("AtlasTexture_465rn")
+texture_normal = ExtResource("19_0xpbf")
+texture_pressed = ExtResource("20_wsc06")
 stretch_mode = 5
 
 [node name="HBoxContainer2" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
@@ -486,12 +426,12 @@ theme_override_constants/margin_left = 2
 theme_override_constants/margin_right = 2
 
 [node name="LoadTracksButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer2"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(44, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_npeu0")
-texture_pressed = SubResource("AtlasTexture_s3com")
+texture_normal = ExtResource("21_b7f5n")
+texture_pressed = ExtResource("22_0xpbf")
 stretch_mode = 5
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
@@ -499,20 +439,21 @@ layout_mode = 2
 size_flags_horizontal = 10
 
 [node name="ShuffleModeButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3"]
+custom_minimum_size = Vector2(94, 30)
 layout_mode = 2
 toggle_mode = true
-texture_normal = SubResource("AtlasTexture_ty4nk")
-texture_pressed = SubResource("AtlasTexture_plxd8")
+texture_normal = ExtResource("26_b8aew")
+texture_pressed = ExtResource("27_jkbgf")
 stretch_mode = 5
 
 [node name="RepeatModeButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer3"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(56, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 toggle_mode = true
-texture_normal = SubResource("AtlasTexture_1qudr")
-texture_pressed = SubResource("AtlasTexture_u5eu6")
+texture_normal = ExtResource("28_bgj4f")
+texture_pressed = ExtResource("29_oo7n4")
 stretch_mode = 5
 
 [node name="DraggablePanel" parent="." instance=ExtResource("12_x5ey5")]

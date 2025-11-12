@@ -97,6 +97,7 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
+		SignalBus.Instance.SelectThemeRequested += OnSelectThemeRequested;
 
 		LoadSettingsState();
 	}
@@ -334,6 +335,23 @@ public partial class Main : HBoxContainer
 		dialog.SetFilters(["*.m3u; M3U Playlist","*.m3u8; M3U8 Playlist"]);
 		dialog.SetUseNativeDialog(true);
 		var fileSelectedCallback = Callable.From((string path) => SavePlaylist(path));
+		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
+		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
+		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
+		AddChild(dialog);
+		dialog.PopupCenteredRatio();
+
+		_lastUsedFileDialog = dialog;
+	}
+	
+	private void OnSelectThemeRequested()
+	{
+		FileDialog dialog = new();
+		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFile);
+		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+		dialog.SetFilters(["*.wsz; Winamp Skin"]);
+		dialog.SetUseNativeDialog(true);
+		var fileSelectedCallback = Callable.From((string path) => SkinLoader.Load(path));
 		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
 		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
 		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
