@@ -12,17 +12,20 @@ public partial class MasterPanel : WindowPanelContainer
 	[Signal] public delegate void ToggleEqualizerRequestedEventHandler();
 	[Signal] public delegate void TogglePlaylistRequestedEventHandler();
 	
+	[ExportGroup("Config")]
 	[Export] public double ClockBlinkEverySeconds = 1.0f;
+
+	[ExportGroup("References")]
+	[Export] public MenuButton WinampMenuButton;
 
 	public TextureButton ToggleEqualizerButton;
 	public TextureButton TogglePlaylistButton;
 
+	// TODO: Reactivate those commented out fields.
 	private MarqueeLabel _masterLabel;
-	private Label _bitrateLabel;
-	private Label _sampleRateLabel;
-	private Label _clockLabel;
-	private CheckButton _1XZoomButton;
-	private CheckButton _2XZoomButton;
+	// private Label _bitrateLabel;
+	// private Label _sampleRateLabel;
+	// private Label _clockLabel;
 	private ButtonGroup _buttonGroup;
 	private HSlider _positionSeekerSlider;
 	private HSlider _volumeSlider;
@@ -34,19 +37,15 @@ public partial class MasterPanel : WindowPanelContainer
 	private float _resumeTrackAtPosition;
 	private double _clockBlinkTimer = 1.0f;
 	private bool _clockBlinking = false;
-
-	private Vector2I _initialSize;
 	
 	public override void _Ready()
 	{
 		_positionSeekerSlider = GetNode<HSlider>("%PositionSeeker");
 		_masterLabel = GetNode<MarqueeLabel>("%MasterLabel");
-		_bitrateLabel = GetNode<Label>("%BitrateLabel");
-		_sampleRateLabel = GetNode<Label>("%SampleRateLabel");
-		_clockLabel = GetNode<Label>("%ClockLabel");
+		// _bitrateLabel = GetNode<Label>("%BitrateLabel");
+		// _sampleRateLabel = GetNode<Label>("%SampleRateLabel");
+		// _clockLabel = GetNode<Label>("%ClockLabel");
 		_volumeSlider = GetNode<HSlider>("%VolumeSlider");
-		_1XZoomButton = GetNode<CheckButton>("%1XZoomButton");
-		_2XZoomButton = GetNode<CheckButton>("%2XZoomButton");
 		_pannerAudioSlider = GetNode<HSlider>("%PannerAudioSlider");
 		ToggleEqualizerButton = GetNode<TextureButton>("%ToggleEqualizerButton");
 		TogglePlaylistButton = GetNode<TextureButton>("%TogglePlaylistButton");
@@ -54,28 +53,6 @@ public partial class MasterPanel : WindowPanelContainer
 			_pannerAudioSlider, (float)_pannerAudioSlider.Value, -1.0f, 1.0f);
 
 		_buttonGroup = new ButtonGroup();
-
-		_1XZoomButton.ButtonGroup = _buttonGroup;
-		_2XZoomButton.ButtonGroup = _buttonGroup;
-
-		_1XZoomButton.ToggleMode = true;
-		_2XZoomButton.ToggleMode = true;
-
-		_initialSize = GetWindow().Size;
-
-		// Load saved zoom mode from settings
-		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
-		if (savedZoomMode == 1)
-		{
-			_2XZoomButton.ButtonPressed = true;
-			Set2XZoomMode();
-		}
-		else
-		{
-			_1XZoomButton.ButtonPressed = true;
-			Set1XZoomMode();
-		}
-
 		_positionSeekerSlider.Value = 0.0f;
 
 		UIUtils.SetSliderColor(
@@ -91,8 +68,8 @@ public partial class MasterPanel : WindowPanelContainer
 		_positionSeekerSlider.MaxValue = _trackPlayerRef.Stream.GetLength();
 
 		var track = _trackPlayerRef.CurrentTrack;
-		_bitrateLabel.Text = $"{track.BitrateKbps}";
-		_sampleRateLabel.Text = $"{track.SampleRateHz}";
+		// _bitrateLabel.Text = $"{track.BitrateKbps}";
+		// _sampleRateLabel.Text = $"{track.SampleRateHz}";
 		if (_hasStarted)
 		{
 			if (!_dragging && !_trackPlayerRef.StreamPaused)
@@ -106,16 +83,16 @@ public partial class MasterPanel : WindowPanelContainer
 		}
 
 		_clockBlinkTimer += delta;
-		_clockLabel.Text = TimeUtils.FormatAsTrackTime(_trackPlayerRef.GetPlaybackPosition(), 2);
+		// _clockLabel.Text = TimeUtils.FormatAsTrackTime(_trackPlayerRef.GetPlaybackPosition(), 2);
 		if (_trackPlayerRef.IsPlaying() && !_trackPlayerRef.StreamPaused)
 		{
-			_clockLabel.Modulate = new Color(_clockLabel.Modulate, 1.0f);
+			// _clockLabel.Modulate = new Color(_clockLabel.Modulate, 1.0f);
 		}
 		else
 		{
 			if (!(_clockBlinkTimer > ClockBlinkEverySeconds))
 				return;
-			_clockLabel.Modulate = new Color(_clockLabel.Modulate, _clockBlinking ? 0.5f : 1.0f);
+			// _clockLabel.Modulate = new Color(_clockLabel.Modulate, _clockBlinking ? 0.5f : 1.0f);
 			_clockBlinking = !_clockBlinking;
 			_clockBlinkTimer = 0.0;
 		}
@@ -210,18 +187,6 @@ public partial class MasterPanel : WindowPanelContainer
 		}
 		UIUtils.SetSliderColor(_pannerAudioSlider, value, -1.0f, 1.0f);
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.PannerBalanceChanged, value);
-	}
-
-	private void Set1XZoomMode()
-	{
-		GetWindow().Size = _initialSize;
-		SettingsManager.Instance.SetZoomMode(0);
-	}
-
-	private void Set2XZoomMode()
-	{
-		GetWindow().Size = new Vector2I(_initialSize.X*2, _initialSize.Y*2);
-		SettingsManager.Instance.SetZoomMode(1);
 	}
 
 	public void SetVolumeValue(float volume)

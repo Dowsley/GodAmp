@@ -1,90 +1,46 @@
-[gd_scene load_steps=15 format=3 uid="uid://dmmlyylsgb8qx"]
+[gd_scene load_steps=9 format=3 uid="uid://dmmlyylsgb8qx"]
 
 [ext_resource type="Script" uid="uid://cc7rp70vh5xc5" path="res://Src/Controls/Playlist/FocusManagedVBoxContainer.cs" id="1_ampdn"]
 [ext_resource type="Script" uid="uid://bu51f8b2pys7n" path="res://Src/Controls/Playlist/ButtonDropdowns/MiscButtonDropdown.cs" id="1_v6fbn"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_v6fbn"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2127g"]
-atlas = SubResource("CompressedTexture2D_v6fbn")
-region = Rect2(308, 222, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jfgg2"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lfl6i"]
-atlas = SubResource("CompressedTexture2D_jfgg2")
-region = Rect2(354, 222, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2127g"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jfgg2"]
-atlas = SubResource("CompressedTexture2D_2127g")
-region = Rect2(308, 260, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_lfl6i"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ufnfu"]
-atlas = SubResource("CompressedTexture2D_lfl6i")
-region = Rect2(354, 260, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ufnfu"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_44cwk"]
-atlas = SubResource("CompressedTexture2D_ufnfu")
-region = Rect2(308, 298, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_syc13"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6x2fh"]
-atlas = SubResource("CompressedTexture2D_syc13")
-region = Rect2(354, 298, 44, 36)
+[ext_resource type="Texture2D" uid="uid://unc5gjafgs0l" path="res://Data/SkinResources/SortListButtonNormal.tres" id="3_lfl6i"]
+[ext_resource type="Texture2D" uid="uid://dr36ke37eenjr" path="res://Data/SkinResources/SortListButtonPressed.tres" id="4_ufnfu"]
+[ext_resource type="Texture2D" uid="uid://4056jk52tiw2" path="res://Data/SkinResources/FileInfoButtonNormal.tres" id="5_ufnfu"]
+[ext_resource type="Texture2D" uid="uid://8j8t1vu2msaa" path="res://Data/SkinResources/FileInfoButtonPressed.tres" id="6_44cwk"]
+[ext_resource type="Texture2D" uid="uid://53w65ynu26db" path="res://Data/SkinResources/MiscOptionsButtonNormal.tres" id="7_syc13"]
+[ext_resource type="Texture2D" uid="uid://d3yiu5g14air5" path="res://Data/SkinResources/MiscOptionsButtonPressed.tres" id="8_6x2fh"]
 
 [node name="MiscButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
 script = ExtResource("1_v6fbn")
 _container = NodePath("FocusButtonContainer")
 
 [node name="FocusButtonContainer" type="VBoxContainer" parent="."]
-offset_right = 44.0
-offset_bottom = 110.0
 focus_mode = 1
 theme_override_constants/separation = 0
 script = ExtResource("1_ampdn")
 
 [node name="SortListButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_2127g")
-texture_pressed = SubResource("AtlasTexture_lfl6i")
-stretch_mode = 5
+texture_normal = ExtResource("3_lfl6i")
+texture_pressed = ExtResource("4_ufnfu")
 
 [node name="FileInfoButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_jfgg2")
-texture_pressed = SubResource("AtlasTexture_ufnfu")
-stretch_mode = 5
+texture_normal = ExtResource("5_ufnfu")
+texture_pressed = ExtResource("6_44cwk")
 
 [node name="MiscOptionsButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_44cwk")
-texture_pressed = SubResource("AtlasTexture_6x2fh")
-stretch_mode = 5
+texture_normal = ExtResource("7_syc13")
+texture_pressed = ExtResource("8_6x2fh")
 
 [connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
 [connection signal="pressed" from="FocusButtonContainer/SortListButton" to="." method="OnSortListButtonPressed"]

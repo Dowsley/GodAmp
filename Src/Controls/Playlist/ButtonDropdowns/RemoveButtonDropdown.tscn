@@ -1,114 +1,58 @@
-[gd_scene load_steps=19 format=3 uid="uid://cvky7cixi5gbr"]
+[gd_scene load_steps=11 format=3 uid="uid://cvky7cixi5gbr"]
 
 [ext_resource type="Script" uid="uid://cc7rp70vh5xc5" path="res://Src/Controls/Playlist/FocusManagedVBoxContainer.cs" id="1_2lw0h"]
 [ext_resource type="Script" uid="uid://ct743u6pbytyq" path="res://Src/Controls/Playlist/ButtonDropdowns/RemoveButtonDropdown.cs" id="1_yp7ol"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_16v6f"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ea7it"]
-atlas = SubResource("CompressedTexture2D_16v6f")
-region = Rect2(108, 336, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4ielk"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2gie7"]
-atlas = SubResource("CompressedTexture2D_4ielk")
-region = Rect2(154, 336, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_nah80"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_16v6f"]
-atlas = SubResource("CompressedTexture2D_nah80")
-region = Rect2(108, 222, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ea7it"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4ielk"]
-atlas = SubResource("CompressedTexture2D_ea7it")
-region = Rect2(154, 222, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_au2x7"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_di31l"]
-atlas = SubResource("CompressedTexture2D_au2x7")
-region = Rect2(108, 260, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_pkvxr"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nah80"]
-atlas = SubResource("CompressedTexture2D_pkvxr")
-region = Rect2(154, 260, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_yp7ol"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_au2x7"]
-atlas = SubResource("CompressedTexture2D_yp7ol")
-region = Rect2(108, 298, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_di31l"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pkvxr"]
-atlas = SubResource("CompressedTexture2D_di31l")
-region = Rect2(154, 298, 44, 36)
+[ext_resource type="Texture2D" uid="uid://bfuym63k332f7" path="res://Data/SkinResources/RemoveMiscButtonNormal.tres" id="3_di31l"]
+[ext_resource type="Texture2D" uid="uid://so24opmb2f4f" path="res://Data/SkinResources/RemoveMiscButtonPressed.tres" id="4_16v6f"]
+[ext_resource type="Texture2D" uid="uid://cjg66sx05n3xt" path="res://Data/SkinResources/RemoveAllButtonNormal.tres" id="5_ea7it"]
+[ext_resource type="Texture2D" uid="uid://cbrpx6s4po6ub" path="res://Data/SkinResources/RemoveAllButtonPressed.tres" id="6_4ielk"]
+[ext_resource type="Texture2D" uid="uid://85tqcbkrbcw0" path="res://Data/SkinResources/CropButtonNormal.tres" id="7_2gie7"]
+[ext_resource type="Texture2D" uid="uid://cq0052rqrqs6w" path="res://Data/SkinResources/CropButtonPressed.tres" id="8_n088m"]
+[ext_resource type="Texture2D" uid="uid://bsptsjeub0r1n" path="res://Data/SkinResources/RemoveSelectionButtonNormal.tres" id="9_400d4"]
+[ext_resource type="Texture2D" uid="uid://jj6s4qsr3px5" path="res://Data/SkinResources/RemoveSelectionButtonPressed.tres" id="10_g5q4n"]
 
 [node name="RemoveButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
 script = ExtResource("1_yp7ol")
 _container = NodePath("FocusButtonContainer")
 
 [node name="FocusButtonContainer" type="VBoxContainer" parent="."]
-offset_right = 44.0
-offset_bottom = 144.0
+offset_right = 22.0
+offset_bottom = 18.0
 focus_mode = 1
 theme_override_constants/separation = 0
 script = ExtResource("1_2lw0h")
 
 [node name="RemoveMiscButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_ea7it")
-texture_pressed = SubResource("AtlasTexture_2gie7")
-stretch_mode = 5
+texture_normal = ExtResource("3_di31l")
+texture_pressed = ExtResource("4_16v6f")
 
 [node name="RemoveAllButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_16v6f")
-texture_pressed = SubResource("AtlasTexture_4ielk")
-stretch_mode = 5
+texture_normal = ExtResource("5_ea7it")
+texture_pressed = ExtResource("6_4ielk")
 
 [node name="CropButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_di31l")
-texture_pressed = SubResource("AtlasTexture_nah80")
-stretch_mode = 5
+texture_normal = ExtResource("7_2gie7")
+texture_pressed = ExtResource("8_n088m")
 
 [node name="RemoveSelectionButton" type="TextureButton" parent="FocusButtonContainer"]
-custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_au2x7")
-texture_pressed = SubResource("AtlasTexture_pkvxr")
-stretch_mode = 5
+texture_normal = ExtResource("9_400d4")
+texture_pressed = ExtResource("10_g5q4n")
 
 [connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
 [connection signal="pressed" from="FocusButtonContainer/RemoveMiscButton" to="." method="OnRemoveMiscButtonPressed"]

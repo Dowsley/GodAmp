@@ -1,27 +1,19 @@
-[gd_scene load_steps=12 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=8 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
-[ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="2_2rc4v"]
-[ext_resource type="PackedScene" uid="uid://dmdlnoh3xy7gs" path="res://Src/Components/BlackNinePatchRect.tscn" id="3_uoe6x"]
-[ext_resource type="Texture2D" uid="uid://br3476egyf47m" path="res://Assets/Winamp/titlebar_2x.png" id="4_kd67v"]
-[ext_resource type="Texture2D" uid="uid://cgx6yr1rwv6qc" path="res://Assets/Winamp/bars_2x.png" id="5_wte6j"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_jduyf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2rine"]
-atlas = ExtResource("4_kd67v")
 region = Rect2(0, 36, 18, 18)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7av1a"]
-atlas = ExtResource("4_kd67v")
 region = Rect2(18, 0, 18, 18)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_piapn"]
-atlas = ExtResource("4_kd67v")
 region = Rect2(36, 0, 18, 18)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dt48o"]
-atlas = ExtResource("4_kd67v")
 region = Rect2(36, 18, 18, 18)
 
 [node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("Contents")]
@@ -35,10 +27,8 @@ size_flags_stretch_ratio = 2.0
 script = ExtResource("1_6dse3")
 Contents = NodePath("ContentContainer")
 
-[node name="Background" parent="." instance=ExtResource("2_2rc4v")]
-layout_mode = 2
-
 [node name="HeaderContainer" type="MarginContainer" parent="."]
+visible = false
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_vertical = 0
@@ -55,7 +45,6 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-texture = ExtResource("5_wte6j")
 patch_margin_left = 6
 patch_margin_top = 6
 patch_margin_right = 6
@@ -70,7 +59,6 @@ text = "VISUALIZER"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-texture = ExtResource("5_wte6j")
 patch_margin_left = 6
 patch_margin_top = 6
 patch_margin_right = 6
@@ -96,14 +84,12 @@ texture_pressed = SubResource("AtlasTexture_dt48o")
 stretch_mode = 3
 
 [node name="ContentContainer" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 30
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 12
-
-[node name="BlackNinePatchRect" parent="ContentContainer" instance=ExtResource("3_uoe6x")]
-layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
 layout_mode = 2

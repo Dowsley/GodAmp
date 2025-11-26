@@ -1,73 +1,40 @@
-[gd_scene load_steps=27 format=3 uid="uid://diw508vd3gr8k"]
+[gd_scene load_steps=30 format=3 uid="uid://diw508vd3gr8k"]
 
 [ext_resource type="Script" uid="uid://35td6b067wck" path="res://Src/Controls/Playlist/Playlist.cs" id="1_qbsw1"]
 [ext_resource type="PackedScene" uid="uid://b0lgw7guxv7tw" path="res://Src/Controls/Playlist/PlaylistTrackEntry.tscn" id="2_ecqcu"]
-[ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="3_3ikr0"]
-[ext_resource type="PackedScene" uid="uid://dmdlnoh3xy7gs" path="res://Src/Components/BlackNinePatchRect.tscn" id="4_a5fbu"]
-[ext_resource type="Texture2D" uid="uid://cgx6yr1rwv6qc" path="res://Assets/Winamp/bars_2x.png" id="5_emg1u"]
-[ext_resource type="Texture2D" uid="uid://br3476egyf47m" path="res://Assets/Winamp/titlebar_2x.png" id="6_iswna"]
+[ext_resource type="Texture2D" uid="uid://dspjst6ciuvy0" path="res://Data/SkinResources/PlaylistTopLeftCorner.tres" id="3_bltap"]
+[ext_resource type="Texture2D" uid="uid://duaqnxdcf32o3" path="res://Data/SkinResources/PlaylistTopTilableBar.tres" id="4_ajpn4"]
+[ext_resource type="Texture2D" uid="uid://c8viqgj8uv5yh" path="res://Data/SkinResources/PlaylistMinimizeButtonNormal.tres" id="4_esdbs"]
+[ext_resource type="Texture2D" uid="uid://qg36ardl2ip0" path="res://Data/SkinResources/PlaylistMinimizeButtonPressed.tres" id="5_bltap"]
+[ext_resource type="Texture2D" uid="uid://g1tc2qlhfejw" path="res://Data/SkinResources/PlaylistTitlebar.tres" id="5_njjkq"]
+[ext_resource type="Texture2D" uid="uid://wc57x2wc60q1" path="res://Data/SkinResources/PlaylistCloseButtonNormal.tres" id="6_esdbs"]
+[ext_resource type="Texture2D" uid="uid://d0bojntuwrhck" path="res://Data/SkinResources/PlaylistTopRightCorner.tres" id="6_njjkq"]
+[ext_resource type="Texture2D" uid="uid://cxk0cy7jmrluf" path="res://Data/SkinResources/PlaylistCloseButtonPressed.tres" id="7_bltap"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_pgi81"]
-[ext_resource type="Texture2D" uid="uid://4705dvdp00oq" path="res://Assets/Winamp/playlist_2x.png" id="7_xq3c3"]
 [ext_resource type="PackedScene" uid="uid://c8do4imjy7rnv" path="res://Src/Controls/Playlist/ButtonDropdowns/AddButtonDropdown.tscn" id="9_bcdvx"]
 [ext_resource type="PackedScene" uid="uid://cvky7cixi5gbr" path="res://Src/Controls/Playlist/ButtonDropdowns/RemoveButtonDropdown.tscn" id="10_ibn1u"]
 [ext_resource type="PackedScene" uid="uid://ryfqbifwt78y" path="res://Src/Controls/Playlist/ButtonDropdowns/SelectButtonDropdown.tscn" id="11_esdbs"]
+[ext_resource type="Texture2D" uid="uid://cnt4ydi16ep40" path="res://Data/SkinResources/PlaylistTilableLeftEdge.tres" id="11_ybvv7"]
+[ext_resource type="Texture2D" uid="uid://dstelo754087c" path="res://Data/SkinResources/PlaylistMiddleTexture.tres" id="12_aygep"]
 [ext_resource type="PackedScene" uid="uid://dmmlyylsgb8qx" path="res://Src/Controls/Playlist/ButtonDropdowns/MiscButtonDropdown.tscn" id="12_bltap"]
 [ext_resource type="PackedScene" uid="uid://b2jb8pn7u1pk5" path="res://Src/Controls/Playlist/ButtonDropdowns/ListOptionsButtonDropdown.tscn" id="13_esdbs"]
+[ext_resource type="Texture2D" uid="uid://c4d6wfd07o5xh" path="res://Data/SkinResources/PlaylistTilableRightEdge.tres" id="13_ocucf"]
+[ext_resource type="Texture2D" uid="uid://wd0l6njpwwa7" path="res://Data/SkinResources/PlaylistTilableBottomEdge.tres" id="14_ocucf"]
+[ext_resource type="Texture2D" uid="uid://b2gvrucfukmad" path="res://Data/SkinResources/PlaylistButtonsArea.tres" id="15_l1iyi"]
+[ext_resource type="Texture2D" uid="uid://5fkrqwagf1u0" path="res://Data/SkinResources/PlaylistAddButton.tres" id="16_l1iyi"]
+[ext_resource type="Texture2D" uid="uid://bcd8n3gl33yf0" path="res://Data/SkinResources/PlaylistRemoveButton.tres" id="17_xtgbh"]
+[ext_resource type="Texture2D" uid="uid://ff6fn5glq31w" path="res://Data/SkinResources/PlaylistSelectButton.tres" id="18_28pe4"]
+[ext_resource type="Texture2D" uid="uid://dm8h3chsour0o" path="res://Data/SkinResources/PlaylistMiscButton.tres" id="19_7604m"]
+[ext_resource type="Texture2D" uid="uid://bhlcuq0n0o35r" path="res://Data/SkinResources/PlaylistSecondaryVisualizationArea.tres" id="20_7604m"]
+[ext_resource type="Texture2D" uid="uid://8i6jdrj4bx7d" path="res://Data/SkinResources/PlaylistControlArea.tres" id="21_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://jn8fnj8u2o73" path="res://Data/SkinResources/PlaylistListOptionsButton.tres" id="22_kvkyn"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pgi81"]
-atlas = ExtResource("6_iswna")
-region = Rect2(0, 36, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fnbme"]
-atlas = ExtResource("6_iswna")
-region = Rect2(18, 0, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ddc7i"]
-atlas = ExtResource("6_iswna")
-region = Rect2(36, 0, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_m7n15"]
-atlas = ExtResource("6_iswna")
-region = Rect2(36, 18, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bcdvx"]
-atlas = ExtResource("7_xq3c3")
-region = Rect2(28, 160, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xq3c3"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ibn1u"]
-atlas = SubResource("CompressedTexture2D_xq3c3")
-region = Rect2(86, 160, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bcdvx"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o26bf"]
-atlas = SubResource("CompressedTexture2D_bcdvx")
-region = Rect2(144, 160, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ibn1u"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2ie1x"]
-atlas = SubResource("CompressedTexture2D_ibn1u")
-region = Rect2(202, 160, 44, 36)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_o26bf"]
-load_path = "res://.godot/imported/playlist_2x.png-50a4cc17cfcfc64e5bd513ec82e5e11b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_esdbs"]
-atlas = SubResource("CompressedTexture2D_o26bf")
-region = Rect2(464, 160, 44, 36)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibn1u"]
 
 [node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "Contents")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+custom_minimum_size = Vector2(275, 116)
+offset_right = 275.0
+offset_bottom = 116.0
 size_flags_vertical = 3
 script = ExtResource("1_qbsw1")
 TrackLabelScene = ExtResource("2_ecqcu")
@@ -76,172 +43,222 @@ RemoveButtonDropdown = NodePath("RemoveButtonDropdown")
 SelectButtonDropdown = NodePath("SelectButtonDropdown")
 MiscButtonDropdown = NodePath("MiscButtonDropdown")
 ListOptionsButtonDropdown = NodePath("ListOptionsButtonDropdown")
-AddButton = NodePath("ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/AddButton")
-RemoveButton = NodePath("ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/RemoveButton")
-SelectButton = NodePath("ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/SelectButton")
-MiscButton = NodePath("ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/MiscButton")
-ListOptionsButton = NodePath("ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/ListOptionsButton")
-Contents = NodePath("ContentContainer")
+AddButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/AddButton")
+RemoveButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/RemoveButton")
+SelectButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton")
+MiscButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton")
+ListOptionsButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton")
+Contents = NodePath("VBoxContainer/AllContent")
 
-[node name="Background" parent="." instance=ExtResource("3_3ikr0")]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="HeaderContainer" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 8
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 6
+theme_override_constants/separation = 0
 
-[node name="NinePatchRect" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+[node name="TopLeftCornerTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("3_bltap")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
-size_flags_stretch_ratio = 1.1
-texture = ExtResource("5_emg1u")
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
+texture = ExtResource("4_ajpn4")
 
-[node name="Label" type="Label" parent="HeaderContainer/HBoxContainer"]
+[node name="TitleTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "PLAYLIST"
+size_flags_vertical = 0
+texture = ExtResource("5_njjkq")
 
-[node name="NinePatchRect2" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+[node name="NinePatchRect2" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
-texture = ExtResource("5_emg1u")
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
+texture = ExtResource("4_ajpn4")
 
-[node name="MinimizeButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-visible = false
+[node name="TopRightCornerTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+texture = ExtResource("6_njjkq")
+
+[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 11.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 toggle_mode = true
-texture_normal = SubResource("AtlasTexture_pgi81")
-texture_pressed = SubResource("AtlasTexture_fnbme")
+texture_normal = ExtResource("4_esdbs")
+texture_pressed = ExtResource("5_bltap")
 stretch_mode = 3
 
-[node name="CloseButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-layout_mode = 2
+[node name="CloseButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 4.0
+offset_right = 22.0
+offset_bottom = 11.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_ddc7i")
-texture_pressed = SubResource("AtlasTexture_m7n15")
+texture_normal = ExtResource("6_esdbs")
+texture_pressed = ExtResource("7_bltap")
 stretch_mode = 3
 
-[node name="ContentContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 12
-
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+[node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 4.0
+theme_override_constants/separation = 0
 
-[node name="BlackNinePatchRect" parent="ContentContainer/MarginContainer/VBoxContainer/MarginContainer" instance=ExtResource("4_a5fbu")]
+[node name="ContentContainer" type="PanelContainer" parent="VBoxContainer/AllContent"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ibn1u")
 
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ContentContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 11
+theme_override_constants/margin_right = 19
 
-[node name="ScrollContainer" type="ScrollContainer" parent="ContentContainer/MarginContainer/VBoxContainer/MarginContainer/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_scroll_mode = 3
 
-[node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/ScrollContainer"]
+[node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="TilableLeftEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
+custom_minimum_size = Vector2(25, 29)
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_constants/separation = 10
+texture = ExtResource("11_ybvv7")
+region_rect = Rect2(0, 0, 25, 29)
 
-[node name="AddButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+[node name="MiddleTexture" type="TextureRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("12_aygep")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
+custom_minimum_size = Vector2(25, 19)
+layout_mode = 2
+texture = ExtResource("13_ocucf")
+
+[node name="TilableBottomEdge" type="NinePatchRect" parent="VBoxContainer/AllContent"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+texture = ExtResource("14_ocucf")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/TilableBottomEdge"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="ButtonsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("15_l1iyi")
+
+[node name="AddButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
+layout_mode = 2
+offset_left = 14.0
+offset_top = 8.0
+offset_right = 36.0
+offset_bottom = 26.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_bcdvx")
-texture_pressed = SubResource("AtlasTexture_bcdvx")
+texture_normal = ExtResource("16_l1iyi")
+texture_pressed = ExtResource("16_l1iyi")
 stretch_mode = 5
 
-[node name="RemoveButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+[node name="RemoveButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
 layout_mode = 2
+offset_left = 43.0
+offset_top = 8.0
+offset_right = 65.0
+offset_bottom = 26.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_ibn1u")
-texture_pressed = SubResource("AtlasTexture_ibn1u")
+texture_normal = ExtResource("17_xtgbh")
+texture_pressed = ExtResource("17_xtgbh")
 stretch_mode = 5
 
-[node name="SelectButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+[node name="SelectButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
 layout_mode = 2
+offset_left = 72.0
+offset_top = 8.0
+offset_right = 94.0
+offset_bottom = 26.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_o26bf")
-texture_pressed = SubResource("AtlasTexture_o26bf")
+texture_normal = ExtResource("18_28pe4")
+texture_pressed = ExtResource("18_28pe4")
 stretch_mode = 5
 
-[node name="MiscButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+[node name="MiscButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
 layout_mode = 2
+offset_left = 101.0
+offset_top = 8.0
+offset_right = 123.0
+offset_bottom = 26.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
 focus_mode = 1
-texture_normal = SubResource("AtlasTexture_2ie1x")
-texture_pressed = SubResource("AtlasTexture_2ie1x")
+texture_normal = ExtResource("19_7604m")
+texture_pressed = ExtResource("19_7604m")
 stretch_mode = 5
 
-[node name="ListOptionsButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(30, 30)
+[node name="SecondaryVisualizationArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+visible = false
 layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("20_7604m")
+
+[node name="ControlsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("21_kvkyn")
+
+[node name="ListOptionsButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea"]
+layout_mode = 0
+offset_left = 106.0
+offset_top = 8.0
+offset_right = 128.0
+offset_bottom = 26.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_esdbs")
-texture_pressed = SubResource("AtlasTexture_esdbs")
+texture_normal = ExtResource("22_kvkyn")
+texture_pressed = ExtResource("22_kvkyn")
 stretch_mode = 5
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_pgi81")]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 
 [node name="AddButtonDropdown" parent="." instance=ExtResource("9_bcdvx")]
@@ -259,11 +276,11 @@ visible = false
 [node name="ListOptionsButtonDropdown" parent="." instance=ExtResource("13_esdbs")]
 visible = false
 
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/AddButton" to="." method="OnAddButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/RemoveButton" to="." method="OnRemoveButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/SelectButton" to="." method="OnSelectButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/MiscButton" to="." method="OnMiscButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/ListOptionsButton" to="." method="OnListOptionsButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/AddButton" to="." method="OnAddButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/RemoveButton" to="." method="OnRemoveButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton" to="." method="OnSelectButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton" to="." method="OnMiscButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton" to="." method="OnListOptionsButtonPressed"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

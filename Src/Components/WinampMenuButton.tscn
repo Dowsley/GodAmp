@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://i0q31hsu8ojj"]
+
+[ext_resource type="Script" uid="uid://bolhoxd1h4jeq" path="res://Src/Components/WinampMenuButton.cs" id="1_10mdb"]
+
+[node name="WinampMenuButton" type="MenuButton"]
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 15.0
+offset_bottom = 12.0
+script = ExtResource("1_10mdb")

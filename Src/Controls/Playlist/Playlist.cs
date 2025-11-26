@@ -91,7 +91,7 @@ public partial class Playlist : WindowPanelContainer
 
 	public HashSet<Track> GetSelectedTracks()
 	{
-		return new HashSet<Track>(_selectedTracks);
+		return [.._selectedTracks];
 	}
 
 	private void OnTrackSelected(int index)

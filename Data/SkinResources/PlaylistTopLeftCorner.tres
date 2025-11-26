@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://dspjst6ciuvy0"]
+
+[ext_resource type="Texture2D" uid="uid://bvswf6ycflsgm" path="res://Assets/Winamp/Raw/PLEDIT.png" id="1_k7q61"]
+
+[resource]
+atlas = ExtResource("1_k7q61")
+region = Rect2(0, 0, 25, 20)

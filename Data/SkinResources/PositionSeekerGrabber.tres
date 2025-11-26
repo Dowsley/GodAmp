@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://b2t1kuia68x2n"]
+
+[ext_resource type="Texture2D" uid="uid://bpswd4pm1f6b3" path="res://Assets/Winamp/Raw/POSBAR.png" id="1_cje83"]
+
+[resource]
+atlas = ExtResource("1_cje83")
+region = Rect2(249, 0, 28, 10)

@@ -103,7 +103,7 @@ public partial class SettingsManager : Node
 	}
 
 	/// <summary>
-	/// Gets the zoom mode (0 = 1x, 1 = 2x).
+	/// Gets the zoom mode multiplier
 	/// </summary>
 	public int GetZoomMode()
 	{
@@ -111,7 +111,7 @@ public partial class SettingsManager : Node
 	}
 
 	/// <summary>
-	/// Sets the zoom mode (0 = 1x, 1 = 2x).
+	/// Sets the zoom mode multiplier
 	/// </summary>
 	public void SetZoomMode(int mode)
 	{

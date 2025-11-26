@@ -36,6 +36,7 @@ public partial class Main : HBoxContainer
 	private bool _masterLabelLockedByPositionSeeker = false;
 
 	private FileDialog _lastUsedFileDialog;
+	private Vector2I _initialWindowSize;
 	
 	public override void _Ready()
 	{
@@ -44,6 +45,8 @@ public partial class Main : HBoxContainer
 		_playlist = GetNode<Playlist>("%Playlist");
 		_visualizer = GetNode<Visualizer.Visualizer>("%Visualizer");
 		_trackPlayer = GetNode<TrackPlayer>("%TrackPlayer");
+
+		_initialWindowSize = GetWindow().Size;
 
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
@@ -97,7 +100,7 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
-		SignalBus.Instance.SelectThemeRequested += OnSelectThemeRequested;
+		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
 
 		LoadSettingsState();
 	}
@@ -343,23 +346,6 @@ public partial class Main : HBoxContainer
 
 		_lastUsedFileDialog = dialog;
 	}
-	
-	private void OnSelectThemeRequested()
-	{
-		FileDialog dialog = new();
-		dialog.SetFileMode(FileDialog.FileModeEnum.OpenFile);
-		dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-		dialog.SetFilters(["*.wsz; Winamp Skin"]);
-		dialog.SetUseNativeDialog(true);
-		var fileSelectedCallback = Callable.From((string path) => SkinLoader.Load(path));
-		dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
-		dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
-		dialog.Connect(Window.SignalName.CloseRequested, new Callable(this, nameof(OnFileDialogClosed)));
-		AddChild(dialog);
-		dialog.PopupCenteredRatio();
-
-		_lastUsedFileDialog = dialog;
-	}
 
 	private void SavePlaylist(string path)
 	{
@@ -499,6 +485,26 @@ public partial class Main : HBoxContainer
 		float savedVolume = SettingsManager.Instance.GetVolume();
 		_masterPanel.SetVolumeValue(savedVolume);
 		_trackPlayer.VolumeLinear = savedVolume;
+
+		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
+		int multiplier = savedZoomMode switch
+		{
+			0 => 1,
+			1 => 2,
+			_ => savedZoomMode
+		};
+		SetZoomMode(multiplier);
+	}
+
+	private void OnZoomModeRequested(int multiplier)
+	{
+		SetZoomMode(multiplier);
+	}
+
+	private void SetZoomMode(int multiplier)
+	{
+		GetWindow().Size = new Vector2I(_initialWindowSize.X * multiplier, _initialWindowSize.Y * multiplier);
+		SettingsManager.Instance.SetZoomMode(multiplier);
 	}
 
 	private void OnEqualizerCloseButtonClicked()

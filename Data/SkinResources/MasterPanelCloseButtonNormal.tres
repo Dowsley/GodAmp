@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://dwhqep2pu0u1m"]
+
+[ext_resource type="Texture2D" uid="uid://cgx07326ky7eq" path="res://Assets/Winamp/Raw/TITLEBAR.png" id="1_ueldk"]
+
+[resource]
+atlas = ExtResource("1_ueldk")
+region = Rect2(18, 0, 9, 9)

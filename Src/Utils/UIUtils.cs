@@ -12,7 +12,8 @@ public static class UIUtils
 	{
 		double t = (value - min) / (max - min); // Normalize 0..1
 		float hue = Mathf.Lerp(0.33f, 0.0f, (float)t); // Green to Red
-		var styleBox = (StyleBoxTexture)slider.GetThemeStylebox("slider");
-		styleBox.ModulateColor = Color.FromHsv(hue, 1.0f, 1.0f);
+		// TODO Get rid of that and use textures instead
+		// var styleBox = (StyleBoxTexture)slider.GetThemeStylebox("slider");
+		// styleBox.ModulateColor = Color.FromHsv(hue, 1.0f, 1.0f);
 	}
 }

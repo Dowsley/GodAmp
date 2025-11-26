@@ -31,16 +31,14 @@ SkinLoader="*res://Src/Autoload/SkinLoader.cs"
 
 [display]
 
+window/size/viewport_width=275
+window/size/viewport_height=348
 window/size/borderless=true
 window/stretch/mode="canvas_items"
 
 [dotnet]
 
 project/assembly_name="GodAmp"
-
-[gui]
-
-theme/custom="uid://dikbou1c1od2v"
 
 [input]
 

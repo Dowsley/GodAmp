@@ -18,6 +18,7 @@ public partial class SkinLoader : Node
 
     private static readonly Dictionary<string, ImageTexture> LoadedTextures = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, Texture2D> OriginalTextures = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, string> AtlasToTextureName = new();
 
     private static string _skinsDirectory;
     private static string _currentSkinName;
@@ -58,7 +59,7 @@ public partial class SkinLoader : Node
             if (File.Exists(skinPath))
             {
                 GD.Print($"Loading active skin: {activeSkin}");
-                LoadFromSkinsFolder(activeSkin);
+                Load(skinPath);
             }
             else
             {
@@ -78,43 +79,7 @@ public partial class SkinLoader : Node
                 return;
             }
 
-            string fileName = Path.GetFileName(filePath);
-            string targetPath = Path.Combine(_skinsDirectory, fileName);
-
-            if (!File.Exists(targetPath))
-            {
-                GD.Print($"Copying skin to: {targetPath}");
-                File.Copy(filePath, targetPath, false);
-            }
-            else
-            {
-                GD.Print($"Skin already exists in Skins folder");
-            }
-
-            LoadFromSkinsFolder(fileName);
-            SettingsManager.Instance.SetActiveSkin(fileName);
-            SettingsManager.Instance.SaveAllSettings();
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error loading skin: {ex.Message}");
-            GD.PrintErr($"Stack trace: {ex.StackTrace}");
-        }
-    }
-
-    private static void LoadFromSkinsFolder(string skinFileName)
-    {
-        try
-        {
-            string skinPath = Path.Combine(_skinsDirectory, skinFileName);
-
-            if (!File.Exists(skinPath))
-            {
-                GD.PrintErr($"Skin not found in Skins folder: {skinFileName}");
-                return;
-            }
-
-            string tempPath = ExtractWszFile(skinPath);
+            string tempPath = ExtractWszFile(filePath);
             if (string.IsNullOrEmpty(tempPath))
             {
                 GD.PrintErr("Failed to extract .wsz file");
@@ -125,12 +90,15 @@ public partial class SkinLoader : Node
             ApplyTextureToAllAtlases();
             CleanupTempFiles(tempPath);
 
-            _currentSkinName = skinFileName;
-            GD.Print($"Skin '{skinFileName}' loaded successfully!");
+            string fileName = Path.GetFileName(filePath);
+            _currentSkinName = fileName;
+            SettingsManager.Instance.SetActiveSkin(fileName);
+            SettingsManager.Instance.SaveAllSettings();
+            GD.Print($"Skin '{fileName}' loaded successfully!");
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"Error loading skin from Skins folder: {ex.Message}");
+            GD.PrintErr($"Error loading skin: {ex.Message}");
             GD.PrintErr($"Stack trace: {ex.StackTrace}");
         }
     }
@@ -141,33 +109,19 @@ public partial class SkinLoader : Node
         {
             GD.Print("Restoring original skin...");
 
-            var atlasResourcePaths = GetAllAtlasResourcePaths();
             int restoredCount = 0;
-
-            foreach (var resourcePath in atlasResourcePaths)
+            foreach (var resourcePath in GetAllAtlasResourcePaths())
             {
-                var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
-                if (atlasTexture is { Atlas: not null })
-                {
-                    string textureName = GetTextureNameFromPath(atlasTexture.Atlas.ResourcePath);
-                    if (OriginalTextures.TryGetValue(textureName, out var texture))
-                    {
-                        atlasTexture.Atlas = texture;
-                        restoredCount++;
-                    }
-                }
+                if (TryRestoreAtlasTexture(resourcePath))
+                    restoredCount++;
             }
 
             GD.Print($"Restored {restoredCount} atlas textures to original skin");
             LoadedTextures.Clear();
             _currentSkinName = null;
 
-            // Clear active skin from settings
-            if (SettingsManager.Instance != null)
-            {
-                SettingsManager.Instance.SetActiveSkin("");
-                SettingsManager.Instance.SaveAllSettings();
-            }
+            SettingsManager.Instance.SetActiveSkin("");
+            SettingsManager.Instance.SaveAllSettings();
         }
         catch (Exception ex)
         {
@@ -175,9 +129,40 @@ public partial class SkinLoader : Node
         }
     }
 
+    private static bool TryRestoreAtlasTexture(string resourcePath)
+    {
+        var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
+        if (atlasTexture?.Atlas == null)
+            return false;
+
+        if (!AtlasToTextureName.TryGetValue(resourcePath, out var textureName))
+            return false;
+
+        if (!OriginalTextures.TryGetValue(textureName, out var texture))
+            return false;
+
+        atlasTexture.Atlas = texture;
+        return true;
+    }
+
     public static string GetCurrentSkinName()
     {
         return _currentSkinName;
+    }
+
+    public static string GetSkinsDirectory()
+    {
+        return _skinsDirectory;
+    }
+
+    public static string[] GetAvailableSkins()
+    {
+        if (string.IsNullOrEmpty(_skinsDirectory) || !Directory.Exists(_skinsDirectory))
+            return [];
+
+        return Directory.GetFiles(_skinsDirectory, "*.wsz")
+            .Select(Path.GetFileName)
+            .ToArray();
     }
 
     private static string ExtractWszFile(string filePath)
@@ -193,7 +178,7 @@ public partial class SkinLoader : Node
                 return null;
             }
 
-            // Create temp directory
+            // Extract zip file
             string tempPath = ProjectSettings.GlobalizePath(TempExtractionFolder);
             if (Directory.Exists(tempPath))
             {
@@ -201,7 +186,6 @@ public partial class SkinLoader : Node
             }
             Directory.CreateDirectory(tempPath);
 
-            // Extract zip file
             ZipFile.ExtractToDirectory(systemPath, tempPath);
             GD.Print($"Extracted skin to: {tempPath}");
 
@@ -261,25 +245,23 @@ public partial class SkinLoader : Node
         try
         {
             var dir = DirAccess.Open(SkinResourcesPath);
-            if (dir != null)
-            {
-                dir.ListDirBegin();
-                string fileName = dir.GetNext();
-
-                while (fileName != "")
-                {
-                    if (!dir.CurrentIsDir() && fileName.EndsWith(".tres"))
-                    {
-                        resources.Add(SkinResourcesPath + fileName);
-                    }
-                    fileName = dir.GetNext();
-                }
-                dir.ListDirEnd();
-            }
-            else
+            if (dir == null)
             {
                 GD.PrintErr($"Failed to open directory: {SkinResourcesPath}");
+                return resources;
             }
+
+            dir.ListDirBegin();
+            string fileName = dir.GetNext();
+
+            while (fileName != "")
+            {
+                if (!dir.CurrentIsDir() && fileName.EndsWith(".tres"))
+                    resources.Add(SkinResourcesPath + fileName);
+
+                fileName = dir.GetNext();
+            }
+            dir.ListDirEnd();
         }
         catch (Exception ex)
         {
@@ -306,75 +288,65 @@ public partial class SkinLoader : Node
         GD.Print($"Successfully updated {replacedCount} atlas textures");
     }
 
-    private static void RestoreAllAtlasesToOriginal()
-    {
-        var atlasResourcePaths = GetAllAtlasResourcePaths();
-        int restoredCount = 0;
-
-        foreach (var resourcePath in atlasResourcePaths)
-        {
-            var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
-            if (atlasTexture is { Atlas: not null })
-            {
-                string textureName = GetTextureNameFromPath(atlasTexture.Atlas.ResourcePath);
-                if (OriginalTextures.TryGetValue(textureName, out var texture))
-                {
-                    atlasTexture.Atlas = texture;
-                    restoredCount++;
-                }
-            }
-        }
-
-        GD.Print($"Restored {restoredCount} atlas textures to original skin");
-    }
-
     private static bool UpdateAtlasTexture(string resourcePath)
     {
         try
         {
-            // Load the atlas texture resource
             var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
-            if (atlasTexture == null)
+            if (atlasTexture?.Atlas == null)
             {
-                GD.PrintErr($"Failed to load atlas texture: {resourcePath}");
+                GD.PrintErr($"Failed to load atlas or missing base texture: {resourcePath}");
                 return false;
             }
 
-            // Get the current texture name
-            if (atlasTexture.Atlas == null)
+            string textureName = GetOrStoreTextureName(resourcePath, atlasTexture);
+            if (string.IsNullOrEmpty(textureName))
             {
-                GD.PrintErr($"Atlas texture has no base texture: {resourcePath}");
+                GD.PrintErr($"Could not determine texture name for: {resourcePath}");
                 return false;
             }
 
-            // Store the original texture if we haven't already
-            string textureName = GetTextureNameFromPath(atlasTexture.Atlas.ResourcePath);
-            if (!OriginalTextures.ContainsKey(textureName))
+            string matchingKey = FindMatchingTextureKey(textureName);
+            if (matchingKey == null)
             {
-                OriginalTextures[textureName] = atlasTexture.Atlas;
-                GD.Print($"Stored original texture: {textureName}");
+                GD.Print($"No matching texture found for: {textureName}");
+                return false;
             }
 
-            // Find matching texture in loaded textures (case-insensitive, extension-insensitive)
-            string baseNameWithoutExt = Path.GetFileNameWithoutExtension(textureName);
-            string matchingKey = LoadedTextures.Keys.FirstOrDefault(k =>
-                Path.GetFileNameWithoutExtension(k).Equals(baseNameWithoutExt, StringComparison.OrdinalIgnoreCase));
-
-            if (matchingKey != null)
-            {
-                atlasTexture.Atlas = LoadedTextures[matchingKey];
-                GD.Print($"Updated atlas texture: {Path.GetFileName(resourcePath)} with {matchingKey}");
-                return true;
-            }
-
-            GD.Print($"No matching texture found for: {textureName}");
-            return false;
+            atlasTexture.Atlas = LoadedTextures[matchingKey];
+            return true;
         }
         catch (Exception ex)
         {
             GD.PrintErr($"Error updating atlas texture {resourcePath}: {ex.Message}");
             return false;
         }
+    }
+
+    private static string GetOrStoreTextureName(string resourcePath, AtlasTexture atlasTexture)
+    {
+        if (AtlasToTextureName.TryGetValue(resourcePath, out var textureName))
+            return textureName;
+
+        textureName = GetTextureNameFromPath(atlasTexture.Atlas.ResourcePath);
+        if (string.IsNullOrEmpty(textureName))
+            return null;
+
+        AtlasToTextureName[resourcePath] = textureName;
+        if (!OriginalTextures.ContainsKey(textureName))
+        {
+            OriginalTextures[textureName] = atlasTexture.Atlas;
+            GD.Print($"Stored original texture: {textureName}");
+        }
+
+        return textureName;
+    }
+
+    private static string FindMatchingTextureKey(string textureName)
+    {
+        string baseNameWithoutExt = Path.GetFileNameWithoutExtension(textureName);
+        return LoadedTextures.Keys.FirstOrDefault(k =>
+            Path.GetFileNameWithoutExtension(k).Equals(baseNameWithoutExt, StringComparison.OrdinalIgnoreCase));
     }
 
     private static string GetTextureNameFromPath(string texturePath)
