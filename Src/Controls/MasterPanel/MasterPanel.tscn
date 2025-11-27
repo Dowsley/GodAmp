@@ -69,11 +69,18 @@ texture = ExtResource("14_8kieg")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("Contents")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "ToggleEqualizerButton", "TogglePlaylistButton", "Contents")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
 script = ExtResource("1_wgfc2")
+WinampMenuButton = NodePath("VBoxContainer/TopBar/WinampMenuButton")
+_masterLabel = NodePath("VBoxContainer/AllContent/MasterLabel")
+_positionSeekerSlider = NodePath("VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker")
+_volumeSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider")
+_pannerAudioSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider")
+ToggleEqualizerButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton")
+TogglePlaylistButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton")
 Contents = NodePath("VBoxContainer/AllContent")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -126,37 +133,29 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
+[node name="MasterLabel" parent="VBoxContainer/AllContent" instance=ExtResource("2_y6dre")]
+layout_mode = 2
+MaxLength = 40
+
 [node name="SlidersContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
 layout_mode = 2
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
-
-[node name="MasterLabel" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer" instance=ExtResource("2_y6dre")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-MaxLength = 40
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 alignment = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/separation = 0
 
-[node name="VolumeSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
+[node name="VolumeSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(68, 14)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -172,8 +171,7 @@ max_value = 1.0
 step = 0.01
 value = 0.5
 
-[node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
+[node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(38, 14)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -189,14 +187,13 @@ min_value = -1.0
 max_value = 1.0
 step = 0.1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
 theme_override_constants/separation = 0
 
-[node name="ToggleEqualizerButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
-unique_name_in_owner = true
+[node name="ToggleEqualizerButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -204,8 +201,7 @@ texture_normal = ExtResource("9_m25c3")
 texture_pressed = ExtResource("10_2gtsh")
 stretch_mode = 5
 
-[node name="TogglePlaylistButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
-unique_name_in_owner = true
+[node name="TogglePlaylistButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -221,7 +217,6 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 6
 
 [node name="PositionSeeker" type="HSlider" parent="VBoxContainer/AllContent/PositionSeekerContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
@@ -332,14 +327,14 @@ layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
-[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
-[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/VBoxContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
+[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
+[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
+[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
+[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
 [connection signal="drag_ended" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerDragEnded"]
 [connection signal="drag_started" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerDragStarted"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerValueChanged"]

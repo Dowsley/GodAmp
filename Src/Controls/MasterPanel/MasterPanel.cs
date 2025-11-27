@@ -17,20 +17,19 @@ public partial class MasterPanel : WindowPanelContainer
 
 	[ExportGroup("References")]
 	[Export] public MenuButton WinampMenuButton;
-
-	public TextureButton ToggleEqualizerButton;
-	public TextureButton TogglePlaylistButton;
-
+	[Export] private MarqueeLabel _masterLabel;
+	[Export] private HSlider _positionSeekerSlider;
+	[Export] private HSlider _volumeSlider;
+	[Export] private HSlider _pannerAudioSlider;
+	[Export] public TextureButton ToggleEqualizerButton;
+	[Export] public TextureButton TogglePlaylistButton;
 	// TODO: Reactivate those commented out fields.
-	private MarqueeLabel _masterLabel;
 	// private Label _bitrateLabel;
 	// private Label _sampleRateLabel;
 	// private Label _clockLabel;
-	private ButtonGroup _buttonGroup;
-	private HSlider _positionSeekerSlider;
-	private HSlider _volumeSlider;
-	private HSlider _pannerAudioSlider;
+
 	private TrackPlayer _trackPlayerRef;
+	private ButtonGroup _buttonGroup;
 	
 	private bool _dragging = false;
 	private bool _hasStarted = false;
@@ -40,15 +39,6 @@ public partial class MasterPanel : WindowPanelContainer
 	
 	public override void _Ready()
 	{
-		_positionSeekerSlider = GetNode<HSlider>("%PositionSeeker");
-		_masterLabel = GetNode<MarqueeLabel>("%MasterLabel");
-		// _bitrateLabel = GetNode<Label>("%BitrateLabel");
-		// _sampleRateLabel = GetNode<Label>("%SampleRateLabel");
-		// _clockLabel = GetNode<Label>("%ClockLabel");
-		_volumeSlider = GetNode<HSlider>("%VolumeSlider");
-		_pannerAudioSlider = GetNode<HSlider>("%PannerAudioSlider");
-		ToggleEqualizerButton = GetNode<TextureButton>("%ToggleEqualizerButton");
-		TogglePlaylistButton = GetNode<TextureButton>("%TogglePlaylistButton");
 		UIUtils.SetSliderColor(
 			_pannerAudioSlider, (float)_pannerAudioSlider.Value, -1.0f, 1.0f);
 

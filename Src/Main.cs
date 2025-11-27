@@ -19,11 +19,12 @@ public partial class Main : HBoxContainer
 	[ExportGroup("Config")]
 	[Export] public string DefaultSongsPath;
 	
-	private MasterPanel _masterPanel;
-	private Equalizer _equalizer;
-	private Playlist _playlist;
-	private Visualizer.Visualizer _visualizer;
-	private TrackPlayer _trackPlayer;
+	[ExportGroup("References")]
+	[Export] private MasterPanel _masterPanel;
+	[Export] private Equalizer _equalizer;
+	[Export] private Playlist _playlist;
+	[Export] private Visualizer.Visualizer _visualizer;
+	[Export] private TrackPlayer _trackPlayer;
 
 	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
@@ -40,12 +41,6 @@ public partial class Main : HBoxContainer
 	
 	public override void _Ready()
 	{
-		_masterPanel = GetNode<MasterPanel>("%MasterPanel");
-		_equalizer = GetNode<Equalizer>("%Equalizer");
-		_playlist = GetNode<Playlist>("%Playlist");
-		_visualizer = GetNode<Visualizer.Visualizer>("%Visualizer");
-		_trackPlayer = GetNode<TrackPlayer>("%TrackPlayer");
-
 		_initialWindowSize = GetWindow().Size;
 
 		// Try to load the last used playlist, fall back to default songs path

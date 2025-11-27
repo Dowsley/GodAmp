@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
 [ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
 
-[node name="Main" type="HBoxContainer"]
+[node name="Main" type="HBoxContainer" node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer")]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -17,6 +17,11 @@ offset_bottom = 174.0
 grow_vertical = 2
 script = ExtResource("1_gh0ne")
 DefaultSongsPath = "res://Data/SampleSongs"
+_masterPanel = NodePath("Controls/MasterPanel")
+_equalizer = NodePath("Controls/Equalizer")
+_playlist = NodePath("Controls/Playlist")
+_visualizer = NodePath("Visualizer")
+_trackPlayer = NodePath("TrackPlayer")
 
 [node name="Controls" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -24,27 +29,22 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 
 [node name="MasterPanel" parent="Controls" instance=ExtResource("3_rlaii")]
-unique_name_in_owner = true
 layout_mode = 2
 MoveGlobalWindow = true
 
 [node name="Equalizer" parent="Controls" instance=ExtResource("4_5mrjc")]
-unique_name_in_owner = true
 layout_mode = 2
 MoveGlobalWindow = true
 
 [node name="Playlist" parent="Controls" instance=ExtResource("5_kf8lf")]
-unique_name_in_owner = true
 layout_mode = 2
 MoveGlobalWindow = true
 
 [node name="Visualizer" parent="." instance=ExtResource("3_5q4o7")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 2
 MoveGlobalWindow = true
 
 [node name="TrackPlayer" parent="." instance=ExtResource("4_3cfgd")]
-unique_name_in_owner = true
 
 [connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]
