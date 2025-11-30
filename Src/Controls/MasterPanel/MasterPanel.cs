@@ -17,15 +17,15 @@ public partial class MasterPanel : WindowPanelContainer
 
 	[ExportGroup("References")]
 	[Export] public MenuButton WinampMenuButton;
+	[Export] public TextureButton ToggleEqualizerButton;
+	[Export] public TextureButton TogglePlaylistButton;
 	[Export] private MarqueeLabel _masterLabel;
 	[Export] private HSlider _positionSeekerSlider;
 	[Export] private HSlider _volumeSlider;
 	[Export] private HSlider _pannerAudioSlider;
-	[Export] public TextureButton ToggleEqualizerButton;
-	[Export] public TextureButton TogglePlaylistButton;
+	[Export] private Label _bitrateLabel;
+	[Export] private Label _sampleRateLabel;
 	// TODO: Reactivate those commented out fields.
-	// private Label _bitrateLabel;
-	// private Label _sampleRateLabel;
 	// private Label _clockLabel;
 
 	private TrackPlayer _trackPlayerRef;
@@ -58,8 +58,8 @@ public partial class MasterPanel : WindowPanelContainer
 		_positionSeekerSlider.MaxValue = _trackPlayerRef.Stream.GetLength();
 
 		var track = _trackPlayerRef.CurrentTrack;
-		// _bitrateLabel.Text = $"{track.BitrateKbps}";
-		// _sampleRateLabel.Text = $"{track.SampleRateHz}";
+		_bitrateLabel.Text = $"{track.BitrateKbps}";
+		_sampleRateLabel.Text = $"{track.SampleRateHz/1000}";
 		if (_hasStarted)
 		{
 			if (!_dragging && !_trackPlayerRef.StreamPaused)

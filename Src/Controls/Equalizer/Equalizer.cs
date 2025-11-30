@@ -6,13 +6,12 @@ namespace GodAmp.Controls.Equalizer;
 
 public partial class Equalizer : WindowPanelContainer
 {
-	private VSlider _preampSlider;
-	private TextureButton _equalizerToggleButton;
+	[ExportGroup("References")]
+	[Export] private VSlider _preampSlider;
+	[Export] private TextureButton _equalizerToggleButton;
 
 	public override void _Ready()
 	{
-		_equalizerToggleButton = GetNode<TextureButton>("%EqualizerToggleButton");
-		_preampSlider = GetNode<VSlider>("%PreampSlider");
 		UIUtils.SetSliderColor(
 			_preampSlider, (float) _preampSlider.Value, -12.0f, 12.0f);
 	}

@@ -37,11 +37,13 @@ public partial class Main : HBoxContainer
 	private bool _masterLabelLockedByPositionSeeker = false;
 
 	private FileDialog _lastUsedFileDialog;
-	private Vector2I _initialWindowSize;
+	private Vector2I _originalWindowSize;
 	
 	public override void _Ready()
 	{
-		_initialWindowSize = GetWindow().Size;
+		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
+		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
+		_originalWindowSize = new Vector2I(width, height);
 
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
@@ -498,7 +500,7 @@ public partial class Main : HBoxContainer
 
 	private void SetZoomMode(int multiplier)
 	{
-		GetWindow().Size = new Vector2I(_initialWindowSize.X * multiplier, _initialWindowSize.Y * multiplier);
+		GetWindow().Size = new Vector2I(_originalWindowSize.X * multiplier, _originalWindowSize.Y * multiplier);
 		SettingsManager.Instance.SetZoomMode(multiplier);
 	}
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=21 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" uid="uid://bjkjs64jbeujb" path="res://Src/Controls/Equalizer/Equalizer.cs" id="1_3v461"]
 [ext_resource type="Texture2D" uid="uid://c58qh2npimswe" path="res://Data/SkinResources/EqualizerBackground.tres" id="2_h2kye"]
@@ -15,43 +15,22 @@
 [ext_resource type="Texture2D" uid="uid://bmlo3h5exxdvv" path="res://Data/SkinResources/AutoEqualizeToggleButtonDisabled.tres" id="12_w3pak"]
 [ext_resource type="Texture2D" uid="uid://c3hlpnorcqfvq" path="res://Data/SkinResources/PresetsButtonNormal.tres" id="13_cqcx4"]
 [ext_resource type="Texture2D" uid="uid://crl3vq30tyhg" path="res://Data/SkinResources/PresetsButtonDisabled.tres" id="14_mphak"]
+[ext_resource type="Texture2D" uid="uid://dfkhvaib7f14j" path="res://Data/SkinResources/EqualizerSliderGrabber.tres" id="15_rf8gf"]
+[ext_resource type="Texture2D" uid="uid://tkyvg1a0anqx" path="res://Data/SkinResources/EqualizerSliderGrabberHighlight.tres" id="16_632ty"]
+[ext_resource type="StyleBox" uid="uid://qwofgnr385yl" path="res://Data/Others/EqualizerSliderStyle.tres" id="16_rf8gf"]
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_n2iej"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ya3m1"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aox6d"]
-atlas = SubResource("CompressedTexture2D_n2iej")
-region = Rect2(448, 352, 88, 24)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rf8gf"]
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_olmkg"]
-color = Color(0.76662, 0.76662, 0.766619, 1)
-grow_begin = 3.0
-grow_end = 3.0
-thickness = 2
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_i2ahh"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lwmiq"]
-atlas = SubResource("CompressedTexture2D_i2ahh")
-region = Rect2(2, 0, 8, 65)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_olmkg"]
-content_margin_left = 6.0
-content_margin_top = 8.0
-content_margin_right = 6.0
-content_margin_bottom = 8.0
-texture = SubResource("AtlasTexture_lwmiq")
-texture_margin_left = 1.0
-texture_margin_top = 1.0
-texture_margin_right = 1.0
-texture_margin_bottom = 1.0
-modulate_color = Color(1, 1, 0, 1)
-
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("Contents")]
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "Contents")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
 size_flags_vertical = 3
 script = ExtResource("1_3v461")
+_preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/Sliders/PreampSlider")
+_equalizerToggleButton = NodePath("VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection/EqualizerToggleButton")
 Contents = NodePath("VBoxContainer/AllContent")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -137,358 +116,185 @@ texture_normal = ExtResource("13_cqcx4")
 texture_disabled = ExtResource("14_mphak")
 stretch_mode = 5
 
-[node name="OLDContentContainer" type="MarginContainer" parent="."]
-visible = false
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 12
-
-[node name="MarginContainer" type="MarginContainer" parent="OLDContentContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="OLDContentContainer/MarginContainer"]
+[node name="Sliders" type="Control" parent="VBoxContainer/AllContent/MarginContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer"]
+[node name="PreampSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.53
-
-[node name="EqualizerToggleButton" type="TextureButton" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-toggle_mode = true
-button_pressed = true
-texture_normal = ExtResource("8_f3of5")
-texture_pressed = ExtResource("9_ya3m1")
-stretch_mode = 5
-
-[node name="AutoEqualizeToggleButton" type="TextureButton" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-disabled = true
-texture_normal = ExtResource("10_rf8gf")
-texture_pressed = ExtResource("11_632ty")
-texture_disabled = ExtResource("12_w3pak")
-stretch_mode = 5
-
-[node name="HSeparator" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Control" type="MarginContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.37
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="PresetsButton" type="TextureButton" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer/Control"]
-layout_mode = 2
-disabled = true
-texture_disabled = SubResource("AtlasTexture_aox6d")
-stretch_mode = 5
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-theme_override_constants/separation = 8
-
-[node name="VBoxContainer" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 6
-
-[node name="MarginContainer" type="MarginContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 6
-
-[node name="HBoxContainer" type="HBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 4
-
-[node name="Ticks" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
-layout_mode = 2
-size_flags_vertical = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator2" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator3" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="PreampSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
+offset_left = 5.0
+offset_top = 26.0
+offset_right = 21.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
 focus_mode = 0
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 step = 0.1
 
-[node name="Ticks2" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="60Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator2" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator3" type="HSeparator" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="MarginContainer" type="MarginContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_left = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 2
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "+12 db"
-
-[node name="Label2" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "+0 db"
-
-[node name="Label3" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "-12 db"
-
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "PREAMP"
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 62.0
+offset_top = 26.0
+offset_right = 78.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="60Slider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+[node name="170Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "60"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 80.0
+offset_top = 26.0
+offset_right = 96.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="170Slider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3"]
+[node name="310Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "170"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer4" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 98.0
+offset_top = 26.0
+offset_right = 114.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="310Slider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4"]
+[node name="600Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "310"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer5" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 116.0
+offset_top = 26.0
+offset_right = 132.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="600Slider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5"]
+[node name="1KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "600"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer6" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 134.0
+offset_top = 26.0
+offset_right = 150.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="1KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6"]
+[node name="3KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "1K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer7" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 152.0
+offset_top = 26.0
+offset_right = 168.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="3KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7"]
+[node name="6KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "3K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer8" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 170.0
+offset_top = 26.0
+offset_right = 186.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="6KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8"]
+[node name="12KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "6K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer9" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 188.0
+offset_top = 26.0
+offset_right = 204.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="12KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9"]
+[node name="14KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "12K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer10" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 206.0
+offset_top = 26.0
+offset_right = 222.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="14KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10"]
+[node name="16KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "14K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer11" type="VBoxContainer" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 224.0
+offset_top = 26.0
+offset_right = 240.0
+offset_bottom = 88.0
 size_flags_horizontal = 6
-
-[node name="16KSlider" type="VSlider" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
-
-[node name="Label" type="Label" parent="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "16K"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_r0ulg")]
 custom_minimum_size = Vector2(0, 14)
@@ -497,16 +303,15 @@ layout_mode = 2
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
-[connection signal="pressed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/PreampSlider" to="." method="OnPreampSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/60Slider" to="." method="On60SliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3/170Slider" to="." method="On170SliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4/310Slider" to="." method="On310SliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5/600Slider" to="." method="On600SliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6/1KSlider" to="." method="On1KSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7/3KSlider" to="." method="On3KSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8/6KSlider" to="." method="On6KSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9/12KSlider" to="." method="On12KSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10/14KSlider" to="." method="On14KSliderValueChanged"]
-[connection signal="value_changed" from="OLDContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11/16KSlider" to="." method="On16KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/PreampSlider" to="." method="OnPreampSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/60Slider" to="." method="On60SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/170Slider" to="." method="On170SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/310Slider" to="." method="On310SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/600Slider" to="." method="On600SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/1KSlider" to="." method="On1KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/3KSlider" to="." method="On3KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/6KSlider" to="." method="On6KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/12KSlider" to="." method="On12KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/14KSlider" to="." method="On14KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/16KSlider" to="." method="On16KSliderValueChanged"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

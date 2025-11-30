@@ -1,9 +1,11 @@
 using System.Text;
 using Godot;
+using GodAmp.Autoload;
+using GodAmp.Components;
 
 namespace GodAmp.Controls.MasterPanel;
 
-public partial class MarqueeLabel : Label
+public partial class MarqueeLabel : BitmapLabel
 {
 	[Export] public int MaxLength = 30;
 	
@@ -15,14 +17,12 @@ public partial class MarqueeLabel : Label
 	public override void _Ready()
 	{
 		_timer = GetNode<Timer>("Timer");
+		SignalBus.Instance.SkinChanged += QueueRedraw;
 	}
 	
 	public void SetValue(string value)
 	{
-		if (value.Length > MaxLength)
-		{
-			_rotate = false;
-		}
+		_rotate = value.Length > MaxLength;
 		var newValue = value.ToUpper() + new string(' ', int.Max(0, MaxLength - value.Length));
 		if (_value != newValue)
 			_offset = 0;
@@ -30,7 +30,7 @@ public partial class MarqueeLabel : Label
 		RenderText();
 	}
 
-	public void OnTimerTimeout()
+	private void OnTimerTimeout()
 	{
 		if (!string.IsNullOrEmpty(_value))
 		{

@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace GodAmp.Autoload;
@@ -15,13 +14,18 @@ public partial class SkinLoader : Node
     private const string SkinResourcesPath = "res://Data/SkinResources/";
     private const string TempExtractionFolder = "user://temp_skin/";
     private const string SkinsDirectoryName = "Skins";
+    private const string BitmapFontPath = "res://Assets/Winamp/Raw/TEXT.png";
 
     private static readonly Dictionary<string, ImageTexture> LoadedTextures = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, Image> LoadedImages = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, Texture2D> OriginalTextures = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, string> AtlasToTextureName = new();
 
     private static string _skinsDirectory;
     private static string _currentSkinName;
+
+    private static FontFile _bitmapFont;
+    private static Image _originalFontImage;
 
     public override void _EnterTree()
     {
@@ -30,6 +34,7 @@ public partial class SkinLoader : Node
         Instance = this;
 
         InitializeSkinsDirectory();
+        InitializeBitmapFont();
     }
 
     public override void _Ready()
@@ -48,6 +53,12 @@ public partial class SkinLoader : Node
             Directory.CreateDirectory(_skinsDirectory);
             GD.Print($"Created skins directory: {_skinsDirectory}");
         }
+    }
+
+    private static void InitializeBitmapFont()
+    {
+        _bitmapFont = GD.Load<FontFile>(BitmapFontPath);
+        _originalFontImage = _bitmapFont.GetTextureImage(0, Vector2I.Zero, 0);
     }
 
     private static void LoadActiveSkin()
@@ -88,12 +99,14 @@ public partial class SkinLoader : Node
 
             LoadTexturesFromPath(tempPath);
             ApplyTextureToAllAtlases();
+            UpdateBitmapFont();
             CleanupTempFiles(tempPath);
 
             string fileName = Path.GetFileName(filePath);
             _currentSkinName = fileName;
             SettingsManager.Instance.SetActiveSkin(fileName);
             SettingsManager.Instance.SaveAllSettings();
+            SignalBus.Instance.EmitSignal(SignalBus.SignalName.SkinChanged);
             GD.Print($"Skin '{fileName}' loaded successfully!");
         }
         catch (Exception ex)
@@ -109,12 +122,8 @@ public partial class SkinLoader : Node
         {
             GD.Print("Restoring original skin...");
 
-            int restoredCount = 0;
-            foreach (var resourcePath in GetAllAtlasResourcePaths())
-            {
-                if (TryRestoreAtlasTexture(resourcePath))
-                    restoredCount++;
-            }
+            int restoredCount = GetAllAtlasResourcePaths().Count(TryRestoreAtlasTexture);
+            RestoreBitmapFont();
 
             GD.Print($"Restored {restoredCount} atlas textures to original skin");
             LoadedTextures.Clear();
@@ -122,11 +131,18 @@ public partial class SkinLoader : Node
 
             SettingsManager.Instance.SetActiveSkin("");
             SettingsManager.Instance.SaveAllSettings();
+            SignalBus.Instance.EmitSignal(SignalBus.SignalName.SkinChanged);
         }
         catch (Exception ex)
         {
             GD.PrintErr($"Error restoring original skin: {ex.Message}");
         }
+    }
+
+    private static void RestoreBitmapFont()
+    {
+        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, _originalFontImage);
+        GD.Print("Restored original bitmap font texture");
     }
 
     private static bool TryRestoreAtlasTexture(string resourcePath)
@@ -201,6 +217,7 @@ public partial class SkinLoader : Node
     private static void LoadTexturesFromPath(string tempPath)
     {
         LoadedTextures.Clear();
+        LoadedImages.Clear();
 
         try
         {
@@ -223,6 +240,7 @@ public partial class SkinLoader : Node
                         var texture = ImageTexture.CreateFromImage(image);
                         string fileName = Path.GetFileName(imagePath).ToUpper();
                         LoadedTextures[fileName] = texture;
+                        LoadedImages[fileName] = image;
                         GD.Print($"Loaded texture: {fileName}");
                     }
                 }
@@ -276,16 +294,29 @@ public partial class SkinLoader : Node
         var atlasResourcePaths = GetAllAtlasResourcePaths();
         GD.Print($"Found {atlasResourcePaths.Count} atlas texture resources");
 
-        int replacedCount = 0;
-        foreach (var resourcePath in atlasResourcePaths)
-        {
-            if (UpdateAtlasTexture(resourcePath))
-            {
-                replacedCount++;
-            }
-        }
+        int replacedCount = atlasResourcePaths.Count(UpdateAtlasTexture);
 
         GD.Print($"Successfully updated {replacedCount} atlas textures");
+    }
+
+    private static void UpdateBitmapFont()
+    {
+        string matchingKey = FindMatchingImageKey("TEXT.PNG");
+        if (matchingKey == null)
+        {
+            GD.Print("No TEXT.png found in skin, keeping default font");
+            return;
+        }
+
+        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[matchingKey]);
+        GD.Print("Updated bitmap font texture");
+    }
+
+    private static string FindMatchingImageKey(string imageName)
+    {
+        string baseNameWithoutExt = Path.GetFileNameWithoutExtension(imageName);
+        return LoadedImages.Keys.FirstOrDefault(k =>
+            Path.GetFileNameWithoutExtension(k).Equals(baseNameWithoutExt, StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool UpdateAtlasTexture(string resourcePath)

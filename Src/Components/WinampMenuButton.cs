@@ -10,7 +10,7 @@ public partial class WinampMenuButton : MenuButton
 	private PopupMenu _popup;
 	private PopupMenu _scaleSubmenu;
 	private PopupMenu _skinSubmenu;
-	private List<string> _skinFilenames = [];
+	private readonly List<string> _skinFilenames = [];
 
 	public override void _Ready()
 	{
@@ -29,7 +29,7 @@ public partial class WinampMenuButton : MenuButton
 
 		_scaleSubmenu.AddItem("1x", 1);
 		_scaleSubmenu.AddItem("2x", 2);
-		_scaleSubmenu.AddItem("3x", 2);
+		_scaleSubmenu.AddItem("3x", 3);
 		_scaleSubmenu.AddItem("4x", 4);
 
 		_scaleSubmenu.IndexPressed += OnScaleMenuItemPressed;
@@ -64,8 +64,7 @@ public partial class WinampMenuButton : MenuButton
 
 	private static void OnScaleMenuItemPressed(long index)
 	{
-		// TODO Allow user to specify multiplier (1.x) in the future, somewhere deep in the settings
-		int multiplier = (int)index;
+		int multiplier = (int)index+1;
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
 	}
 

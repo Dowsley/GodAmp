@@ -1,0 +1,6 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dov041weprxen"]
+
+[ext_resource type="Shader" uid="uid://dsodxmar33yxu" path="res://Data/Shaders/BitmapFont.gdshader" id="1_27qb1"]
+
+[resource]
+shader = ExtResource("1_27qb1")
