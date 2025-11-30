@@ -1,0 +1,36 @@
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://bsacd6apsccmu"]
+
+[ext_resource type="Texture2D" uid="uid://brggxbdwytbbw" path="res://Data/SkinResources/VScrollbarGrabber.tres" id="1_yykv4"]
+[ext_resource type="Texture2D" uid="uid://ea7rnr0h0hi1" path="res://Data/SkinResources/VScrollbarGrabberHighlight.tres" id="2_ihcc3"]
+[ext_resource type="Texture2D" uid="uid://cqewnwrgffqd" path="res://Data/SkinResources/VScrollbarGrabberPressed.tres" id="3_yykv4"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_88gss"]
+texture = ExtResource("1_yykv4")
+texture_margin_left = 1.0
+texture_margin_top = 3.0
+texture_margin_right = 1.0
+texture_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ihcc3"]
+texture = ExtResource("2_ihcc3")
+texture_margin_left = 1.0
+texture_margin_top = 3.0
+texture_margin_right = 1.0
+texture_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_l4koe"]
+texture = ExtResource("3_yykv4")
+texture_margin_left = 1.0
+texture_margin_top = 3.0
+texture_margin_right = 1.0
+texture_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yykv4"]
+content_margin_left = 4.0
+content_margin_right = 4.0
+
+[resource]
+VScrollBar/styles/grabber = SubResource("StyleBoxTexture_88gss")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxTexture_ihcc3")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxTexture_l4koe")
+VScrollBar/styles/scroll = SubResource("StyleBoxEmpty_yykv4")

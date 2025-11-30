@@ -11,24 +11,27 @@ namespace GodAmp.Controls.Playlist;
 
 public partial class Playlist : WindowPanelContainer
 {
+	[ExportGroup("Config")]
 	[Export] public PackedScene TrackLabelScene;
 	
-	[ExportCategory("Button dropdown refs")]
+	[ExportGroup("References")]
+	[ExportSubgroup("Controls")]
+	[Export] private VBoxContainer _trackEntryContainer;
+	[Export] private ScrollContainer _scrollContainer;
+	
+	[ExportSubgroup("Button dropdowns")]
 	[Export] public ButtonDropdown AddButtonDropdown;
 	[Export] public ButtonDropdown RemoveButtonDropdown;
 	[Export] public ButtonDropdown SelectButtonDropdown;
 	[Export] public ButtonDropdown MiscButtonDropdown;
 	[Export] public ButtonDropdown ListOptionsButtonDropdown;
 	
-	[ExportCategory("Button refs")]
+	[ExportSubgroup("Buttons")]
 	[Export] public TextureButton AddButton;
 	[Export] public TextureButton RemoveButton;
 	[Export] public TextureButton SelectButton;
 	[Export] public TextureButton MiscButton;
 	[Export] public TextureButton ListOptionsButton;
-	
-	private VBoxContainer _trackEntryContainer;
-	private ScrollContainer _scrollContainer;
 
 	private HashSet<Track> _selectedTracks = [];
 	private List<Track> _playlistRef;
@@ -37,11 +40,10 @@ public partial class Playlist : WindowPanelContainer
 
 	public override void _Ready()
 	{
-		_trackEntryContainer = GetNode<VBoxContainer>("%PlaylistTrackEntryContainer");
-		_scrollContainer = GetNode<ScrollContainer>("%ScrollContainer");
 		SignalBus.Instance.InverseSelectionRequested += OnInverseSelectionRequested;
 		SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
 		SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;
+		SignalBus.Instance.SkinChanged += OnSkinChanged;
 	}
 
 	public void Setup(TrackPlayer trackPlayerRef, List<Track> playlist)
@@ -207,6 +209,12 @@ public partial class Playlist : WindowPanelContainer
 			label.IsSelected = true;
 		}
 		_selectionAnchorIndex = 0;
+	}
+
+	private void OnSkinChanged()
+	{
+		var vScrollBar = _scrollContainer.GetVScrollBar();
+		vScrollBar?.QueueRedraw();
 	}
 
 	public void ReorderSelectedTracks(List<int> selectedIndices, int targetIndex, bool insertAfter)

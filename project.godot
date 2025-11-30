@@ -40,6 +40,10 @@ window/stretch/mode="canvas_items"
 
 project/assembly_name="GodAmp"
 
+[gui]
+
+theme/custom="uid://bsacd6apsccmu"
+
 [input]
 
 MultipleSelection={
