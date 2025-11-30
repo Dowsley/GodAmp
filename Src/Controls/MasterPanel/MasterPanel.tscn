@@ -15,7 +15,6 @@
 [ext_resource type="FontFile" uid="uid://dnt8jdk6j4exq" path="res://Assets/Winamp/Raw/TEXT.png" id="10_8kieg"]
 [ext_resource type="Texture2D" uid="uid://c1g6ac0gxrkxf" path="res://Data/SkinResources/VolumeSlider.tres" id="10_b8aew"]
 [ext_resource type="Texture2D" uid="uid://bjfmxtdq2kt0l" path="res://Data/SkinResources/VolumeSliderGrabberHighlight.tres" id="10_bgj4f"]
-[ext_resource type="Material" uid="uid://dov041weprxen" path="res://Data/Materials/BitmapFont.tres" id="10_ixbbo"]
 [ext_resource type="Texture2D" uid="uid://ck2phyu241jwi" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="11_j1eng"]
 [ext_resource type="Texture2D" uid="uid://dw2hupkgvxcj5" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="11_pboy1"]
 [ext_resource type="Texture2D" uid="uid://bujh07cr8mncs" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="12_6x7f4"]
@@ -24,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="12_umuss"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="12_x5ey5"]
 [ext_resource type="Texture2D" uid="uid://dn0vs65qhodq4" path="res://Data/SkinResources/PannerAudioSliderGrabberHighlight.tres" id="13_2vlkh"]
+[ext_resource type="FontFile" uid="uid://dh6f1yc7o4y34" path="res://Assets/Winamp/Raw/NUMBERS.png" id="13_13jth"]
 [ext_resource type="Texture2D" uid="uid://dsp2hooqm7hu1" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="13_umuss"]
 [ext_resource type="Texture2D" uid="uid://o1n3pn051fgy" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="14_4muab"]
 [ext_resource type="Texture2D" uid="uid://08clhe1icnca" path="res://Data/SkinResources/PannerAudioSlider.tres" id="14_8kieg"]
@@ -72,7 +72,7 @@ texture = ExtResource("14_8kieg")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "Contents")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "Contents")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -86,6 +86,10 @@ _volumeSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContaine
 _pannerAudioSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider")
 _bitrateLabel = NodePath("VBoxContainer/AllContent/Control/BitrateLabel")
 _sampleRateLabel = NodePath("VBoxContainer/AllContent/Control/SampleRateLabel")
+_timeMinutesTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesTensLabel")
+_timeMinutesOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesOnesLabel")
+_timeSecondsTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsTensLabel")
+_timeSecondsOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsOnesLabel")
 Contents = NodePath("VBoxContainer/AllContent")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -142,7 +146,6 @@ theme_override_constants/separation = 0
 layout_mode = 2
 
 [node name="MasterLabel" parent="VBoxContainer/AllContent/Control" instance=ExtResource("2_y6dre")]
-material = ExtResource("10_ixbbo")
 layout_mode = 2
 offset_left = 111.0
 offset_top = -33.0
@@ -153,7 +156,6 @@ theme_override_font_sizes/font_size = 3
 text = "LINKIN PARK - NUMB"
 
 [node name="BitrateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
-material = ExtResource("10_ixbbo")
 layout_mode = 0
 offset_left = 110.0
 offset_top = -16.0
@@ -165,7 +167,6 @@ text = "000"
 script = ExtResource("12_ixbbo")
 
 [node name="SampleRateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
-material = ExtResource("10_ixbbo")
 layout_mode = 0
 offset_left = 155.0
 offset_top = -16.0
@@ -174,6 +175,50 @@ offset_bottom = -6.0
 theme_override_fonts/font = ExtResource("10_8kieg")
 theme_override_font_sizes/font_size = 3
 text = "00"
+script = ExtResource("12_ixbbo")
+
+[node name="TimeMinutesTensLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = -38.0
+offset_right = 58.0
+offset_bottom = -17.0
+theme_override_fonts/font = ExtResource("13_13jth")
+theme_override_font_sizes/font_size = 7
+text = "0"
+script = ExtResource("12_ixbbo")
+
+[node name="TimeMinutesOnesLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = -38.0
+offset_right = 70.0
+offset_bottom = -17.0
+theme_override_fonts/font = ExtResource("13_13jth")
+theme_override_font_sizes/font_size = 7
+text = "0"
+script = ExtResource("12_ixbbo")
+
+[node name="TimeSecondsTensLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = -38.0
+offset_right = 88.0
+offset_bottom = -17.0
+theme_override_fonts/font = ExtResource("13_13jth")
+theme_override_font_sizes/font_size = 7
+text = "0"
+script = ExtResource("12_ixbbo")
+
+[node name="TimeSecondsOnesLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = -38.0
+offset_right = 100.0
+offset_bottom = -17.0
+theme_override_fonts/font = ExtResource("13_13jth")
+theme_override_font_sizes/font_size = 7
+text = "0"
 script = ExtResource("12_ixbbo")
 
 [node name="SlidersContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
@@ -341,9 +386,6 @@ theme_override_constants/margin_top = 1
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/separation = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3"]
-layout_mode = 2
 
 [node name="ShuffleModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3"]
 layout_mode = 2

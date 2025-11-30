@@ -1,4 +1,3 @@
-using System;
 using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Player;
@@ -25,8 +24,11 @@ public partial class MasterPanel : WindowPanelContainer
 	[Export] private HSlider _pannerAudioSlider;
 	[Export] private Label _bitrateLabel;
 	[Export] private Label _sampleRateLabel;
-	// TODO: Reactivate those commented out fields.
-	// private Label _clockLabel;
+	[ExportSubgroup("Time display")]
+	[Export] private Label _timeMinutesTensLabel;
+	[Export] private Label _timeMinutesOnesLabel;
+	[Export] private Label _timeSecondsTensLabel;
+	[Export] private Label _timeSecondsOnesLabel;
 
 	private TrackPlayer _trackPlayerRef;
 	private ButtonGroup _buttonGroup;
@@ -72,17 +74,47 @@ public partial class MasterPanel : WindowPanelContainer
 			_positionSeekerSlider.Value = 0.0f;
 		}
 
+		UpdateTimeDisplay();
 		_clockBlinkTimer += delta;
-		// _clockLabel.Text = TimeUtils.FormatAsTrackTime(_trackPlayerRef.GetPlaybackPosition(), 2);
+	}
+
+	private void UpdateTimeDisplay()
+	{
+		var playbackPosition = _trackPlayerRef.GetPlaybackPosition();
+		var time = System.TimeSpan.FromSeconds(playbackPosition);
+
+		int totalMinutes = (int)time.TotalMinutes;
+		int seconds = time.Seconds;
+
+		// Extract individual digits
+		int minutesTens = totalMinutes / 10;
+		int minutesOnes = totalMinutes % 10;
+		int secondsTens = seconds / 10;
+		int secondsOnes = seconds % 10;
+
+		_timeMinutesTensLabel.Text = minutesTens.ToString();
+		_timeMinutesOnesLabel.Text = minutesOnes.ToString();
+		_timeSecondsTensLabel.Text = secondsTens.ToString();
+		_timeSecondsOnesLabel.Text = secondsOnes.ToString();
+
 		if (_trackPlayerRef.IsPlaying() && !_trackPlayerRef.StreamPaused)
 		{
-			// _clockLabel.Modulate = new Color(_clockLabel.Modulate, 1.0f);
+			_timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, 1.0f);
+			_timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, 1.0f);
+			_timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, 1.0f);
+			_timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, 1.0f);
 		}
 		else
 		{
 			if (!(_clockBlinkTimer > ClockBlinkEverySeconds))
 				return;
-			// _clockLabel.Modulate = new Color(_clockLabel.Modulate, _clockBlinking ? 0.5f : 1.0f);
+
+			float alpha = _clockBlinking ? 0.5f : 1.0f;
+			_timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, alpha);
+			_timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, alpha);
+			_timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, alpha);
+			_timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, alpha);
+
 			_clockBlinking = !_clockBlinking;
 			_clockBlinkTimer = 0.0;
 		}

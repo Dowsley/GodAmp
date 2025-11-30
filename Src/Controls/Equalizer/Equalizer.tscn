@@ -29,8 +29,8 @@ offset_right = 275.0
 offset_bottom = 116.0
 size_flags_vertical = 3
 script = ExtResource("1_3v461")
-_preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/Sliders/PreampSlider")
-_equalizerToggleButton = NodePath("VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection/EqualizerToggleButton")
+_preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider")
+_equalizerToggleButton = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection/EqualizerToggleButton")
 Contents = NodePath("VBoxContainer/AllContent")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -84,12 +84,15 @@ theme_override_constants/margin_top = -1
 theme_override_constants/margin_right = 13
 theme_override_constants/margin_bottom = 0
 
-[node name="ButtonsAndGraphSection" type="HBoxContainer" parent="VBoxContainer/AllContent/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/MarginContainer"]
+layout_mode = 2
+
+[node name="ButtonsAndGraphSection" type="HBoxContainer" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="EqualizerToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection"]
+[node name="EqualizerToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
@@ -97,7 +100,7 @@ texture_normal = ExtResource("8_f3of5")
 texture_pressed = ExtResource("9_ya3m1")
 stretch_mode = 5
 
-[node name="AutoEqualizeToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection"]
+[node name="AutoEqualizeToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
 layout_mode = 2
 size_flags_horizontal = 0
 focus_mode = 0
@@ -107,7 +110,7 @@ texture_pressed = ExtResource("11_632ty")
 texture_disabled = ExtResource("12_w3pak")
 stretch_mode = 5
 
-[node name="PresetsButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection"]
+[node name="PresetsButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
 layout_mode = 2
 size_flags_horizontal = 10
 focus_mode = 0
@@ -116,15 +119,14 @@ texture_normal = ExtResource("13_cqcx4")
 texture_disabled = ExtResource("14_mphak")
 stretch_mode = 5
 
-[node name="Sliders" type="Control" parent="VBoxContainer/AllContent/MarginContainer"]
+[node name="Sliders" type="Control" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="PreampSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="PreampSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 5.0
-offset_top = 26.0
 offset_right = 21.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -136,12 +138,11 @@ min_value = -12.0
 max_value = 12.0
 step = 0.1
 
-[node name="60Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="60Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 62.0
-offset_top = 26.0
 offset_right = 78.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -152,12 +153,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="170Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="170Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 80.0
-offset_top = 26.0
 offset_right = 96.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -168,12 +168,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="310Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="310Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 98.0
-offset_top = 26.0
 offset_right = 114.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -184,12 +183,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="600Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="600Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 116.0
-offset_top = 26.0
 offset_right = 132.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -200,12 +198,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="1KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="1KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 134.0
-offset_top = 26.0
 offset_right = 150.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -216,12 +213,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="3KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="3KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 152.0
-offset_top = 26.0
 offset_right = 168.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -232,12 +228,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="6KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="6KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 170.0
-offset_top = 26.0
 offset_right = 186.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -248,12 +243,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="12KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="12KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 188.0
-offset_top = 26.0
 offset_right = 204.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -264,12 +258,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="14KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="14KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 206.0
-offset_top = 26.0
 offset_right = 222.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -280,12 +273,11 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf"
 min_value = -12.0
 max_value = 12.0
 
-[node name="16KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/Sliders"]
+[node name="16KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
 offset_left = 224.0
-offset_top = 26.0
 offset_right = 240.0
-offset_bottom = 88.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
@@ -302,16 +294,16 @@ layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/MarginContainer/ButtonsAndGraphSection/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/PreampSlider" to="." method="OnPreampSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/60Slider" to="." method="On60SliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/170Slider" to="." method="On170SliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/310Slider" to="." method="On310SliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/600Slider" to="." method="On600SliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/1KSlider" to="." method="On1KSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/3KSlider" to="." method="On3KSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/6KSlider" to="." method="On6KSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/12KSlider" to="." method="On12KSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/14KSlider" to="." method="On14KSliderValueChanged"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/Sliders/16KSlider" to="." method="On16KSliderValueChanged"]
+[connection signal="pressed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider" to="." method="OnPreampSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/60Slider" to="." method="On60SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/170Slider" to="." method="On170SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/310Slider" to="." method="On310SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/600Slider" to="." method="On600SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/1KSlider" to="." method="On1KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/3KSlider" to="." method="On3KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/6KSlider" to="." method="On6KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/12KSlider" to="." method="On12KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/14KSlider" to="." method="On14KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/16KSlider" to="." method="On16KSliderValueChanged"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

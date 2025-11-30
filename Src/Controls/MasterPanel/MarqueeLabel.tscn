@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://conirsy88ed0m" path="res://Src/Controls/MasterPanel/MarqueeLabel.cs" id="1_i64vm"]
 
 [node name="MarqueeLabel" type="Label"]
-theme_override_colors/font_color = Color(0, 0.811765, 0, 1)
 text = "1. LINKIN PARK - IN MY REMAINS"
 script = ExtResource("1_i64vm")
 

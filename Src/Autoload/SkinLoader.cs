@@ -15,6 +15,7 @@ public partial class SkinLoader : Node
     private const string TempExtractionFolder = "user://temp_skin/";
     private const string SkinsDirectoryName = "Skins";
     private const string BitmapFontPath = "res://Assets/Winamp/Raw/TEXT.png";
+    private const string BitmapNumberFontPath = "res://Assets/Winamp/Raw/TEXT.png";
 
     private static readonly Dictionary<string, ImageTexture> LoadedTextures = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, Image> LoadedImages = new(StringComparer.OrdinalIgnoreCase);
