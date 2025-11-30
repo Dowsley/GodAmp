@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Godot;
 using GodAmp.Autoload;
@@ -23,7 +24,12 @@ public partial class MarqueeLabel : BitmapLabel
 	public void SetValue(string value)
 	{
 		_rotate = value.Length > MaxLength;
-		var newValue = value.ToUpper() + new string(' ', int.Max(0, MaxLength - value.Length));
+		var upperValue = value.ToUpper();
+
+		var newValue = _rotate
+			? upperValue + "   ***   " // Separator for scrolling
+			: upperValue + new string(' ', Math.Max(0, MaxLength - upperValue.Length));
+
 		if (_value != newValue)
 			_offset = 0;
 		_value = newValue;
@@ -46,7 +52,7 @@ public partial class MarqueeLabel : BitmapLabel
 		var sb = new StringBuilder();
 		for (var i = 0; i < MaxLength; i++)
 		{
-			sb.Append(_value[(i + _offset) % MaxLength]);
+			sb.Append(_value[(i + _offset) % _value.Length]);
 		}
 		Text = sb.ToString();
 	}
