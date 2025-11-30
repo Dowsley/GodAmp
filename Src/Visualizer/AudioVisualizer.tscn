@@ -27,7 +27,7 @@ grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="ContainerA"]
 handle_input_locally = false
-size = Vector2i(1152, 648)
+size = Vector2i(576, 324)
 render_target_update_mode = 0
 
 [node name="Background" type="ColorRect" parent="ContainerA/SubViewport"]
@@ -60,7 +60,7 @@ grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="ContainerB"]
 handle_input_locally = false
-size = Vector2i(1152, 648)
+size = Vector2i(576, 324)
 render_target_update_mode = 0
 
 [node name="Background" type="ColorRect" parent="ContainerB/SubViewport"]

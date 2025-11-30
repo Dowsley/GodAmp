@@ -15,7 +15,6 @@ ColorChangeSpeed = 3.0
 RandomOffsetAmount = 5.0
 
 [node name="Line2D" type="Line2D" parent="."]
-position = Vector2(0, 120)
 width = 3.5
 default_color = Color(0.203922, 1, 1, 1)
 joint_mode = 2

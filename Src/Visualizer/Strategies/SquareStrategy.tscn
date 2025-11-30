@@ -7,15 +7,15 @@ friction = 0.0
 bounce = 0.9
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q5r2e"]
-size = Vector2(100, 100)
+size = Vector2(50, 50)
 
 [node name="SquareStrategy" type="Node2D"]
 script = ExtResource("1_wrrfh")
-BaseSize = 100.0
+BaseSize = 60.0
 SizeMultiplier = 300.0
-MinSize = 80.0
-MaxSize = 300.0
-BaseForce = 1200.0
+MinSize = 50.0
+MaxSize = 200.0
+BaseForce = 800.0
 ForceMultiplier = 8000.0
 TorqueMultiplier = 5000.0
 MinimumBassForForce = 0.001
@@ -33,7 +33,6 @@ DirectionSensitivity = 2.5
 DepthSmoothingFactor = 0.1
 
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
-position = Vector2(576, 324)
 physics_material_override = SubResource("PhysicsMaterial_w5mbp")
 can_sleep = false
 contact_monitor = true
@@ -42,11 +41,12 @@ linear_damp = 0.02
 angular_damp = 0.03
 
 [node name="Square" type="ColorRect" parent="RigidBody2D"]
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
 color = Color(0, 1, 1, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 shape = SubResource("RectangleShape2D_q5r2e")

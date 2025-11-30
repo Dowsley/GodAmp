@@ -31,7 +31,7 @@ SkinLoader="*res://Src/Autoload/SkinLoader.cs"
 
 [display]
 
-window/size/viewport_width=275
+window/size/viewport_width=623
 window/size/viewport_height=348
 window/size/borderless=true
 window/stretch/mode="canvas_items"

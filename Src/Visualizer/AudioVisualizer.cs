@@ -29,7 +29,6 @@ namespace GodAmp.Visualizer
         private ShaderMaterial _shaderMaterialA;
         private ShaderMaterial _shaderMaterialB;
 
-        // Properties for active viewport components
         private SubViewportContainer ActiveContainer => _isUsingA ? _containerA : _containerB;
         private SubViewportContainer InactiveContainer => _isUsingA ? _containerB : _containerA;
         private ShaderMaterial ActiveShader => _isUsingA ? _shaderMaterialA : _shaderMaterialB;
@@ -53,7 +52,7 @@ namespace GodAmp.Visualizer
             SwapViewports();
         }
 
-        public void InitializeStrategy(Vector2 viewportSize, int currStrategy)
+        private void InitializeStrategy(Vector2 viewportSize, int currStrategy)
         {
             _strategyContainerA = GetNode<Node2D>("%StrategyContainerA");
             _strategyContainerB = GetNode<Node2D>("%StrategyContainerB");
@@ -66,7 +65,7 @@ namespace GodAmp.Visualizer
             RefreshStrategy(viewportSize);
         }
 
-        public void NextStrategy()
+        private void NextStrategy()
         {
             _currStrategy++;
             if (_currStrategy >= StrategyTypes.Count)
@@ -75,13 +74,13 @@ namespace GodAmp.Visualizer
             _timer.Start();
         }
 
-        public void RefreshStrategy(Vector2 viewportSize)
+        private void RefreshStrategy(Vector2 viewportSize)
         {
             _strategyA?.Initialize(viewportSize);
             _strategyB?.Initialize(viewportSize);
         }
-        
-        public void UpdateStrategy(double delta)
+
+        private void UpdateStrategy(double delta)
         {
             _strategyA.Update(delta);
             _strategyB.Update(delta);
@@ -154,10 +153,10 @@ namespace GodAmp.Visualizer
         private void SwapViewports()
         {
             // Capture the previous frame before swapping
-            if (InactiveViewport.GetTexture() is ViewportTexture texture)
+            if (InactiveViewport.GetTexture() is { } texture)
             {
-                // Wait until viewport is done rendering
-                RenderingServer.ForceSync();
+                
+                RenderingServer.ForceSync(); // need to wait viewport is done rendering.
                 
                 var viewportImage = texture.GetImage();
                 if (viewportImage.GetFormat() != _feedbackImage.GetFormat())
@@ -179,7 +178,7 @@ namespace GodAmp.Visualizer
         private float GetViewportWidth() => _viewportA?.Size.X ?? 0;
         private float GetViewportHeight() => _viewportA?.Size.Y ?? 0;
 
-        public void OnResized()
+        private void OnResized()
         {
             if (_viewportA == null || _viewportB == null)
                 return;

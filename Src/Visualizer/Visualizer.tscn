@@ -1,8 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=16 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
+[ext_resource type="Texture2D" uid="uid://dspjst6ciuvy0" path="res://Data/SkinResources/PlaylistTopLeftCorner.tres" id="2_7wv81"]
+[ext_resource type="Texture2D" uid="uid://duaqnxdcf32o3" path="res://Data/SkinResources/PlaylistTopTilableBar.tres" id="3_gnf20"]
+[ext_resource type="Texture2D" uid="uid://g1tc2qlhfejw" path="res://Data/SkinResources/PlaylistTitlebar.tres" id="4_cwlo7"]
+[ext_resource type="Texture2D" uid="uid://d0bojntuwrhck" path="res://Data/SkinResources/PlaylistTopRightCorner.tres" id="5_17lv8"]
+[ext_resource type="Texture2D" uid="uid://c8viqgj8uv5yh" path="res://Data/SkinResources/PlaylistMinimizeButtonNormal.tres" id="6_6jsav"]
+[ext_resource type="Texture2D" uid="uid://qg36ardl2ip0" path="res://Data/SkinResources/PlaylistMinimizeButtonPressed.tres" id="7_cujt6"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_jduyf"]
+[ext_resource type="Texture2D" uid="uid://wc57x2wc60q1" path="res://Data/SkinResources/PlaylistCloseButtonNormal.tres" id="8_c0tab"]
+[ext_resource type="Texture2D" uid="uid://cxk0cy7jmrluf" path="res://Data/SkinResources/PlaylistCloseButtonPressed.tres" id="9_700eo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2rine"]
 region = Rect2(0, 36, 18, 18)
@@ -26,6 +34,73 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 script = ExtResource("1_6dse3")
 Contents = NodePath("ContentContainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="TopLeftCornerTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("2_7wv81")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_gnf20")
+
+[node name="TitleTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("4_cwlo7")
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_gnf20")
+
+[node name="TopRightCornerTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+texture = ExtResource("5_17lv8")
+
+[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 11.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = ExtResource("6_6jsav")
+texture_pressed = ExtResource("7_cujt6")
+stretch_mode = 3
+
+[node name="CloseButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 4.0
+offset_right = 22.0
+offset_bottom = 11.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("8_c0tab")
+texture_pressed = ExtResource("9_700eo")
+stretch_mode = 3
+
+[node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
 
 [node name="HeaderContainer" type="MarginContainer" parent="."]
 visible = false
@@ -103,6 +178,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_jduyf")]
+visible = false
 layout_mode = 2
 
 [connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]

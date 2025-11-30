@@ -6,10 +6,11 @@ namespace GodAmp.Visualizer.Strategies;
 public partial class LineStrategy : VisualizerStrategy
 {
     [ExportGroup("Raw Waveform")]
-    [Export] public float Amplitude = 2.0f;
-    [Export] public float NoiseAmount = 0.07f;
-    [Export] public int SampleCount = 64;
-    [Export] public int PointsPerSegment = 5;
+    [Export] private float _amplitude = 2.0f;
+    [Export] private float _noiseAmount = 0.07f;
+    [Export] private int _sampleCount = 64;
+    [Export] private int _pointsPerSegment = 5;
+    [Export(PropertyHint.Range, "0.0,1.0")] private float _lineVerticalPosition = 0.75f;
         
     private Line2D _line;
     private AudioEffectSpectrumAnalyzerInstance _spectrum;
@@ -40,7 +41,7 @@ public partial class LineStrategy : VisualizerStrategy
     
     private void InitializePoints()
     {
-        _points = new Vector2[SampleCount];
+        _points = new Vector2[_sampleCount];
         ResetPoints();
     }
     
@@ -48,12 +49,12 @@ public partial class LineStrategy : VisualizerStrategy
     {
         float width = ViewportSize.X;
         float height = ViewportSize.Y;
-            
-        for (int i = 0; i < SampleCount; i++)
+
+        for (int i = 0; i < _sampleCount; i++)
         {
             _points[i] = new Vector2(
-                width * i / (SampleCount - 1),
-                height / 2
+                width * i / (_sampleCount - 1),
+                height * _lineVerticalPosition
             );
         }
     }
@@ -71,44 +72,44 @@ public partial class LineStrategy : VisualizerStrategy
     
     private void UpdateWaveform()
     {
-        float halfHeight = ViewportSize.Y / 2;
-            
-        float randomX = (float)(GD.RandRange(-RandomOffsetAmount, RandomOffsetAmount));
-        float randomY = (float)(GD.RandRange(-RandomOffsetAmount, RandomOffsetAmount));
+        float baselineHeight = ViewportSize.Y * _lineVerticalPosition;
 
-        for (int i = 0; i < SampleCount; i++)
+        float randomX = (float)GD.RandRange(-RandomOffsetAmount, RandomOffsetAmount);
+        float randomY = (float)GD.RandRange(-RandomOffsetAmount, RandomOffsetAmount);
+
+        for (int i = 0; i < _sampleCount; i++)
         {
             float hzMin = GetFrequencyForSampleIndex(i);
             float hzMax = GetFrequencyForSampleIndex(i + 1);
 
             float value = GetFrequencyRangeMagnitude(hzMin, hzMax);
-            value *= Amplitude;
-            value += GD.Randf() * NoiseAmount - (NoiseAmount * 0.5f);
+            value *= _amplitude;
+            value += GD.Randf() * _noiseAmount - _noiseAmount * 0.5f;
             _points[i] = new Vector2(
-                ViewportSize.X * i / (SampleCount - 1) + randomX,
-                halfHeight - (value * halfHeight) + randomY
+                ViewportSize.X * i / (_sampleCount - 1) + randomX,
+                baselineHeight - value * baselineHeight + randomY
             );
         }
 
-        var smoothPoints = GenerateCatmullRomPoints(_points, PointsPerSegment).ToArray();
+        var smoothPoints = GenerateCatmullRomPoints(_points, _pointsPerSegment).ToArray();
         _line.Points = smoothPoints;
     }
     
     private float GetFrequencyForSampleIndex(int index)
     {
-        return Mathf.Exp(Mathf.Lerp(Mathf.Log(20f), Mathf.Log(22050f), (float)index / SampleCount));
+        return Mathf.Exp(Mathf.Lerp(Mathf.Log(20f), Mathf.Log(22050f), (float)index / _sampleCount));
     }
     
     private float GetAverageAudioMagnitude()
     {
         float sum = 0f;
-        for (int i = 0; i < SampleCount; i++)
+        for (int i = 0; i < _sampleCount; i++)
         {
             float hzMin = GetFrequencyForSampleIndex(i);
             float hzMax = GetFrequencyForSampleIndex(i + 1);
             sum += GetFrequencyRangeMagnitude(hzMin, hzMax);
         }
-        return sum / SampleCount;
+        return sum / _sampleCount;
     }
     
     private float GetFrequencyRangeMagnitude(float minHz, float maxHz)
@@ -126,7 +127,7 @@ public partial class LineStrategy : VisualizerStrategy
             Vector2 p0 = i > 0 ? controlPoints[i - 1] : controlPoints[i];
             Vector2 p1 = controlPoints[i];
             Vector2 p2 = controlPoints[i + 1];
-            Vector2 p3 = (i + 2 < controlPoints.Length) ? controlPoints[i + 2] : controlPoints[i + 1];
+            Vector2 p3 = i + 2 < controlPoints.Length ? controlPoints[i + 2] : controlPoints[i + 1];
 
             for (int j = 0; j < pointsPerSegment; j++)
             {
@@ -135,7 +136,7 @@ public partial class LineStrategy : VisualizerStrategy
                 float t3 = t2 * t;
 
                 Vector2 interpolated = 0.5f * (
-                    (2f * p1) +
+                    2f * p1 +
                     (-p0 + p2) * t +
                     (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
                     (-p0 + 3f * p1 - 3f * p2 + p3) * t3
