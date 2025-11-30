@@ -15,7 +15,7 @@ public partial class SkinLoader : Node
     private const string TempExtractionFolder = "user://temp_skin/";
     private const string SkinsDirectoryName = "Skins";
     private const string BitmapFontPath = "res://Assets/Winamp/Raw/TEXT.png";
-    private const string BitmapNumberFontPath = "res://Assets/Winamp/Raw/TEXT.png";
+    private const string BitmapNumbersFontPath = "res://Assets/Winamp/Raw/NUMBERS.png";
 
     private static readonly Dictionary<string, ImageTexture> LoadedTextures = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, Image> LoadedImages = new(StringComparer.OrdinalIgnoreCase);
@@ -26,7 +26,9 @@ public partial class SkinLoader : Node
     private static string _currentSkinName;
 
     private static FontFile _bitmapFont;
-    private static Image _originalFontImage;
+    private static FontFile _bitmapNumbersFont;
+    private static Image _originalBitmapFontImage;
+    private static Image _originalBitmapNumbersFontImage;
 
     public override void _EnterTree()
     {
@@ -59,7 +61,9 @@ public partial class SkinLoader : Node
     private static void InitializeBitmapFont()
     {
         _bitmapFont = GD.Load<FontFile>(BitmapFontPath);
-        _originalFontImage = _bitmapFont.GetTextureImage(0, Vector2I.Zero, 0);
+        _bitmapNumbersFont = GD.Load<FontFile>(BitmapNumbersFontPath);
+        _originalBitmapFontImage = _bitmapFont.GetTextureImage(0, Vector2I.Zero, 0);
+        _originalBitmapNumbersFontImage = _bitmapNumbersFont.GetTextureImage(0, Vector2I.Zero, 0);
     }
 
     private static void LoadActiveSkin()
@@ -142,7 +146,8 @@ public partial class SkinLoader : Node
 
     private static void RestoreBitmapFont()
     {
-        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, _originalFontImage);
+        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, _originalBitmapFontImage);
+        _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, _originalBitmapNumbersFontImage);
         GD.Print("Restored original bitmap font texture");
     }
 
@@ -303,13 +308,9 @@ public partial class SkinLoader : Node
     private static void UpdateBitmapFont()
     {
         string matchingKey = FindMatchingImageKey("TEXT.PNG");
-        if (matchingKey == null)
-        {
-            GD.Print("No TEXT.png found in skin, keeping default font");
-            return;
-        }
-
         _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[matchingKey]);
+        matchingKey = FindMatchingImageKey("NUMBERS.PNG");
+        _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[matchingKey]);
         GD.Print("Updated bitmap font texture");
     }
 

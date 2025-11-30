@@ -158,23 +158,25 @@ text = "LINKIN PARK - NUMB"
 [node name="BitrateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
 layout_mode = 0
 offset_left = 110.0
-offset_top = -16.0
+offset_top = -17.0
 offset_right = 126.0
-offset_bottom = -6.0
+offset_bottom = -7.0
 theme_override_fonts/font = ExtResource("10_8kieg")
 theme_override_font_sizes/font_size = 3
 text = "000"
+horizontal_alignment = 2
 script = ExtResource("12_ixbbo")
 
 [node name="SampleRateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
 layout_mode = 0
 offset_left = 155.0
-offset_top = -16.0
+offset_top = -17.0
 offset_right = 166.0
-offset_bottom = -6.0
+offset_bottom = -7.0
 theme_override_fonts/font = ExtResource("10_8kieg")
 theme_override_font_sizes/font_size = 3
 text = "00"
+horizontal_alignment = 2
 script = ExtResource("12_ixbbo")
 
 [node name="TimeMinutesTensLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
