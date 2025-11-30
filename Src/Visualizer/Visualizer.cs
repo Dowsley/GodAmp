@@ -1,5 +1,4 @@
 using GodAmp.Components;
-using Godot;
 
 namespace GodAmp.Visualizer;
 
@@ -15,11 +14,11 @@ public partial class Visualizer : WindowPanelContainer
 
 	public void Pause()
 	{
-		_audioVisualizer.ProcessMode = Node.ProcessModeEnum.Disabled;
+		_audioVisualizer.ProcessMode = ProcessModeEnum.Disabled;
 	}
 	
 	public void Unpause()
 	{
-		_audioVisualizer.ProcessMode = Node.ProcessModeEnum.Inherit;
+		_audioVisualizer.ProcessMode = ProcessModeEnum.Inherit;
 	}
 }

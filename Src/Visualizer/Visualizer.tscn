@@ -1,30 +1,26 @@
-[gd_scene load_steps=16 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=20 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
-[ext_resource type="Texture2D" uid="uid://dspjst6ciuvy0" path="res://Data/SkinResources/PlaylistTopLeftCorner.tres" id="2_7wv81"]
-[ext_resource type="Texture2D" uid="uid://duaqnxdcf32o3" path="res://Data/SkinResources/PlaylistTopTilableBar.tres" id="3_gnf20"]
-[ext_resource type="Texture2D" uid="uid://g1tc2qlhfejw" path="res://Data/SkinResources/PlaylistTitlebar.tres" id="4_cwlo7"]
-[ext_resource type="Texture2D" uid="uid://d0bojntuwrhck" path="res://Data/SkinResources/PlaylistTopRightCorner.tres" id="5_17lv8"]
-[ext_resource type="Texture2D" uid="uid://c8viqgj8uv5yh" path="res://Data/SkinResources/PlaylistMinimizeButtonNormal.tres" id="6_6jsav"]
-[ext_resource type="Texture2D" uid="uid://qg36ardl2ip0" path="res://Data/SkinResources/PlaylistMinimizeButtonPressed.tres" id="7_cujt6"]
+[ext_resource type="Texture2D" uid="uid://6qyxmjpsp5gu" path="res://Data/SkinResources/VisualizerTopLeftCorner.tres" id="2_7wv81"]
+[ext_resource type="Texture2D" uid="uid://bkibrg5xs5inl" path="res://Data/SkinResources/VisualizerTopTilableBar.tres" id="3_cwlo7"]
+[ext_resource type="Texture2D" uid="uid://coj4eoyi1dw43" path="res://Data/SkinResources/VisualizerTitlebar.tres" id="4_7wv81"]
+[ext_resource type="Texture2D" uid="uid://dkkcq2jvv4s58" path="res://Data/SkinResources/VisualizerTopLeftCornerEnd.tres" id="4_gnf20"]
+[ext_resource type="Texture2D" uid="uid://cwv0lqctdihgq" path="res://Data/SkinResources/VisualizerTopRightCornerStart.tres" id="6_cwlo7"]
+[ext_resource type="Texture2D" uid="uid://bdkilg3i3gcm" path="res://Data/SkinResources/VisualizerTopRightCorner.tres" id="7_cwlo7"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_jduyf"]
-[ext_resource type="Texture2D" uid="uid://wc57x2wc60q1" path="res://Data/SkinResources/PlaylistCloseButtonNormal.tres" id="8_c0tab"]
-[ext_resource type="Texture2D" uid="uid://cxk0cy7jmrluf" path="res://Data/SkinResources/PlaylistCloseButtonPressed.tres" id="9_700eo"]
+[ext_resource type="Texture2D" uid="uid://cgm3dk1wrgc17" path="res://Data/SkinResources/VisualizerCloseButtonNormal.tres" id="8_qpg3j"]
+[ext_resource type="Texture2D" uid="uid://dmpwfopuxlbsa" path="res://Data/SkinResources/VisualizerCloseButtonPressed.tres" id="9_qpg3j"]
+[ext_resource type="Texture2D" uid="uid://b70wgp5ay8qlc" path="res://Data/SkinResources/VisualizerTilableLeftEdge.tres" id="10_c0tab"]
+[ext_resource type="Texture2D" uid="uid://bnbxbq2wgeeqq" path="res://Data/SkinResources/VisualizerLeftEdgeBottom.tres" id="11_700eo"]
+[ext_resource type="Texture2D" uid="uid://ugo2xivqi0pw" path="res://Data/SkinResources/EqualizerMiddleTexture.tres" id="11_c0tab"]
+[ext_resource type="Texture2D" uid="uid://d1hb4mm30y1ka" path="res://Data/SkinResources/VisualizerTilableRightEdge.tres" id="12_c0tab"]
+[ext_resource type="Texture2D" uid="uid://br1l3v8fy20q2" path="res://Data/SkinResources/VisualizerTilableBottomEdge.tres" id="14_5e0r8"]
+[ext_resource type="Texture2D" uid="uid://kqwskmh18fbo" path="res://Data/SkinResources/VisualizerRightEdgeBottom.tres" id="14_qpg3j"]
+[ext_resource type="Texture2D" uid="uid://bl2vrtdloq57o" path="res://Data/SkinResources/VisualizerBottomLeftCorner.tres" id="15_c0tab"]
+[ext_resource type="Texture2D" uid="uid://1o265qd5jybc" path="res://Data/SkinResources/VisualizerBottomRightCorner.tres" id="16_700eo"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2rine"]
-region = Rect2(0, 36, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7av1a"]
-region = Rect2(18, 0, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_piapn"]
-region = Rect2(36, 0, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dt48o"]
-region = Rect2(36, 18, 18, 18)
-
-[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("Contents")]
+[node name="Visualizer" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -33,7 +29,6 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 script = ExtResource("1_6dse3")
-Contents = NodePath("ContentContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -53,37 +48,39 @@ texture = ExtResource("2_7wv81")
 [node name="NinePatchRect" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-texture = ExtResource("3_gnf20")
+texture = ExtResource("3_cwlo7")
+
+[node name="TopLeftCornerEndTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("4_gnf20")
 
 [node name="TitleTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
-texture = ExtResource("4_cwlo7")
+texture = ExtResource("4_7wv81")
+
+[node name="TopRightCornerStartTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("6_cwlo7")
 
 [node name="NinePatchRect2" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-texture = ExtResource("3_gnf20")
+texture = ExtResource("3_cwlo7")
 
 [node name="TopRightCornerTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
-texture = ExtResource("5_17lv8")
-
-[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
-layout_mode = 0
-offset_left = 5.0
-offset_top = 4.0
-offset_right = 12.0
-offset_bottom = 11.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-toggle_mode = true
-texture_normal = ExtResource("6_6jsav")
-texture_pressed = ExtResource("7_cujt6")
-stretch_mode = 3
+texture = ExtResource("7_cwlo7")
 
 [node name="CloseButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
 layout_mode = 0
@@ -93,8 +90,8 @@ offset_right = 22.0
 offset_bottom = 11.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource("8_c0tab")
-texture_pressed = ExtResource("9_700eo")
+texture_normal = ExtResource("8_qpg3j")
+texture_pressed = ExtResource("9_qpg3j")
 stretch_mode = 3
 
 [node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
@@ -102,85 +99,76 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="HeaderContainer" type="MarginContainer" parent="."]
-visible = false
-custom_minimum_size = Vector2(0, 24)
+[node name="Middle" type="HBoxContainer" parent="VBoxContainer/AllContent"]
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 8
+size_flags_vertical = 3
+theme_override_constants/separation = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 6
+theme_override_constants/separation = 0
 
-[node name="NinePatchRect" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+[node name="TilableLeftEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer"]
+custom_minimum_size = Vector2(11, 29)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
+size_flags_horizontal = 0
+size_flags_vertical = 3
+texture = ExtResource("10_c0tab")
+region_rect = Rect2(0, 0, 11, 29)
 
-[node name="Label" type="Label" parent="HeaderContainer/HBoxContainer"]
+[node name="LeftEdgeBottomTexture" type="TextureRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "VISUALIZER"
+texture = ExtResource("11_700eo")
 
-[node name="NinePatchRect2" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
+[node name="MiddleTexture" type="TextureRect" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
+texture = ExtResource("11_c0tab")
+expand_mode = 2
+stretch_mode = 1
 
-[node name="MinimizeButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-toggle_mode = true
-texture_normal = SubResource("AtlasTexture_2rine")
-texture_pressed = SubResource("AtlasTexture_7av1a")
-stretch_mode = 3
-
-[node name="CloseButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_piapn")
-texture_pressed = SubResource("AtlasTexture_dt48o")
-stretch_mode = 3
-
-[node name="ContentContainer" type="MarginContainer" parent="."]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 12
-
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
-
-[node name="AudioVisualizer" parent="ContentContainer/MarginContainer" instance=ExtResource("2_2g1mo")]
+[node name="AudioVisualizer" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("2_2g1mo")]
 unique_name_in_owner = true
+layout_mode = 1
+size_flags_vertical = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer2"]
+custom_minimum_size = Vector2(8, 29)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+texture = ExtResource("12_c0tab")
+region_rect = Rect2(0, 0, 8, 29)
+
+[node name="RightEdgeBottomTexture" type="TextureRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("14_qpg3j")
+
+[node name="Bottom" type="HBoxContainer" parent="VBoxContainer/AllContent"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="BottomLeftCornerTexture" type="TextureRect" parent="VBoxContainer/AllContent/Bottom"]
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("15_c0tab")
+
+[node name="BottomTilableTexture" type="TextureRect" parent="VBoxContainer/AllContent/Bottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("14_5e0r8")
+
+[node name="BottomRightCornerTexture" type="TextureRect" parent="VBoxContainer/AllContent/Bottom"]
+layout_mode = 2
+texture = ExtResource("16_700eo")
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_jduyf")]
 visible = false
 layout_mode = 2
 
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

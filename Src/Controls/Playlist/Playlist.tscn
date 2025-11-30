@@ -14,19 +14,19 @@
 [ext_resource type="PackedScene" uid="uid://c8do4imjy7rnv" path="res://Src/Controls/Playlist/ButtonDropdowns/AddButtonDropdown.tscn" id="9_bcdvx"]
 [ext_resource type="PackedScene" uid="uid://cvky7cixi5gbr" path="res://Src/Controls/Playlist/ButtonDropdowns/RemoveButtonDropdown.tscn" id="10_ibn1u"]
 [ext_resource type="PackedScene" uid="uid://ryfqbifwt78y" path="res://Src/Controls/Playlist/ButtonDropdowns/SelectButtonDropdown.tscn" id="11_esdbs"]
-[ext_resource type="Texture2D" uid="uid://cnt4ydi16ep40" path="res://Data/SkinResources/PlaylistTilableLeftEdge.tres" id="11_ybvv7"]
+[ext_resource type="Texture2D" uid="uid://cnt4ydi16ep40" path="res://Data/SkinResources/PlaylistTilableLeftEdge.tres" id="11_kvkyn"]
 [ext_resource type="Texture2D" uid="uid://dstelo754087c" path="res://Data/SkinResources/PlaylistMiddleTexture.tres" id="12_aygep"]
 [ext_resource type="PackedScene" uid="uid://dmmlyylsgb8qx" path="res://Src/Controls/Playlist/ButtonDropdowns/MiscButtonDropdown.tscn" id="12_bltap"]
+[ext_resource type="Texture2D" uid="uid://wd0l6njpwwa7" path="res://Data/SkinResources/PlaylistTilableBottomEdge.tres" id="13_7604m"]
 [ext_resource type="PackedScene" uid="uid://b2jb8pn7u1pk5" path="res://Src/Controls/Playlist/ButtonDropdowns/ListOptionsButtonDropdown.tscn" id="13_esdbs"]
-[ext_resource type="Texture2D" uid="uid://c4d6wfd07o5xh" path="res://Data/SkinResources/PlaylistTilableRightEdge.tres" id="13_ocucf"]
-[ext_resource type="Texture2D" uid="uid://wd0l6njpwwa7" path="res://Data/SkinResources/PlaylistTilableBottomEdge.tres" id="14_ocucf"]
-[ext_resource type="Texture2D" uid="uid://b2gvrucfukmad" path="res://Data/SkinResources/PlaylistButtonsArea.tres" id="15_l1iyi"]
+[ext_resource type="Texture2D" uid="uid://c4d6wfd07o5xh" path="res://Data/SkinResources/PlaylistTilableRightEdge.tres" id="13_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://b2gvrucfukmad" path="res://Data/SkinResources/PlaylistButtonsArea.tres" id="14_7604m"]
 [ext_resource type="Texture2D" uid="uid://5fkrqwagf1u0" path="res://Data/SkinResources/PlaylistAddButton.tres" id="16_l1iyi"]
 [ext_resource type="Texture2D" uid="uid://bcd8n3gl33yf0" path="res://Data/SkinResources/PlaylistRemoveButton.tres" id="17_xtgbh"]
 [ext_resource type="Texture2D" uid="uid://ff6fn5glq31w" path="res://Data/SkinResources/PlaylistSelectButton.tres" id="18_28pe4"]
 [ext_resource type="Texture2D" uid="uid://dm8h3chsour0o" path="res://Data/SkinResources/PlaylistMiscButton.tres" id="19_7604m"]
 [ext_resource type="Texture2D" uid="uid://bhlcuq0n0o35r" path="res://Data/SkinResources/PlaylistSecondaryVisualizationArea.tres" id="20_7604m"]
-[ext_resource type="Texture2D" uid="uid://8i6jdrj4bx7d" path="res://Data/SkinResources/PlaylistControlArea.tres" id="21_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://8i6jdrj4bx7d" path="res://Data/SkinResources/PlaylistControlArea.tres" id="20_kvkyn"]
 [ext_resource type="Texture2D" uid="uid://jn8fnj8u2o73" path="res://Data/SkinResources/PlaylistListOptionsButton.tres" id="22_kvkyn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibn1u"]
@@ -133,7 +133,7 @@ theme_override_constants/separation = 0
 custom_minimum_size = Vector2(25, 29)
 layout_mode = 2
 size_flags_horizontal = 0
-texture = ExtResource("11_ybvv7")
+texture = ExtResource("11_kvkyn")
 region_rect = Rect2(0, 0, 25, 29)
 
 [node name="MiddleTexture" type="TextureRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
@@ -146,7 +146,7 @@ stretch_mode = 1
 [node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
 custom_minimum_size = Vector2(25, 19)
 layout_mode = 2
-texture = ExtResource("13_ocucf")
+texture = ExtResource("13_kvkyn")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ContentContainer"]
 layout_mode = 2
@@ -174,7 +174,7 @@ size_flags_vertical = 3
 [node name="TilableBottomEdge" type="NinePatchRect" parent="VBoxContainer/AllContent"]
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-texture = ExtResource("14_ocucf")
+texture = ExtResource("13_7604m")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/TilableBottomEdge"]
 layout_mode = 1
@@ -189,7 +189,7 @@ alignment = 2
 [node name="ButtonsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 2
-texture = ExtResource("15_l1iyi")
+texture = ExtResource("14_7604m")
 
 [node name="AddButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
 layout_mode = 2
@@ -252,7 +252,7 @@ texture = ExtResource("20_7604m")
 [node name="ControlsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
-texture = ExtResource("21_kvkyn")
+texture = ExtResource("20_kvkyn")
 
 [node name="ListOptionsButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea"]
 layout_mode = 0
