@@ -36,6 +36,12 @@ public partial class WindowPanelContainer : PanelContainer
 
 	public override void _Process(double delta)
 	{
+		if (_dragging && !Input.IsMouseButtonPressed(MouseButton.Left))
+		{
+			_dragging = false;
+			return;
+		}
+		
 		if (_dragging && !MoveGlobalWindow)
 		{
 			GlobalPosition = GetGlobalMousePosition() - _dragOffset;

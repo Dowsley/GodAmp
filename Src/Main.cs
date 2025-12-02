@@ -44,6 +44,8 @@ public partial class Main : HBoxContainer
 		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
 		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
 		_originalWindowSize = new Vector2I(width, height);
+		
+		CenterWindow();
 
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
@@ -502,6 +504,15 @@ public partial class Main : HBoxContainer
 	{
 		GetWindow().Size = new Vector2I(_originalWindowSize.X * multiplier, _originalWindowSize.Y * multiplier);
 		SettingsManager.Instance.SetZoomMode(multiplier);
+		CenterWindow();
+	}
+	
+	private void CenterWindow()
+	{
+		var screenSize = DisplayServer.ScreenGetSize();
+		var windowSize = GetWindow().Size;
+		var centeredPosition = (screenSize - windowSize) / 2;
+		DisplayServer.WindowSetPosition(centeredPosition);
 	}
 
 	private void OnEqualizerCloseButtonClicked()

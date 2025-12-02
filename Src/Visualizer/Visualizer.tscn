@@ -168,7 +168,7 @@ layout_mode = 2
 texture = ExtResource("16_700eo")
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_jduyf")]
-visible = false
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]
