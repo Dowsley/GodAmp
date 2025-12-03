@@ -20,8 +20,8 @@ public partial class MasterPanel : WindowPanelContainer
 	[Export] public TextureButton TogglePlaylistButton;
 	[Export] private MarqueeLabel _masterLabel;
 	[Export] private HSlider _positionSeekerSlider;
-	[Export] private HSlider _volumeSlider;
-	[Export] private HSlider _pannerAudioSlider;
+	[Export] private SkinnableHSlider _volumeSlider;
+	[Export] private SkinnableHSlider _pannerAudioSlider;
 	[Export] private Label _bitrateLabel;
 	[Export] private Label _sampleRateLabel;
 	[ExportSubgroup("Time display")]

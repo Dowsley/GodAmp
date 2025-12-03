@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://cpme6jm30nl1o"]
+[gd_scene load_steps=53 format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
 [ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="2_j1eng"]
@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://c36trldiqrjwr" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="9_m25c3"]
 [ext_resource type="Texture2D" uid="uid://7jj1x5twau4e" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="10_2gtsh"]
 [ext_resource type="FontFile" uid="uid://dnt8jdk6j4exq" path="res://Assets/Winamp/Raw/TEXT.png" id="10_8kieg"]
-[ext_resource type="Texture2D" uid="uid://c1g6ac0gxrkxf" path="res://Data/SkinResources/VolumeSlider.tres" id="10_b8aew"]
+[ext_resource type="Texture2D" uid="uid://b4ro2wogdqcf8" path="res://Data/SkinResources/VolumeSlider.tres" id="10_b8aew"]
 [ext_resource type="Texture2D" uid="uid://bjfmxtdq2kt0l" path="res://Data/SkinResources/VolumeSliderGrabberHighlight.tres" id="10_bgj4f"]
 [ext_resource type="Texture2D" uid="uid://ck2phyu241jwi" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="11_j1eng"]
 [ext_resource type="Texture2D" uid="uid://dw2hupkgvxcj5" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="11_pboy1"]
@@ -30,6 +30,7 @@
 [ext_resource type="Texture2D" uid="uid://b2t1kuia68x2n" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="15_6x7f4"]
 [ext_resource type="Texture2D" uid="uid://cejh2ucgorivr" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="15_81lhg"]
 [ext_resource type="Texture2D" uid="uid://0slai6wqnltg" path="res://Data/SkinResources/PositionSeekerGrabberHighlight.tres" id="16_6x7f4"]
+[ext_resource type="Script" uid="uid://bgv63pklc41b7" path="res://Src/Controls/MasterPanel/SkinnableHSlider.cs" id="16_13jth"]
 [ext_resource type="Texture2D" uid="uid://767yrevn2quh" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="16_b6q8b"]
 [ext_resource type="Texture2D" uid="uid://cgcywfbr7bmo6" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="17_6nk5l"]
 [ext_resource type="Texture2D" uid="uid://cou0jaj38whh" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="18_b7f5n"]
@@ -255,7 +256,7 @@ theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_6x7f4")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_b8aew")
 max_value = 1.0
 step = 0.01
-value = 0.5
+script = ExtResource("16_13jth")
 
 [node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(38, 14)
@@ -272,6 +273,9 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_bgj4f"
 min_value = -1.0
 max_value = 1.0
 step = 0.1
+script = ExtResource("16_13jth")
+TextureX = 9
+TextureWidth = 38
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer"]
 layout_mode = 2
@@ -410,11 +414,7 @@ layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
 [connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
 [connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]

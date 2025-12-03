@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://dvp802eqhf7cb"]
+
+[ext_resource type="Texture2D" uid="uid://cwonrpeyj5ynv" path="res://Assets/Winamp/Raw/EQMAIN.png" id="1_vp077"]
+
+[resource]
+atlas = ExtResource("1_vp077")
+region = Rect2(28, 229, 14, 63)

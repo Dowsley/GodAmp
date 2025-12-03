@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=43 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" uid="uid://bjkjs64jbeujb" path="res://Src/Controls/Equalizer/Equalizer.cs" id="1_3v461"]
 [ext_resource type="Texture2D" uid="uid://c58qh2npimswe" path="res://Data/SkinResources/EqualizerBackground.tres" id="2_h2kye"]
@@ -17,11 +17,99 @@
 [ext_resource type="Texture2D" uid="uid://crl3vq30tyhg" path="res://Data/SkinResources/PresetsButtonDisabled.tres" id="14_mphak"]
 [ext_resource type="Texture2D" uid="uid://dfkhvaib7f14j" path="res://Data/SkinResources/EqualizerSliderGrabber.tres" id="15_rf8gf"]
 [ext_resource type="Texture2D" uid="uid://tkyvg1a0anqx" path="res://Data/SkinResources/EqualizerSliderGrabberHighlight.tres" id="16_632ty"]
-[ext_resource type="StyleBox" uid="uid://qwofgnr385yl" path="res://Data/Others/EqualizerSliderStyle.tres" id="16_rf8gf"]
+[ext_resource type="Texture2D" uid="uid://bbt4epo2qnpqx" path="res://Data/SkinResources/EqualizerSlider.tres" id="17_mphak"]
+[ext_resource type="Script" uid="uid://cqhi8h1ap7eer" path="res://Src/Controls/Equalizer/SkinnableVSlider.cs" id="18_w3pak"]
+[ext_resource type="Texture2D" uid="uid://codm2vvfxtxua" path="res://Data/SkinResources/EqualizerSlider60.tres" id="19_o1jqx"]
+[ext_resource type="Texture2D" uid="uid://bwidgvmt8rjmn" path="res://Data/SkinResources/EqualizerSlider170.tres" id="20_dkyav"]
+[ext_resource type="Texture2D" uid="uid://j2ewoxudpsp0" path="res://Data/SkinResources/EqualizerSlider600.tres" id="20_o1jqx"]
+[ext_resource type="Texture2D" uid="uid://div38p4iyv0u6" path="res://Data/SkinResources/EqualizerSlider310.tres" id="21_u6mml"]
+[ext_resource type="Texture2D" uid="uid://dffq0iyl0j0fq" path="res://Data/SkinResources/EqualizerSlider1K.tres" id="23_y3etc"]
+[ext_resource type="Texture2D" uid="uid://c0f28l6rc2661" path="res://Data/SkinResources/EqualizerSlider3K.tres" id="24_kuyhs"]
+[ext_resource type="Texture2D" uid="uid://cps88cxnwgsj1" path="res://Data/SkinResources/EqualizerSlider6K.tres" id="25_t06ms"]
+[ext_resource type="Texture2D" uid="uid://dvp802eqhf7cb" path="res://Data/SkinResources/EqualizerSlider12K.tres" id="26_opqgq"]
+[ext_resource type="Texture2D" uid="uid://bu122ogrn7xrj" path="res://Data/SkinResources/EqualizerSlider14K.tres" id="27_omypg"]
+[ext_resource type="Texture2D" uid="uid://cchwb5dfa62no" path="res://Data/SkinResources/EqualizerSlider16K.tres" id="28_omypg"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dkyav"]
+texture = ExtResource("17_mphak")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ya3m1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rf8gf"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u6mml"]
+texture = ExtResource("19_o1jqx")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_o1jqx"]
+texture = ExtResource("20_dkyav")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y3etc"]
+texture = ExtResource("21_u6mml")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kuyhs"]
+texture = ExtResource("20_o1jqx")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t06ms"]
+texture = ExtResource("23_y3etc")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_opqgq"]
+texture = ExtResource("24_kuyhs")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_omypg"]
+texture = ExtResource("25_t06ms")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tute8"]
+texture = ExtResource("26_opqgq")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1cnjl"]
+texture = ExtResource("27_omypg")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uxdu4"]
+texture = ExtResource("28_omypg")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
 [node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "Contents")]
 custom_minimum_size = Vector2(275, 116)
@@ -131,12 +219,13 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_dkyav")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 step = 0.1
+script = ExtResource("18_w3pak")
 
 [node name="60Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -147,11 +236,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_u6mml")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="170Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -162,11 +252,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_o1jqx")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="310Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -177,11 +268,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_y3etc")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="600Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -192,11 +284,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_kuyhs")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="1KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -207,11 +300,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_t06ms")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="3KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -222,11 +316,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_opqgq")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="6KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -237,11 +332,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_omypg")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="12KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -252,11 +348,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_tute8")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="14KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -267,11 +364,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_1cnjl")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="16KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
@@ -282,11 +380,12 @@ size_flags_horizontal = 6
 focus_mode = 0
 theme_override_icons/grabber = ExtResource("15_rf8gf")
 theme_override_icons/grabber_highlight = ExtResource("16_632ty")
-theme_override_styles/slider = ExtResource("16_rf8gf")
+theme_override_styles/slider = SubResource("StyleBoxTexture_uxdu4")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_r0ulg")]
 custom_minimum_size = Vector2(0, 14)

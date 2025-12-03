@@ -13,11 +13,7 @@ public partial class DraggablePanel : Panel
 		
 		if (@event is InputEventMouseButton mouseEvent)
 		{
-			if (mouseEvent.Pressed && GetGlobalRect().HasPoint(mouseEvent.GlobalPosition))
-			{
-				EmitSignal(SignalName.OnDraggablePanelInput, @event);
-			}
-			else if (!mouseEvent.Pressed)
+			if (mouseEvent.Pressed && GetGlobalRect().HasPoint(mouseEvent.GlobalPosition) || !mouseEvent.Pressed)
 			{
 				EmitSignal(SignalName.OnDraggablePanelInput, @event);
 			}

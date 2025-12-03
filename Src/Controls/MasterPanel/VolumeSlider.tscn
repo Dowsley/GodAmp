@@ -1,0 +1,34 @@
+[gd_scene load_steps=8 format=3 uid="uid://mfux1ywkthk2"]
+
+[ext_resource type="Texture2D" uid="uid://bv2vu3yypki2e" path="res://Data/SkinResources/VolumeSliderGrabber.tres" id="1_5x7i1"]
+[ext_resource type="Texture2D" uid="uid://bjfmxtdq2kt0l" path="res://Data/SkinResources/VolumeSliderGrabberHighlight.tres" id="2_4f05x"]
+[ext_resource type="Texture2D" uid="uid://b4ro2wogdqcf8" path="res://Data/SkinResources/VolumeSlider.tres" id="3_4f05x"]
+[ext_resource type="Script" uid="uid://bgv63pklc41b7" path="res://Src/Controls/MasterPanel/SkinnableHSlider.cs" id="4_4f05x"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6x7f4"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+texture = ExtResource("3_4f05x")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6x7f4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b8aew"]
+
+[node name="VolumeSlider" type="HSlider"]
+custom_minimum_size = Vector2(68, 14)
+size_flags_horizontal = 3
+size_flags_vertical = 5
+focus_mode = 1
+theme_override_constants/grabber_offset = -1
+theme_override_icons/grabber = ExtResource("1_5x7i1")
+theme_override_icons/grabber_highlight = ExtResource("2_4f05x")
+theme_override_styles/slider = SubResource("StyleBoxTexture_6x7f4")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_6x7f4")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_b8aew")
+max_value = 1.0
+step = 0.01
+script = ExtResource("4_4f05x")
+
+[connection signal="value_changed" from="." to="." method="OnValueChanged"]
