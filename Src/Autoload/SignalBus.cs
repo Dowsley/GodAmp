@@ -19,7 +19,9 @@ public partial class SignalBus : Node
 	[Signal] public delegate void SelectAllRequestedEventHandler();
 	[Signal] public delegate void LoadPlaylistRequestedEventHandler();
 	[Signal] public delegate void SavePlaylistRequestedEventHandler();
-	
+	[Signal] public delegate void ZoomModeRequestedEventHandler(int multiplier);
+	[Signal] public delegate void SkinChangedEventHandler();
+
 	// For Master Label
 	[Signal] public delegate void LockMasterLabelEventHandler(bool byPositionSeeker=false);
 	[Signal] public delegate void UnlockMasterLabelEventHandler();

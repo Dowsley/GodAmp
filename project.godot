@@ -27,9 +27,12 @@ buses/default_bus_layout="res://DefaultBusLayout.tres"
 
 SignalBus="*res://Src/Autoload/SignalBus.cs"
 SettingsManager="*res://Src/Autoload/SettingsManager.cs"
+SkinLoader="*res://Src/Autoload/SkinLoader.cs"
 
 [display]
 
+window/size/viewport_width=623
+window/size/viewport_height=348
 window/size/borderless=true
 window/stretch/mode="canvas_items"
 
@@ -39,7 +42,7 @@ project/assembly_name="GodAmp"
 
 [gui]
 
-theme/custom="uid://dikbou1c1od2v"
+theme/custom="uid://bsacd6apsccmu"
 
 [input]
 

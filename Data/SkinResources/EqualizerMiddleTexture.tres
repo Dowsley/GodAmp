@@ -1,0 +1,12 @@
+[gd_resource type="AtlasTexture" load_steps=3 format=3 uid="uid://ugo2xivqi0pw"]
+
+[sub_resource type="Gradient" id="Gradient_u3e15"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_n3o8e"]
+gradient = SubResource("Gradient_u3e15")
+
+[resource]
+atlas = SubResource("GradientTexture1D_n3o8e")
+region = Rect2(118, 72, 7, 7)

@@ -10,6 +10,7 @@ public partial class SettingsManager : Node
 	private const string LastPlaylistPathKey = "last_playlist_path";
 	private const string ZoomModeKey = "zoom_mode";
 	private const string VolumeKey = "volume";
+	private const string ActiveSkinKey = "active_skin";
 
 	[Signal] public delegate void SettingChangedEventHandler(string key, Variant value);
 	[Signal] public delegate void LastPlaylistPathChangedEventHandler(string path);
@@ -102,7 +103,7 @@ public partial class SettingsManager : Node
 	}
 
 	/// <summary>
-	/// Gets the zoom mode (0 = 1x, 1 = 2x).
+	/// Gets the zoom mode multiplier
 	/// </summary>
 	public int GetZoomMode()
 	{
@@ -110,7 +111,7 @@ public partial class SettingsManager : Node
 	}
 
 	/// <summary>
-	/// Sets the zoom mode (0 = 1x, 1 = 2x).
+	/// Sets the zoom mode multiplier
 	/// </summary>
 	public void SetZoomMode(int mode)
 	{
@@ -131,6 +132,22 @@ public partial class SettingsManager : Node
 	public void SetVolume(float volume)
 	{
 		SetSetting(VolumeKey, volume);
+	}
+
+	/// <summary>
+	/// Gets the active skin filename.
+	/// </summary>
+	public string GetActiveSkin()
+	{
+		return (string)GetSetting(ActiveSkinKey, "");
+	}
+
+	/// <summary>
+	/// Sets the active skin filename.
+	/// </summary>
+	public void SetActiveSkin(string skinFileName)
+	{
+		SetSetting(ActiveSkinKey, skinFileName);
 	}
 
 	/// <summary>

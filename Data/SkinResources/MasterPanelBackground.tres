@@ -1,0 +1,6 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://c4flab18dxnq6"]
+
+[ext_resource type="Texture2D" uid="uid://dfbfxsuj7tt6p" path="res://Assets/Winamp/Raw/MAIN.png" id="1_orx7t"]
+
+[resource]
+atlas = ExtResource("1_orx7t")

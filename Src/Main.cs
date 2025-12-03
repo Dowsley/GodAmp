@@ -19,11 +19,12 @@ public partial class Main : HBoxContainer
 	[ExportGroup("Config")]
 	[Export] public string DefaultSongsPath;
 	
-	private MasterPanel _masterPanel;
-	private Equalizer _equalizer;
-	private Playlist _playlist;
-	private Visualizer.Visualizer _visualizer;
-	private TrackPlayer _trackPlayer;
+	[ExportGroup("References")]
+	[Export] private MasterPanel _masterPanel;
+	[Export] private Equalizer _equalizer;
+	[Export] private Playlist _playlist;
+	[Export] private Visualizer.Visualizer _visualizer;
+	[Export] private TrackPlayer _trackPlayer;
 
 	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
@@ -36,14 +37,15 @@ public partial class Main : HBoxContainer
 	private bool _masterLabelLockedByPositionSeeker = false;
 
 	private FileDialog _lastUsedFileDialog;
+	private Vector2I _originalWindowSize;
 	
 	public override void _Ready()
 	{
-		_masterPanel = GetNode<MasterPanel>("%MasterPanel");
-		_equalizer = GetNode<Equalizer>("%Equalizer");
-		_playlist = GetNode<Playlist>("%Playlist");
-		_visualizer = GetNode<Visualizer.Visualizer>("%Visualizer");
-		_trackPlayer = GetNode<TrackPlayer>("%TrackPlayer");
+		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
+		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
+		_originalWindowSize = new Vector2I(width, height);
+		
+		CenterWindow();
 
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
@@ -97,6 +99,7 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
+		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
 
 		LoadSettingsState();
 	}
@@ -481,6 +484,35 @@ public partial class Main : HBoxContainer
 		float savedVolume = SettingsManager.Instance.GetVolume();
 		_masterPanel.SetVolumeValue(savedVolume);
 		_trackPlayer.VolumeLinear = savedVolume;
+
+		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
+		int multiplier = savedZoomMode switch
+		{
+			0 => 1,
+			1 => 2,
+			_ => savedZoomMode
+		};
+		SetZoomMode(multiplier);
+	}
+
+	private void OnZoomModeRequested(int multiplier)
+	{
+		SetZoomMode(multiplier);
+	}
+
+	private void SetZoomMode(int multiplier)
+	{
+		GetWindow().Size = new Vector2I(_originalWindowSize.X * multiplier, _originalWindowSize.Y * multiplier);
+		SettingsManager.Instance.SetZoomMode(multiplier);
+		CenterWindow();
+	}
+	
+	private void CenterWindow()
+	{
+		var screenSize = DisplayServer.ScreenGetSize();
+		var windowSize = GetWindow().Size;
+		var centeredPosition = (screenSize - windowSize) / 2;
+		DisplayServer.WindowSetPosition(centeredPosition);
 	}
 
 	private void OnEqualizerCloseButtonClicked()

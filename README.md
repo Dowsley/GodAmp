@@ -47,7 +47,7 @@ As far as I know, they are royalty/copyright-free, but please do let me know if 
 - [X] Actual window
 - [X] Functional playlists
 - [ ] Full theme support
-- [ ] Working Frequency panels
+- [ ] Working frequency spline panels
 - [ ] More visualizers (and flexibility for them)
 - [ ] Multiple windows
 - [ ] Integration with special keys

@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://cxbsopf6tgkp6"]
+
+[ext_resource type="Texture2D" uid="uid://dfssuct8b3iyu" path="res://Assets/Winamp/Raw/BALANCE.png" id="1_1l37h"]
+
+[resource]
+atlas = ExtResource("1_1l37h")
+region = Rect2(15, 422, 14, 11)

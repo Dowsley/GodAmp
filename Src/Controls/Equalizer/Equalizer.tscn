@@ -1,534 +1,408 @@
-[gd_scene load_steps=24 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=43 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" uid="uid://bjkjs64jbeujb" path="res://Src/Controls/Equalizer/Equalizer.cs" id="1_3v461"]
-[ext_resource type="PackedScene" uid="uid://dnyy6ilxelte7" path="res://Src/Components/MainNinePatchRect.tscn" id="2_i2ahh"]
-[ext_resource type="Texture2D" uid="uid://crh2eoxv0mpu1" path="res://Assets/Winamp/volume_vertical.png" id="3_lwmiq"]
-[ext_resource type="Texture2D" uid="uid://c8cfjnp3hgv01" path="res://Assets/Winamp/eq_buttons_2x.png" id="3_olmkg"]
-[ext_resource type="Texture2D" uid="uid://br3476egyf47m" path="res://Assets/Winamp/titlebar_2x.png" id="4_ai5qi"]
-[ext_resource type="Texture2D" uid="uid://cgx6yr1rwv6qc" path="res://Assets/Winamp/bars_2x.png" id="5_y504q"]
+[ext_resource type="Texture2D" uid="uid://c58qh2npimswe" path="res://Data/SkinResources/EqualizerBackground.tres" id="2_h2kye"]
+[ext_resource type="Texture2D" uid="uid://b0t8obmsk2i8y" path="res://Data/SkinResources/EqualizerTitleBar.tres" id="3_f3of5"]
+[ext_resource type="Texture2D" uid="uid://b1l5t640rkgqn" path="res://Data/SkinResources/EqualizerMinimizeButtonNormal.tres" id="4_ne4qw"]
+[ext_resource type="Texture2D" uid="uid://x4rfo6tnvekc" path="res://Data/SkinResources/EqualizerMinimizeButtonPressed.tres" id="5_4k323"]
+[ext_resource type="Texture2D" uid="uid://bfqq6k4lvgetp" path="res://Data/SkinResources/EqualizerCloseButtonNormal.tres" id="6_klai7"]
+[ext_resource type="Texture2D" uid="uid://gjbj1xm2lqof" path="res://Data/SkinResources/EqualizerCloseButtonPressed.tres" id="7_k83ll"]
 [ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_r0ulg"]
+[ext_resource type="Texture2D" uid="uid://w6owntvxdsg3" path="res://Data/SkinResources/EqualizerToggleButtonNormal.tres" id="8_f3of5"]
+[ext_resource type="Texture2D" uid="uid://bg575vkt0rmad" path="res://Data/SkinResources/EqualizerToggleButtonPressed.tres" id="9_ya3m1"]
+[ext_resource type="Texture2D" uid="uid://bgwq6y4v7mt62" path="res://Data/SkinResources/AutoEqualizeToggleButtonNormal.tres" id="10_rf8gf"]
+[ext_resource type="Texture2D" uid="uid://br7at5fhal03e" path="res://Data/SkinResources/AutoEqualizeToggleButtonPressed.tres" id="11_632ty"]
+[ext_resource type="Texture2D" uid="uid://bmlo3h5exxdvv" path="res://Data/SkinResources/AutoEqualizeToggleButtonDisabled.tres" id="12_w3pak"]
+[ext_resource type="Texture2D" uid="uid://c3hlpnorcqfvq" path="res://Data/SkinResources/PresetsButtonNormal.tres" id="13_cqcx4"]
+[ext_resource type="Texture2D" uid="uid://crl3vq30tyhg" path="res://Data/SkinResources/PresetsButtonDisabled.tres" id="14_mphak"]
+[ext_resource type="Texture2D" uid="uid://dfkhvaib7f14j" path="res://Data/SkinResources/EqualizerSliderGrabber.tres" id="15_rf8gf"]
+[ext_resource type="Texture2D" uid="uid://tkyvg1a0anqx" path="res://Data/SkinResources/EqualizerSliderGrabberHighlight.tres" id="16_632ty"]
+[ext_resource type="Texture2D" uid="uid://bbt4epo2qnpqx" path="res://Data/SkinResources/EqualizerSlider.tres" id="17_mphak"]
+[ext_resource type="Script" uid="uid://cqhi8h1ap7eer" path="res://Src/Controls/Equalizer/SkinnableVSlider.cs" id="18_w3pak"]
+[ext_resource type="Texture2D" uid="uid://codm2vvfxtxua" path="res://Data/SkinResources/EqualizerSlider60.tres" id="19_o1jqx"]
+[ext_resource type="Texture2D" uid="uid://bwidgvmt8rjmn" path="res://Data/SkinResources/EqualizerSlider170.tres" id="20_dkyav"]
+[ext_resource type="Texture2D" uid="uid://j2ewoxudpsp0" path="res://Data/SkinResources/EqualizerSlider600.tres" id="20_o1jqx"]
+[ext_resource type="Texture2D" uid="uid://div38p4iyv0u6" path="res://Data/SkinResources/EqualizerSlider310.tres" id="21_u6mml"]
+[ext_resource type="Texture2D" uid="uid://dffq0iyl0j0fq" path="res://Data/SkinResources/EqualizerSlider1K.tres" id="23_y3etc"]
+[ext_resource type="Texture2D" uid="uid://c0f28l6rc2661" path="res://Data/SkinResources/EqualizerSlider3K.tres" id="24_kuyhs"]
+[ext_resource type="Texture2D" uid="uid://cps88cxnwgsj1" path="res://Data/SkinResources/EqualizerSlider6K.tres" id="25_t06ms"]
+[ext_resource type="Texture2D" uid="uid://dvp802eqhf7cb" path="res://Data/SkinResources/EqualizerSlider12K.tres" id="26_opqgq"]
+[ext_resource type="Texture2D" uid="uid://bu122ogrn7xrj" path="res://Data/SkinResources/EqualizerSlider14K.tres" id="27_omypg"]
+[ext_resource type="Texture2D" uid="uid://cchwb5dfa62no" path="res://Data/SkinResources/EqualizerSlider16K.tres" id="28_omypg"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_v2ypu"]
-atlas = ExtResource("4_ai5qi")
-region = Rect2(0, 36, 18, 18)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dkyav"]
+texture = ExtResource("17_mphak")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_087c6"]
-atlas = ExtResource("4_ai5qi")
-region = Rect2(18, 0, 18, 18)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ya3m1"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_sxrbh"]
-atlas = ExtResource("4_ai5qi")
-region = Rect2(36, 0, 18, 18)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rf8gf"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6t30a"]
-atlas = ExtResource("4_ai5qi")
-region = Rect2(36, 18, 18, 18)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u6mml"]
+texture = ExtResource("19_o1jqx")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_y504q"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(20, 238, 50, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_o1jqx"]
+texture = ExtResource("20_dkyav")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_r0ulg"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(138, 238, 50, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y3etc"]
+texture = ExtResource("21_u6mml")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_olmkg"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(72, 238, 64, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kuyhs"]
+texture = ExtResource("20_o1jqx")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_57iu7"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(190, 238, 64, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t06ms"]
+texture = ExtResource("23_y3etc")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_iof0s"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(308, 238, 64, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_opqgq"]
+texture = ExtResource("24_kuyhs")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aox6d"]
-atlas = ExtResource("3_olmkg")
-region = Rect2(448, 352, 88, 24)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_omypg"]
+texture = ExtResource("25_t06ms")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_olmkg"]
-color = Color(0.76662, 0.76662, 0.766619, 1)
-grow_begin = 3.0
-grow_end = 3.0
-thickness = 2
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tute8"]
+texture = ExtResource("26_opqgq")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aqe8w"]
-atlas = ExtResource("3_lwmiq")
-region = Rect2(3, 0, 7, 65)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1cnjl"]
+texture = ExtResource("27_omypg")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lwmiq"]
-content_margin_left = 6.0
-content_margin_top = 8.0
-content_margin_right = 6.0
-content_margin_bottom = 8.0
-texture = SubResource("AtlasTexture_aqe8w")
-texture_margin_left = 1.0
-texture_margin_top = 1.0
-texture_margin_right = 1.0
-texture_margin_bottom = 1.0
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uxdu4"]
+texture = ExtResource("28_omypg")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_i2ahh"]
-load_path = "res://.godot/imported/volume_vertical.png-2de75dd7c6c75763b44346a6ee7347aa.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lwmiq"]
-atlas = SubResource("CompressedTexture2D_i2ahh")
-region = Rect2(2, 0, 8, 65)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_olmkg"]
-content_margin_left = 6.0
-content_margin_top = 8.0
-content_margin_right = 6.0
-content_margin_bottom = 8.0
-texture = SubResource("AtlasTexture_lwmiq")
-texture_margin_left = 1.0
-texture_margin_top = 1.0
-texture_margin_right = 1.0
-texture_margin_bottom = 1.0
-modulate_color = Color(1, 1, 0, 1)
-
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("Contents")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -7.0
-offset_right = -518.0
-offset_bottom = -422.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "Contents")]
+custom_minimum_size = Vector2(275, 116)
+offset_right = 275.0
+offset_bottom = 116.0
 size_flags_vertical = 3
 script = ExtResource("1_3v461")
-Contents = NodePath("ContentContainer")
+_preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider")
+_equalizerToggleButton = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection/EqualizerToggleButton")
+Contents = NodePath("VBoxContainer/AllContent")
 
-[node name="Background" parent="." instance=ExtResource("2_i2ahh")]
-layout_mode = 2
-
-[node name="HeaderContainer" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 8
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 6
-
-[node name="NinePatchRect" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-size_flags_stretch_ratio = 1.1
-texture = ExtResource("5_y504q")
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
-
-[node name="Label" type="Label" parent="HeaderContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "EQUALIZER"
-
-[node name="NinePatchRect2" type="NinePatchRect" parent="HeaderContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-texture = ExtResource("5_y504q")
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 8
-
-[node name="MinimizeButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-toggle_mode = true
-texture_normal = SubResource("AtlasTexture_v2ypu")
-texture_pressed = SubResource("AtlasTexture_087c6")
-stretch_mode = 3
-
-[node name="CloseButton" type="TextureButton" parent="HeaderContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = SubResource("AtlasTexture_sxrbh")
-texture_pressed = SubResource("AtlasTexture_6t30a")
-stretch_mode = 3
-
-[node name="ContentContainer" type="MarginContainer" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 12
+texture = ExtResource("2_h2kye")
 
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+size_flags_vertical = 0
+theme_override_constants/separation = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
+[node name="TopBar" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(275, 14)
 layout_mode = 2
 size_flags_vertical = 3
+texture = ExtResource("3_f3of5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.53
-
-[node name="EqualizerToggleButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
+[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/TopBar"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 4.0
+offset_right = 262.0
+offset_bottom = 11.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 toggle_mode = true
-button_pressed = true
-texture_normal = SubResource("AtlasTexture_y504q")
-texture_pressed = SubResource("AtlasTexture_r0ulg")
+texture_normal = ExtResource("4_ne4qw")
+texture_pressed = ExtResource("5_4k323")
+
+[node name="CloseButton" type="TextureButton" parent="VBoxContainer/TopBar"]
+layout_mode = 0
+offset_left = 265.0
+offset_top = 4.0
+offset_right = 272.0
+offset_bottom = 11.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("6_klai7")
+texture_pressed = ExtResource("7_k83ll")
+
+[node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = -1
+theme_override_constants/margin_right = 13
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/MarginContainer"]
+layout_mode = 2
+
+[node name="ButtonsAndGraphSection" type="HBoxContainer" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="EqualizerToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("8_f3of5")
+texture_pressed = ExtResource("9_ya3m1")
 stretch_mode = 5
 
-[node name="AutoEqualizeToggleButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="AutoEqualizeToggleButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
 layout_mode = 2
+size_flags_horizontal = 0
 focus_mode = 0
 disabled = true
-texture_normal = SubResource("AtlasTexture_olmkg")
-texture_pressed = SubResource("AtlasTexture_57iu7")
-texture_disabled = SubResource("AtlasTexture_iof0s")
+texture_normal = ExtResource("10_rf8gf")
+texture_pressed = ExtResource("11_632ty")
+texture_disabled = ExtResource("12_w3pak")
 stretch_mode = 5
 
-[node name="HSeparator" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PresetsButton" type="TextureButton" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection"]
 layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Control" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.37
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="PresetsButton" type="TextureButton" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/Control"]
-layout_mode = 2
+size_flags_horizontal = 10
+focus_mode = 0
 disabled = true
-texture_disabled = SubResource("AtlasTexture_aox6d")
+texture_normal = ExtResource("13_cqcx4")
+texture_disabled = ExtResource("14_mphak")
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-theme_override_constants/separation = 8
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 6
-
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 6
-
-[node name="HBoxContainer" type="HBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 4
-
-[node name="Ticks" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="Sliders" type="Control" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
+[node name="PreampSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_vertical = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator2" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator3" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="PreampSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
+offset_left = 5.0
+offset_right = 21.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_lwmiq")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_dkyav")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
 step = 0.1
+script = ExtResource("18_w3pak")
 
-[node name="Ticks2" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="60Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator2" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="HSeparator3" type="HSeparator" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/Ticks2"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_olmkg")
-
-[node name="MarginContainer" type="MarginContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_left = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 2
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "+12 db"
-
-[node name="Label2" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "+0 db"
-
-[node name="Label3" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 10
-theme_override_colors/font_color = Color(0.831373, 0.658824, 0.0392157, 1)
-text = "-12 db"
-
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "PREAMP"
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 62.0
+offset_right = 78.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="60Slider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_u6mml")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+[node name="170Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "60"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 80.0
+offset_right = 96.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="170Slider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_o1jqx")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3"]
+[node name="310Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "170"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer4" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 98.0
+offset_right = 114.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="310Slider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_y3etc")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4"]
+[node name="600Slider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "310"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer5" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 116.0
+offset_right = 132.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="600Slider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_kuyhs")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5"]
+[node name="1KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "600"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer6" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 134.0
+offset_right = 150.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="1KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_t06ms")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6"]
+[node name="3KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "1K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer7" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 152.0
+offset_right = 168.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="3KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_opqgq")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7"]
+[node name="6KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "3K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer8" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 170.0
+offset_right = 186.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="6KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_omypg")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8"]
+[node name="12KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "6K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer9" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 188.0
+offset_right = 204.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="12KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_tute8")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9"]
+[node name="14KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "12K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer10" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 206.0
+offset_right = 222.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="14KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_1cnjl")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
+script = ExtResource("18_w3pak")
 
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10"]
+[node name="16KSlider" type="VSlider" parent="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "14K"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer11" type="VBoxContainer" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
+offset_left = 224.0
+offset_right = 240.0
+offset_bottom = 62.0
 size_flags_horizontal = 6
-
-[node name="16KSlider" type="VSlider" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11"]
-layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 0
-theme_override_styles/slider = SubResource("StyleBoxTexture_olmkg")
+theme_override_icons/grabber = ExtResource("15_rf8gf")
+theme_override_icons/grabber_highlight = ExtResource("16_632ty")
+theme_override_styles/slider = SubResource("StyleBoxTexture_uxdu4")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_ya3m1")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_rf8gf")
 min_value = -12.0
 max_value = 12.0
-
-[node name="Label" type="Label" parent="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "16K"
-horizontal_alignment = 1
-vertical_alignment = 1
+script = ExtResource("18_w3pak")
 
 [node name="DraggablePanel" parent="." instance=ExtResource("7_r0ulg")]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
-[connection signal="pressed" from="HeaderContainer/HBoxContainer/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="pressed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/HBoxContainer/PreampSlider" to="." method="OnPreampSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/60Slider" to="." method="On60SliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3/170Slider" to="." method="On170SliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4/310Slider" to="." method="On310SliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5/600Slider" to="." method="On600SliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer6/1KSlider" to="." method="On1KSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer7/3KSlider" to="." method="On3KSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer8/6KSlider" to="." method="On6KSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer9/12KSlider" to="." method="On12KSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer10/14KSlider" to="." method="On14KSliderValueChanged"]
-[connection signal="value_changed" from="ContentContainer/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer11/16KSlider" to="." method="On16KSliderValueChanged"]
+[connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider" to="." method="OnPreampSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/60Slider" to="." method="On60SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/170Slider" to="." method="On170SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/310Slider" to="." method="On310SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/600Slider" to="." method="On600SliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/1KSlider" to="." method="On1KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/3KSlider" to="." method="On3KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/6KSlider" to="." method="On6KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/12KSlider" to="." method="On12KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/14KSlider" to="." method="On14KSliderValueChanged"]
+[connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/16KSlider" to="." method="On16KSliderValueChanged"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

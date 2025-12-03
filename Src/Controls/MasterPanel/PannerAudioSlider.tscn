@@ -1,0 +1,67 @@
+[gd_scene load_steps=8 format=3 uid="uid://832dm0od6q3h"]
+
+[ext_resource type="Texture2D" uid="uid://cxbsopf6tgkp6" path="res://Data/SkinResources/PannerAudioSliderGrabber.tres" id="1_l4rhq"]
+[ext_resource type="Texture2D" uid="uid://dn0vs65qhodq4" path="res://Data/SkinResources/PannerAudioSliderGrabberHighlight.tres" id="2_83mep"]
+[ext_resource type="Texture2D" uid="uid://08clhe1icnca" path="res://Data/SkinResources/PannerAudioSlider.tres" id="3_e1ots"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bgj4f"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+texture = ExtResource("3_e1ots")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jkbgf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bgj4f"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_l4rhq"]
+script/source = "using Godot;
+
+namespace GodAmp.Controls.MasterPanel;
+
+public partial class PannerAudioSlider : HSlider
+{
+    private const int TextureX = 9;
+    private const int TextureStep = 15;
+    private const int FrameCount = 27;
+    private const int TextureWidth = 38;
+    private const int TextureHeight = 13;
+    
+    private AtlasTexture _atlasTexture;
+
+    public override void _Ready()
+    {
+        var styleBox = GetThemeStylebox(\"slider\") as StyleBoxTexture;
+        _atlasTexture = styleBox?.Texture as AtlasTexture;
+        
+        ValueChanged += OnValueChanged;
+        OnValueChanged(Value);
+    }
+
+    private void OnValueChanged(double value)
+    {
+        if (_atlasTexture == null) return;
+        
+        float normalized = (float)Mathf.Abs(value / MaxValue);
+        int frame = Mathf.FloorToInt(normalized * FrameCount);
+        
+        _atlasTexture.Region = new Rect2(TextureX, frame * TextureStep, TextureWidth, TextureHeight);
+    }
+}"
+
+[node name="PannerAudioSlider" type="HSlider"]
+custom_minimum_size = Vector2(38, 14)
+size_flags_horizontal = 3
+size_flags_vertical = 5
+focus_mode = 1
+theme_override_constants/grabber_offset = -1
+theme_override_icons/grabber = ExtResource("1_l4rhq")
+theme_override_icons/grabber_highlight = ExtResource("2_83mep")
+theme_override_styles/slider = SubResource("StyleBoxTexture_bgj4f")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_jkbgf")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_bgj4f")
+min_value = -1.0
+max_value = 1.0
+step = 0.1
+script = SubResource("CSharpScript_l4rhq")

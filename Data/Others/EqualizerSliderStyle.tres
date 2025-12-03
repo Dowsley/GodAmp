@@ -1,0 +1,10 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://qwofgnr385yl"]
+
+[ext_resource type="Texture2D" uid="uid://bbt4epo2qnpqx" path="res://Data/SkinResources/EqualizerSlider.tres" id="1_kjhmd"]
+
+[resource]
+texture = ExtResource("1_kjhmd")
+texture_margin_left = 6.0
+texture_margin_top = 5.0
+texture_margin_right = 7.0
+texture_margin_bottom = 5.0
