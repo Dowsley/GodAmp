@@ -40,6 +40,14 @@ window/stretch/mode="canvas_items"
 
 project/assembly_name="GodAmp"
 
+[file_customization]
+
+folder_colors={
+"res://Assets/": "yellow",
+"res://Data/": "green",
+"res://Src/": "purple"
+}
+
 [gui]
 
 theme/custom="uid://bsacd6apsccmu"

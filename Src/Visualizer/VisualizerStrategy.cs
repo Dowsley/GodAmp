@@ -25,7 +25,7 @@ public abstract partial class VisualizerStrategy : Node2D
     [Export] public float RandomOffsetAmount = 80.0f;
     
     [ExportSubgroup("Music Reactivity")]
-    [Export] public float SmoothingFactor = 0.1f;
+    [Export] public float SmoothingFactor = 0.1f; // higher=responsive size changes
     [Export] public float DirectionSmoothingFactor = 0.05f;
     [Export] public float DirectionSensitivity = 2.0f;
     [Export] public float DepthSmoothingFactor = 0.05f;

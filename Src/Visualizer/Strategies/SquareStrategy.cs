@@ -72,7 +72,6 @@ public partial class SquareStrategy : VisualizerStrategy
     {
         var walls = GetNode<Node2D>("Walls");
         
-        // Clear any existing walls
         foreach (var child in walls.GetChildren())
         {
             child.QueueFree();
@@ -122,19 +121,17 @@ public partial class SquareStrategy : VisualizerStrategy
     {
         var impulseDir = Vector2.Right.Rotated((float)GD.RandRange(0, Mathf.Pi * 2));
         _body.ApplyCentralImpulse(impulseDir * BaseForce * 4.0f);
-        _body.ApplyTorqueImpulse((float)GD.RandRange(-1000, 1000));
+        _body.ApplyTorqueImpulse(GD.RandRange(-1000, 1000));
     }
     
     private void UpdateSquare()
     {
-        // Amplify the audio effect on size with SizeReactivity
         float targetSize = Mathf.Clamp(
             BaseSize + (SizeMultiplier * SmoothedMagnitude * SizeReactivity),
             MinSize,
             MaxSize
         );
         
-        // More responsive size change
         _currentSize = Mathf.Lerp(_currentSize, targetSize, 0.3f);
         UpdateSquareSize();
         
@@ -168,7 +165,6 @@ public partial class SquareStrategy : VisualizerStrategy
         var forceDir = _forceDirections[FrameCount % 4].Rotated((float)GD.RandRange(-0.5, 0.5));
         _body.ApplyCentralForce(forceDir * forceMagnitude * (float)delta);
         
-        // Apply stronger impulse on bass hits
         if (bassFreq > MinimumBassForForce && FrameCount % 10 == 0)
         {
             _body.ApplyCentralImpulse(forceDir * BaseForce * bassFreq * 5.0f);
@@ -208,7 +204,6 @@ public partial class SquareStrategy : VisualizerStrategy
         }
         
         float currentMagnitude = sum / sampleCount;
-        // Use higher smoothing factor for more responsive size changes
         SmoothedMagnitude = Mathf.Lerp(SmoothedMagnitude, currentMagnitude, SmoothingFactor * 2.0f);
         
         float lowFreqMagnitude = GetFrequencyRangeMagnitude(20f, 200f);

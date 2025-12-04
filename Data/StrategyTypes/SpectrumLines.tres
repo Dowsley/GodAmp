@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="VisualizerStrategyType" load_steps=3 format=3 uid="uid://dou3xq3exepce"]
+
+[ext_resource type="PackedScene" uid="uid://eki80sycvco2" path="res://Src/Visualizer/Strategies/LineStrategy.tscn" id="1_6bdtn"]
+[ext_resource type="Script" uid="uid://n417alhj3k8k" path="res://Src/Data/VisualizerStrategyType.cs" id="2_7ijap"]
+
+[resource]
+script = ExtResource("2_7ijap")
+Id = &"SpectrumLines"
+DisplayName = "Spectrum Lines"
+Scene = ExtResource("1_6bdtn")
+metadata/_custom_type_script = "uid://n417alhj3k8k"

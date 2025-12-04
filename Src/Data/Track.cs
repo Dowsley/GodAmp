@@ -2,6 +2,7 @@ using Godot;
 
 namespace GodAmp.Data;
 
+[GlobalClass]
 public partial class Track : Resource
 {
     public string SourcePath;

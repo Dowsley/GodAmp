@@ -4,8 +4,7 @@
 
 [node name="LineStrategy" type="Node2D"]
 script = ExtResource("1_gl2c8")
-Amplitude = 5.0
-UpdateEveryNFrames = 3
+UpdateEveryNFrames = 2
 FixedRotationValue = 10.0
 RotationSpeed = 0.004
 TunnelDepth = 0.905

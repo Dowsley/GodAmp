@@ -1,0 +1,72 @@
+using System.Collections.Generic;
+using GodAmp.Autoload;
+using GodAmp.Data;
+using Godot;
+
+namespace GodAmp.Visualizer;
+
+public partial class VisualizerOptionsButton : MenuButton
+{
+	[Signal] public delegate void VizChangedEventHandler(StringName vizId);
+	
+	private readonly List<StringName> _vizIds = [];
+	private PopupMenu _popup;
+	private PopupMenu _vizSubmenu;
+	private int _currentVizIndex = 0;
+
+	public void Initialize(List<VisualizerStrategyType> strategyTypeMapRef)
+	{
+		_popup = GetPopup();
+		_popup.AboutToPopup += OnAboutToPopup;
+
+		SetupVizMenu(strategyTypeMapRef);
+	}
+
+	private void OnAboutToPopup()
+	{
+		_popup.Size = new Vector2I(150, 0);
+		Vector2 mousePos = GetGlobalMousePosition();
+		_popup.Position = new Vector2I((int)mousePos.X, (int)mousePos.Y);
+
+		UpdateCheckedItem();
+	}
+
+	private void UpdateCheckedItem()
+	{
+		for (int i = 0; i < _vizSubmenu.ItemCount; i++)
+		{
+			_vizSubmenu.SetItemChecked(i, i == _currentVizIndex);
+		}
+	}
+
+	private void SetupVizMenu(List<VisualizerStrategyType> strategyTypes)
+	{
+		_vizSubmenu = new PopupMenu();
+		_vizSubmenu.Name = "VizSubmenu";
+
+		var subId = 0;
+		foreach (var strategy in strategyTypes)
+		{
+			_vizSubmenu.AddItem(strategy.DisplayName, subId);
+			_vizSubmenu.SetItemAsCheckable(subId, true);
+			_vizIds.Add(strategy.Id);
+			subId++;
+		}
+
+		_vizSubmenu.SetItemChecked(0, true);
+		_vizSubmenu.IndexPressed += OnVizMenuItemPressed;
+		_popup.AddSubmenuNodeItem("Visualizations", _vizSubmenu);
+	}
+
+	private static void OnScaleMenuItemPressed(long index)
+	{
+		int multiplier = (int)index+1;
+		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
+	}
+
+	private void OnVizMenuItemPressed(long index)
+	{
+		_currentVizIndex = (int)index;
+		EmitSignal(SignalName.VizChanged, _vizIds[_currentVizIndex]);
+	}
+}

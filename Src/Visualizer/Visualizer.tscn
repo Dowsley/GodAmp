@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=21 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
@@ -16,11 +16,12 @@
 [ext_resource type="Texture2D" uid="uid://ugo2xivqi0pw" path="res://Data/SkinResources/EqualizerMiddleTexture.tres" id="11_c0tab"]
 [ext_resource type="Texture2D" uid="uid://d1hb4mm30y1ka" path="res://Data/SkinResources/VisualizerTilableRightEdge.tres" id="12_c0tab"]
 [ext_resource type="Texture2D" uid="uid://br1l3v8fy20q2" path="res://Data/SkinResources/VisualizerTilableBottomEdge.tres" id="14_5e0r8"]
+[ext_resource type="PackedScene" uid="uid://chcdhios5qef2" path="res://Src/Visualizer/VisualizerOptionsButton.tscn" id="14_blgew"]
 [ext_resource type="Texture2D" uid="uid://kqwskmh18fbo" path="res://Data/SkinResources/VisualizerRightEdgeBottom.tres" id="14_qpg3j"]
 [ext_resource type="Texture2D" uid="uid://bl2vrtdloq57o" path="res://Data/SkinResources/VisualizerBottomLeftCorner.tres" id="15_c0tab"]
 [ext_resource type="Texture2D" uid="uid://1o265qd5jybc" path="res://Data/SkinResources/VisualizerBottomRightCorner.tres" id="16_700eo"]
 
-[node name="Visualizer" type="PanelContainer"]
+[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "Contents")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,15 +29,21 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+mouse_filter = 2
 script = ExtResource("1_6dse3")
+_audioVisualizer = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer")
+_vizOptsButton = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton")
+Contents = NodePath("VBoxContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="TopLeftCornerTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
@@ -97,15 +104,18 @@ stretch_mode = 3
 [node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="Middle" type="HBoxContainer" parent="VBoxContainer/AllContent"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="TilableLeftEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer"]
@@ -123,17 +133,22 @@ texture = ExtResource("11_700eo")
 [node name="MiddleTexture" type="TextureRect" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 0
 texture = ExtResource("11_c0tab")
 expand_mode = 2
 stretch_mode = 1
 
 [node name="AudioVisualizer" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("2_2g1mo")]
-unique_name_in_owner = true
 layout_mode = 1
 size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="VisualizerOptionsButton" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("14_blgew")]
+layout_mode = 1
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/AllContent/Middle"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer2"]
@@ -150,6 +165,7 @@ texture = ExtResource("14_qpg3j")
 
 [node name="Bottom" type="HBoxContainer" parent="VBoxContainer/AllContent"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 2
 
@@ -171,4 +187,6 @@ texture = ExtResource("16_700eo")
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
+[connection signal="gui_input" from="VBoxContainer/AllContent/Middle/MiddleTexture" to="." method="OnVisualizerGuiInput"]
+[connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
 [connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

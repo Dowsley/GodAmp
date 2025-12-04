@@ -1,12 +1,15 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using GodAmp.Data;
 using Godot;
 
 namespace GodAmp.Visualizer
 {
     public partial class AudioVisualizer : Control
     {
-        [Export] public Godot.Collections.Array<PackedScene> StrategyTypes;
+        [Export(PropertyHint.Dir)] private string _strategyTypeDirectory;
+        
+        public Dictionary<StringName, VisualizerStrategyType> StrategyTypeMap;
         
         private SubViewportContainer _containerA;
         private SubViewportContainer _containerB;
@@ -18,13 +21,11 @@ namespace GodAmp.Visualizer
         private VisualizerStrategy _strategyB;
         private Node2D _strategyContainerA;
         private Node2D _strategyContainerB;
-        private Timer _timer;
         
         private ViewportTexture _previousFrameTexture;
         private ImageTexture _feedbackTexture;
         private Image _feedbackImage;
         private bool _isUsingA = true;
-        private int _currStrategy = 0;
         
         private ShaderMaterial _shaderMaterialA;
         private ShaderMaterial _shaderMaterialB;
@@ -36,11 +37,14 @@ namespace GodAmp.Visualizer
         private SubViewport InactiveViewport => _isUsingA ? _viewportB : _viewportA;
         private VisualizerStrategy ActiveStrategy => _isUsingA ? _strategyA : _strategyB;
         
+        private float GetViewportWidth() => _viewportA?.Size.X ?? 0;
+        private float GetViewportHeight() => _viewportA?.Size.Y ?? 0;
+        
         public override void _Ready()
         {
-            _timer = GetNode<Timer>("Timer");
+            LoadStrategiesFromDisk();
             InitializeViewports();
-            InitializeStrategy(_viewportA.Size, _currStrategy);
+            InitializeStrategy(_viewportA.Size, StrategyTypeMap.First().Key);
             InitializeFeedbackTexture();
         }
         
@@ -52,26 +56,22 @@ namespace GodAmp.Visualizer
             SwapViewports();
         }
 
-        private void InitializeStrategy(Vector2 viewportSize, int currStrategy)
+        private void InitializeStrategy(Vector2 viewportSize, StringName strategyId)
         {
             _strategyContainerA = GetNode<Node2D>("%StrategyContainerA");
             _strategyContainerB = GetNode<Node2D>("%StrategyContainerB");
             _strategyA?.QueueFree();
             _strategyB?.QueueFree();
-            _strategyA = StrategyTypes[currStrategy].Instantiate<VisualizerStrategy>();
-            _strategyB = StrategyTypes[currStrategy].Instantiate<VisualizerStrategy>();
+            _strategyA = StrategyTypeMap[strategyId].Scene.Instantiate<VisualizerStrategy>();
+            _strategyB = StrategyTypeMap[strategyId].Scene.Instantiate<VisualizerStrategy>();
             _strategyContainerA.AddChild(_strategyA);
             _strategyContainerB.AddChild(_strategyB);
             RefreshStrategy(viewportSize);
         }
 
-        private void NextStrategy()
+        public void SwitchStrategy(StringName strategyId)
         {
-            _currStrategy++;
-            if (_currStrategy >= StrategyTypes.Count)
-                _currStrategy = 0;
-            InitializeStrategy(_viewportA.Size, _currStrategy);
-            _timer.Start();
+            InitializeStrategy(_viewportA.Size, strategyId);
         }
 
         private void RefreshStrategy(Vector2 viewportSize)
@@ -174,9 +174,6 @@ namespace GodAmp.Visualizer
             
             _isUsingA = !_isUsingA;
         }
-        
-        private float GetViewportWidth() => _viewportA?.Size.X ?? 0;
-        private float GetViewportHeight() => _viewportA?.Size.Y ?? 0;
 
         private void OnResized()
         {
@@ -188,6 +185,15 @@ namespace GodAmp.Visualizer
             
             InitializeFeedbackTexture();
             RefreshStrategy(_viewportA.Size);
+        }
+        
+        private void LoadStrategiesFromDisk()
+        {
+            StrategyTypeMap = DirAccess.GetFilesAt(_strategyTypeDirectory)
+                .Where(f => f.EndsWith(".tres") || f.EndsWith(".res"))
+                .Select(f => GD.Load<VisualizerStrategyType>(_strategyTypeDirectory.PathJoin(f)))
+                .Where(r => r != null)
+                .ToDictionary(s => s.Id);
         }
     }
 }

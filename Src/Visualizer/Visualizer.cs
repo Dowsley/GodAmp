@@ -1,15 +1,19 @@
+using System.Linq;
+using Godot;
 using GodAmp.Components;
 
 namespace GodAmp.Visualizer;
 
 public partial class Visualizer : WindowPanelContainer
 {
-	private AudioVisualizer _audioVisualizer;
-	
+	[ExportGroup("References")]
+	[Export] private AudioVisualizer _audioVisualizer;
+	[Export] private VisualizerOptionsButton _vizOptsButton;
+
 	public override void _Ready()
 	{
-		_audioVisualizer = GetNode<AudioVisualizer>("%AudioVisualizer");
 		Pause();
+		_vizOptsButton.Initialize(_audioVisualizer.StrategyTypeMap.Values.ToList());
 	}
 
 	public void Pause()
