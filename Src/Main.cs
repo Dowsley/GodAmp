@@ -25,6 +25,9 @@ public partial class Main : HBoxContainer
 	[Export] private Playlist _playlist;
 	[Export] private Visualizer.Visualizer _visualizer;
 	[Export] private TrackPlayer _trackPlayer;
+	[Export] private Window _equalizerWindow;
+	[Export] private Window _playlistWindow;
+	[Export] private Window _visualizerWindow;
 
 	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
@@ -38,13 +41,17 @@ public partial class Main : HBoxContainer
 
 	private FileDialog _lastUsedFileDialog;
 	private Vector2I _originalWindowSize;
+	private Vector2I _originalVisualizerWindowSize;
+	private bool _bringingWindowsToForeground;
 	
 	public override void _Ready()
 	{
 		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
 		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
 		_originalWindowSize = new Vector2I(width, height);
-		
+		_originalVisualizerWindowSize = _visualizerWindow.Size;
+
+		GetWindow().AlwaysOnTop = true; // Keep main window on top to prevent occlusion-based throttling
 		CenterWindow();
 
 		// Try to load the last used playlist, fall back to default songs path
@@ -100,6 +107,8 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
 		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
+
+		GetWindow().FocusEntered += OnMainWindowFocused;
 
 		LoadSettingsState();
 	}
@@ -502,7 +511,23 @@ public partial class Main : HBoxContainer
 
 	private void SetZoomMode(int multiplier)
 	{
-		GetWindow().Size = new Vector2I(_originalWindowSize.X * multiplier, _originalWindowSize.Y * multiplier);
+		var scale = new Vector2(multiplier, multiplier);
+
+		var newSize = _originalWindowSize * multiplier;
+		GetWindow().Size = newSize;
+		
+		_equalizerWindow.Size = newSize;
+		_equalizer.Size = _originalWindowSize;
+		_equalizer.Scale = scale;
+		
+		_playlistWindow.Size = newSize;
+		_playlist.Size = _originalWindowSize;
+		_playlist.Scale = scale;
+		
+		_visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
+		_visualizer.Size = _originalVisualizerWindowSize;
+		_visualizer.Scale = scale;
+		
 		SettingsManager.Instance.SetZoomMode(multiplier);
 		CenterWindow();
 	}
@@ -523,5 +548,21 @@ public partial class Main : HBoxContainer
 	private void OnPlaylistCloseButtonClicked()
 	{
 		_masterPanel.TogglePlaylistButton.ButtonPressed = false;
+	}
+
+	private void OnMainWindowFocused()
+	{
+		if (_bringingWindowsToForeground)
+			return;
+		
+		_bringingWindowsToForeground = true;
+		
+		// Order matters here. We bring all windows to the front, and the main window last to keep focus.
+		_equalizerWindow.GrabFocus();
+		_playlistWindow.GrabFocus();
+		_visualizerWindow.GrabFocus();
+		GetWindow().GrabFocus();
+		
+		_bringingWindowsToForeground = false;
 	}
 }

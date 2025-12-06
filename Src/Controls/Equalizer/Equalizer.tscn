@@ -113,8 +113,11 @@ texture_margin_bottom = 5.0
 
 [node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "Contents")]
 custom_minimum_size = Vector2(275, 116)
-offset_right = 275.0
-offset_bottom = 116.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_3v461")
 _preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider")

@@ -15,20 +15,19 @@ public partial class WindowPanelContainer : PanelContainer
 	protected bool Dragging = false;
 	protected Vector2 DragOffset = Vector2.Zero;
 	protected Input.MouseModeEnum PreviousMouseMode;
-	
+
 	public override void _Input(InputEvent @event)
 	{
 		if (Dragging && MoveGlobalWindow && @event is InputEventMouseMotion motionEvent)
 		{
-			float scaleFactorX = GetWindow().Size.X / GetViewport().GetVisibleRect().Size.X;
-			float scaleFactorY = GetWindow().Size.Y / GetViewport().GetVisibleRect().Size.Y;
+			var window = GetWindow();
+			var viewportSize = GetViewport().GetVisibleRect().Size;
+			float scaleFactorX = window.Size.X / viewportSize.X;
+			float scaleFactorY = window.Size.Y / viewportSize.Y;
 			float scaleFactor = (scaleFactorX + scaleFactorY) / 2.0f;
 			
 			Vector2 scaledMotion = motionEvent.Relative * scaleFactor;
-			
-			Vector2I windowPosition = DisplayServer.WindowGetPosition();
-			windowPosition += new Vector2I((int)scaledMotion.X, (int)scaledMotion.Y);
-			DisplayServer.WindowSetPosition(windowPosition);
+			window.Position += new Vector2I((int)scaledMotion.X, (int)scaledMotion.Y);
 		}
 	}
 

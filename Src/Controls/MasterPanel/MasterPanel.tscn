@@ -414,7 +414,11 @@ layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
+[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
+[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
 [connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
 [connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]

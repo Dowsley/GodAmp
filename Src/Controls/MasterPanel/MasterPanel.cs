@@ -195,7 +195,7 @@ public partial class MasterPanel : WindowPanelContainer
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, false);
 	}
 	
-	private static void OnSliderDragEnded(float value = 0.0f)
+	private static void OnSliderDragEnded(bool valueChanged = false)
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.UnlockMasterLabel);
 	}
