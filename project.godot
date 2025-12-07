@@ -14,7 +14,6 @@ config/name="GodAmp"
 config/description="Modern Winamp Clone. Submission for https://itch.io/jam/the-tool-jam-5."
 config/tags=PackedStringArray("music", "tool")
 run/main_scene="uid://db6b3hi4hou7w"
-run/low_processor_mode=false
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 0)
 boot_splash/show_image=false

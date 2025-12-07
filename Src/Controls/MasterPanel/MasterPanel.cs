@@ -41,6 +41,7 @@ public partial class MasterPanel : WindowPanelContainer
 	
 	public override void _Ready()
 	{
+		base._Ready();
 		UIUtils.SetSliderColor(
 			_pannerAudioSlider, (float)_pannerAudioSlider.Value, -1.0f, 1.0f);
 

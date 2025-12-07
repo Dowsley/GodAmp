@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://cpme6jm30nl1o"]
+[gd_scene load_steps=52 format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
 [ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="2_j1eng"]
@@ -21,7 +21,6 @@
 [ext_resource type="Script" uid="uid://u7v1n5jeyhwj" path="res://Src/Components/BitmapLabel.cs" id="12_ixbbo"]
 [ext_resource type="Texture2D" uid="uid://cxbsopf6tgkp6" path="res://Data/SkinResources/PannerAudioSliderGrabber.tres" id="12_oo7n4"]
 [ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="12_umuss"]
-[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="12_x5ey5"]
 [ext_resource type="Texture2D" uid="uid://dn0vs65qhodq4" path="res://Data/SkinResources/PannerAudioSliderGrabberHighlight.tres" id="13_2vlkh"]
 [ext_resource type="FontFile" uid="uid://dh6f1yc7o4y34" path="res://Assets/Winamp/Raw/NUMBERS.png" id="13_13jth"]
 [ext_resource type="Texture2D" uid="uid://dsp2hooqm7hu1" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="13_umuss"]
@@ -73,7 +72,7 @@ texture = ExtResource("14_8kieg")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "Contents")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_contents", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -91,7 +90,8 @@ _timeMinutesTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesTe
 _timeMinutesOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesOnesLabel")
 _timeSecondsTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsTensLabel")
 _timeSecondsOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsOnesLabel")
-Contents = NodePath("VBoxContainer/AllContent")
+_contents = NodePath("VBoxContainer")
+_draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
@@ -408,9 +408,11 @@ toggle_mode = true
 texture_normal = ExtResource("28_bgj4f")
 texture_pressed = ExtResource("29_oo7n4")
 
-[node name="DraggablePanel" parent="." instance=ExtResource("12_x5ey5")]
+[node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 14.17)
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
@@ -433,4 +435,3 @@ layout_mode = 2
 [connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer2/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

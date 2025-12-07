@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GodAmp.Autoload;
+using GodAmp.Components;
 using GodAmp.Controls.Equalizer;
 using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
@@ -43,15 +44,21 @@ public partial class Main : HBoxContainer
 	private Vector2I _originalWindowSize;
 	private Vector2I _originalVisualizerWindowSize;
 	private bool _bringingWindowsToForeground;
+
+	private List<WindowPanelContainer> _allContainerRefs;
+	private List<Window> _allWindowsRefs;
 	
 	public override void _Ready()
 	{
+		_allContainerRefs = [ _masterPanel, _equalizer, _playlist, _visualizer ];
+		_allWindowsRefs = [GetWindow(), _equalizerWindow, _playlistWindow, _visualizerWindow];
+
 		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
 		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
 		_originalWindowSize = new Vector2I(width, height);
 		_originalVisualizerWindowSize = _visualizerWindow.Size;
 
-		GetWindow().AlwaysOnTop = true; // Keep main window on top to prevent occlusion-based throttling
+		// GetWindow().AlwaysOnTop = true; // Keep main window on top to prevent occlusion-based throttling
 		CenterWindow();
 
 		// Try to load the last used playlist, fall back to default songs path
@@ -108,7 +115,10 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
 		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
 
-		GetWindow().FocusEntered += OnMainWindowFocused;
+		GetWindow().FocusEntered += () => OnAnyWindowFocused(GetWindow());
+		_equalizerWindow.FocusEntered += () => OnAnyWindowFocused(_equalizerWindow);
+		_playlistWindow.FocusEntered += () => OnAnyWindowFocused(_playlistWindow);
+		_visualizerWindow.FocusEntered += () => OnAnyWindowFocused(_visualizerWindow);
 
 		LoadSettingsState();
 	}
@@ -129,6 +139,8 @@ public partial class Main : HBoxContainer
 		{
 			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
 		}
+
+		CheckWindowsForSnapping();
 	}
 
 	private void OnNextTrackRequested()
@@ -550,19 +562,45 @@ public partial class Main : HBoxContainer
 		_masterPanel.TogglePlaylistButton.ButtonPressed = false;
 	}
 
-	private void OnMainWindowFocused()
+	private void OnAnyWindowFocused(Window focusedWindow)
 	{
-		if (_bringingWindowsToForeground)
-			return;
-		
-		_bringingWindowsToForeground = true;
-		
-		// Order matters here. We bring all windows to the front, and the main window last to keep focus.
-		_equalizerWindow.GrabFocus();
-		_playlistWindow.GrabFocus();
-		_visualizerWindow.GrabFocus();
-		GetWindow().GrabFocus();
-		
-		_bringingWindowsToForeground = false;
+		// if (_bringingWindowsToForeground)
+		// 	return;
+		//
+		// _bringingWindowsToForeground = true;
+		//
+		// foreach (var window in _allWindowsRefs.Where(window => window != focusedWindow))
+		// {
+		// 	window.GrabFocus();
+		// }
+		// focusedWindow.GrabFocus();
+		//
+		// _bringingWindowsToForeground = false;
+	}
+
+	private void CheckWindowsForSnapping()
+	{
+		foreach (WindowPanelContainer container in _allContainerRefs)
+		{
+			// GD.Print(container.WindowRef.Position);
+		}
+	}
+
+	private void ComputeWindowSnap(Window windowBeingMoved)
+	{
+		foreach (var window in _allWindowsRefs)
+		{
+			
+		}
+	}
+	
+	private void Test(InputEvent ev)
+	{
+		GD.Print(ev);
+	}
+	
+	private void Test2()
+	{
+		GD.Print("Got focus");
 	}
 }

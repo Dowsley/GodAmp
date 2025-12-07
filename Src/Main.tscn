@@ -27,7 +27,6 @@ _visualizerWindow = NodePath("VisualizerWindow")
 
 [node name="MasterPanel" parent="." instance=ExtResource("3_rlaii")]
 layout_mode = 2
-MoveGlobalWindow = true
 
 [node name="TrackPlayer" parent="." instance=ExtResource("4_3cfgd")]
 
@@ -36,7 +35,6 @@ canvas_item_default_texture_filter = 0
 position = Vector2i(0, 116)
 size = Vector2i(275, 116)
 borderless = true
-unfocusable = true
 
 [node name="Equalizer" parent="EqualizerWindow" instance=ExtResource("4_5mrjc")]
 anchors_preset = 0
@@ -46,14 +44,12 @@ offset_right = 275.0
 offset_bottom = 116.0
 grow_horizontal = 1
 grow_vertical = 1
-MoveGlobalWindow = true
 
 [node name="PlaylistWindow" type="Window" parent="."]
 canvas_item_default_texture_filter = 0
 position = Vector2i(0, 232)
 size = Vector2i(275, 116)
 borderless = true
-unfocusable = true
 
 [node name="Playlist" parent="PlaylistWindow" instance=ExtResource("5_kf8lf")]
 anchors_preset = 0
@@ -63,7 +59,6 @@ offset_right = 275.0
 offset_bottom = 116.0
 grow_horizontal = 1
 grow_vertical = 1
-MoveGlobalWindow = true
 
 [node name="VisualizerWindow" type="Window" parent="."]
 auto_translate_mode = 1
@@ -71,7 +66,6 @@ canvas_item_default_texture_filter = 0
 position = Vector2i(275, 0)
 size = Vector2i(348, 348)
 borderless = true
-unfocusable = true
 
 [node name="Visualizer" parent="VisualizerWindow" instance=ExtResource("3_5q4o7")]
 anchors_preset = 0
@@ -81,6 +75,7 @@ offset_right = 333.0
 offset_bottom = 87.0
 grow_horizontal = 1
 grow_vertical = 1
-MoveGlobalWindow = true
 
 [connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]
+[connection signal="focus_entered" from="PlaylistWindow" to="." method="Test2"]
+[connection signal="window_input" from="PlaylistWindow" to="." method="Test"]

@@ -40,6 +40,7 @@ public partial class Playlist : WindowPanelContainer
 
 	public override void _Ready()
 	{
+		base._Ready();
 		SignalBus.Instance.InverseSelectionRequested += OnInverseSelectionRequested;
 		SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
 		SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;

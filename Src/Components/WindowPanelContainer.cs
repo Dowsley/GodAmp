@@ -6,44 +6,43 @@ public partial class WindowPanelContainer : PanelContainer
 {
 	[Signal] public delegate void CloseButtonClickedEventHandler();
 	
-	[Export] public Control Contents;
-	[Export] public bool MoveGlobalWindow = false;
+	[ExportGroup("References")]
+	[Export] private Control _contents;
+	[Export] private Control _draggableHitbox;
+
+	public Window WindowRef;
+	public bool IsDragging { get; private set; }
 
 	protected bool Minimized = false;
 	protected bool Closed = false;
-		
-	protected bool Dragging = false;
-	protected Vector2 DragOffset = Vector2.Zero;
-	protected Input.MouseModeEnum PreviousMouseMode;
 
-	public override void _Input(InputEvent @event)
+	private bool _wasMousePressed;
+
+	public override void _Ready()
 	{
-		if (Dragging && MoveGlobalWindow && @event is InputEventMouseMotion motionEvent)
-		{
-			var window = GetWindow();
-			var viewportSize = GetViewport().GetVisibleRect().Size;
-			float scaleFactorX = window.Size.X / viewportSize.X;
-			float scaleFactorY = window.Size.Y / viewportSize.Y;
-			float scaleFactor = (scaleFactorX + scaleFactorY) / 2.0f;
-			
-			Vector2 scaledMotion = motionEvent.Relative * scaleFactor;
-			window.Position += new Vector2I((int)scaledMotion.X, (int)scaledMotion.Y);
-		}
+		WindowRef = GetWindow();
 	}
 
 	public override void _Process(double delta)
 	{
-		switch (Dragging)
+		bool mousePressed = (DisplayServer.MouseGetButtonState() & MouseButtonMask.Left) != 0;
+		if (!mousePressed)
 		{
-			case true when !Input.IsMouseButtonPressed(MouseButton.Left):
-				Dragging = false;
-				return;
-			case true when !MoveGlobalWindow:
-				GlobalPosition = GetGlobalMousePosition() - DragOffset;
-				break;
+			IsDragging = false;
+			_wasMousePressed = false;
+			return;
 		}
+		
+		var mousePos = _draggableHitbox.GetGlobalMousePosition();
+		if (!_wasMousePressed && _draggableHitbox.GetGlobalRect().HasPoint(mousePos))
+		{
+			IsDragging = true;
+			WindowRef.StartDrag();
+		}
+		
+		_wasMousePressed = true;
 	}
-	
+
 	public virtual void OnCloseButtonPressed()
 	{
 		Closed = !Closed;
@@ -54,25 +53,6 @@ public partial class WindowPanelContainer : PanelContainer
 	public virtual void OnMinimizeButtonPressed()
 	{
 		Minimized = !Minimized;
-		Contents.Visible = !Contents.Visible;
+		_contents.Visible = !_contents.Visible;
 	}
-
-    private void OnDraggablePanelInput(InputEvent @event)
-    {
-        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left } mouseEvent)
-        {
-	        if (mouseEvent.Pressed)
-	        {
-		        Dragging = true;
-		        if (!MoveGlobalWindow)
-		        {
-			        DragOffset = GetGlobalMousePosition() - GlobalPosition;
-		        }
-	        }
-	        else
-	        {
-		        Dragging = false;
-	        }
-        }
-    }
 }
