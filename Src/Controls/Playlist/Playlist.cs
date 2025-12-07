@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
+using GodAmp.Core;
 using GodAmp.Data;
-using GodAmp.Player;
 using GodAmp.Utils;
 using Godot;
 
@@ -40,6 +40,7 @@ public partial class Playlist : WindowPanelContainer
 
 	public override void _Ready()
 	{
+		base._Ready();
 		SignalBus.Instance.InverseSelectionRequested += OnInverseSelectionRequested;
 		SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
 		SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;
@@ -153,28 +154,27 @@ public partial class Playlist : WindowPanelContainer
 
 	private void OnAddButtonPressed()
 	{
-		AddButtonDropdown.Activate(AddButton.GlobalPosition, AddButton.Size);
+		AddButtonDropdown.Activate(AddButton.GetGlobalRect());
 	}
-	
+
 	private void OnRemoveButtonPressed()
 	{
-		RemoveButtonDropdown.Activate(RemoveButton.GlobalPosition, RemoveButton.Size);
+		RemoveButtonDropdown.Activate(RemoveButton.GetGlobalRect());
 	}
-	
+
 	private void OnSelectButtonPressed()
 	{
-		SelectButtonDropdown.Activate(SelectButton.GlobalPosition, SelectButton.Size);
+		SelectButtonDropdown.Activate(SelectButton.GetGlobalRect());
 	}
-	
+
 	private void OnMiscButtonPressed()
 	{
-		MiscButtonDropdown.Activate(MiscButton.GlobalPosition, MiscButton.Size);
+		MiscButtonDropdown.Activate(MiscButton.GetGlobalRect());
 	}
-	
+
 	private void OnListOptionsButtonPressed()
 	{
-		ListOptionsButtonDropdown.Activate(
-			ListOptionsButton.GlobalPosition, ListOptionsButton.Size);
+		ListOptionsButtonDropdown.Activate(ListOptionsButton.GetGlobalRect());
 	}
 
 	private void OnInverseSelectionRequested()
@@ -248,19 +248,13 @@ public partial class Playlist : WindowPanelContainer
 		if (insertIndex > _playlistRef.Count - normalized.Count)
 			insertIndex = _playlistRef.Count - normalized.Count;
 
-		// extract tracks to move in original order
 		var movedTracks = new List<Track>(normalized.Count);
 		movedTracks.AddRange(normalized.Select(idx => _playlistRef[idx]));
-
-		// remove from end to start to avoid shifting
-		for (int k = normalized.Count - 1; k >= 0; k--)
+		for (int k = normalized.Count - 1; k >= 0; k--) // remove from end to start to avoid shifting
 			_playlistRef.RemoveAt(normalized[k]);
 
-		// insert block at computed index
 		_playlistRef.InsertRange(insertIndex, movedTracks);
-
-		// preserve selection of moved tracks
-		_selectedTracks = new HashSet<Track>(movedTracks);
+		_selectedTracks = new HashSet<Track>(movedTracks); // preserve selection of moved tracks
 		_selectionAnchorIndex = insertIndex;
 
 		Refresh();

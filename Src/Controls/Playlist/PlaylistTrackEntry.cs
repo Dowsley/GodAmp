@@ -30,6 +30,8 @@ public partial class PlaylistTrackEntry : PanelContainer
     public override void _Ready()
     {
         MouseFilter = MouseFilterEnum.Stop;
+        SignalBus.Instance.SkinChanged += _trackTitleLabel.QueueRedraw;
+        SignalBus.Instance.SkinChanged += _durationLabel.QueueRedraw;
     }
     
     public void Setup(string title, float duration, int index, bool selected, bool current = false)
@@ -37,7 +39,7 @@ public partial class PlaylistTrackEntry : PanelContainer
         IsSelected = selected;
         
         Index = index;
-        _trackTitleLabel.Text = title;
+        _trackTitleLabel.Text = title.ToUpper();
         _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
         if (!current)
             return;

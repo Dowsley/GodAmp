@@ -12,6 +12,7 @@ public partial class Visualizer : WindowPanelContainer
 
 	public override void _Ready()
 	{
+		base._Ready();
 		Pause();
 		_vizOptsButton.Initialize(_audioVisualizer.StrategyTypeMap.Values.ToList());
 	}

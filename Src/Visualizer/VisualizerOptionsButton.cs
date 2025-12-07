@@ -25,8 +25,8 @@ public partial class VisualizerOptionsButton : MenuButton
 	private void OnAboutToPopup()
 	{
 		_popup.Size = new Vector2I(150, 0);
-		Vector2 mousePos = GetGlobalMousePosition();
-		_popup.Position = new Vector2I((int)mousePos.X, (int)mousePos.Y);
+		Vector2I mousePos = DisplayServer.MouseGetPosition();
+		_popup.Position = mousePos;
 
 		UpdateCheckedItem();
 	}
@@ -56,12 +56,6 @@ public partial class VisualizerOptionsButton : MenuButton
 		_vizSubmenu.SetItemChecked(0, true);
 		_vizSubmenu.IndexPressed += OnVizMenuItemPressed;
 		_popup.AddSubmenuNodeItem("Visualizations", _vizSubmenu);
-	}
-
-	private static void OnScaleMenuItemPressed(long index)
-	{
-		int multiplier = (int)index+1;
-		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
 	}
 
 	private void OnVizMenuItemPressed(long index)

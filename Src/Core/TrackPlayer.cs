@@ -1,7 +1,7 @@
 using GodAmp.Data;
 using Godot;
 
-namespace GodAmp.Player;
+namespace GodAmp.Core;
 
 public partial class TrackPlayer : AudioStreamPlayer
 {

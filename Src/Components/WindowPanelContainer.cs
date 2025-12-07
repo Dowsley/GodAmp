@@ -5,46 +5,59 @@ namespace GodAmp.Components;
 public partial class WindowPanelContainer : PanelContainer
 {
 	[Signal] public delegate void CloseButtonClickedEventHandler();
+	[Signal] public delegate void DragStartedEventHandler(WindowPanelContainer c);
+	[Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
 	
-	[Export] public Control Contents;
-	[Export] public bool MoveGlobalWindow = false;
+	[ExportGroup("References")]
+	[Export] private Control _contents;
+	[Export] private Control _draggableHitbox;
+
+	public Window WindowRef;
+	public bool IsDragging { get; private set; }
 
 	protected bool Minimized = false;
 	protected bool Closed = false;
-		
-	protected bool Dragging = false;
-	protected Vector2 DragOffset = Vector2.Zero;
-	protected Input.MouseModeEnum PreviousMouseMode;
-	
-	public override void _Input(InputEvent @event)
+	private bool _wasMousePressed;
+	private Vector2I _dragOffset;
+
+	public override void _Ready()
 	{
-		if (Dragging && MoveGlobalWindow && @event is InputEventMouseMotion motionEvent)
-		{
-			float scaleFactorX = GetWindow().Size.X / GetViewport().GetVisibleRect().Size.X;
-			float scaleFactorY = GetWindow().Size.Y / GetViewport().GetVisibleRect().Size.Y;
-			float scaleFactor = (scaleFactorX + scaleFactorY) / 2.0f;
-			
-			Vector2 scaledMotion = motionEvent.Relative * scaleFactor;
-			
-			Vector2I windowPosition = DisplayServer.WindowGetPosition();
-			windowPosition += new Vector2I((int)scaledMotion.X, (int)scaledMotion.Y);
-			DisplayServer.WindowSetPosition(windowPosition);
-		}
+		WindowRef = GetWindow();
 	}
 
 	public override void _Process(double delta)
 	{
-		switch (Dragging)
+		bool mousePressed = (DisplayServer.MouseGetButtonState() & MouseButtonMask.Left) != 0;
+
+		if (!mousePressed)
 		{
-			case true when !Input.IsMouseButtonPressed(MouseButton.Left):
-				Dragging = false;
-				return;
-			case true when !MoveGlobalWindow:
-				GlobalPosition = GetGlobalMousePosition() - DragOffset;
-				break;
+			if (IsDragging)
+			{
+				IsDragging = false;
+				EmitSignal(SignalName.DragEnded, this);
+			}
+			_wasMousePressed = false;
+			return;
 		}
+
+		var mousePos = _draggableHitbox.GetGlobalMousePosition();
+
+		if (!_wasMousePressed && _draggableHitbox.GetGlobalRect().HasPoint(mousePos))
+		{
+			IsDragging = true;
+			var globalMousePos = DisplayServer.MouseGetPosition();
+			_dragOffset = WindowRef.Position - globalMousePos;
+			EmitSignal(SignalName.DragStarted, this);
+		}
+
+		_wasMousePressed = true;
 	}
-	
+
+	public Vector2I GetDesiredPosition()
+	{
+		return DisplayServer.MouseGetPosition() + _dragOffset;
+	}
+
 	public virtual void OnCloseButtonPressed()
 	{
 		Closed = !Closed;
@@ -55,25 +68,6 @@ public partial class WindowPanelContainer : PanelContainer
 	public virtual void OnMinimizeButtonPressed()
 	{
 		Minimized = !Minimized;
-		Contents.Visible = !Contents.Visible;
+		_contents.Visible = !_contents.Visible;
 	}
-
-    private void OnDraggablePanelInput(InputEvent @event)
-    {
-        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left } mouseEvent)
-        {
-	        if (mouseEvent.Pressed)
-	        {
-		        Dragging = true;
-		        if (!MoveGlobalWindow)
-		        {
-			        DragOffset = GetGlobalMousePosition() - GlobalPosition;
-		        }
-	        }
-	        else
-	        {
-		        Dragging = false;
-	        }
-        }
-    }
 }

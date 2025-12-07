@@ -32,7 +32,7 @@ public partial class WinampMenuButton : MenuButton
 		_scaleSubmenu.AddItem("3x", 3);
 		_scaleSubmenu.AddItem("4x", 4);
 
-		_scaleSubmenu.IndexPressed += OnScaleMenuItemPressed;
+		_scaleSubmenu.IdPressed += OnScaleMenuItemPressed;
 
 		_popup.AddSubmenuNodeItem("Scale UI", _scaleSubmenu, id);
 	}
@@ -62,9 +62,9 @@ public partial class WinampMenuButton : MenuButton
 		_popup.AddSubmenuNodeItem("Skins", _skinSubmenu, id);
 	}
 
-	private static void OnScaleMenuItemPressed(long index)
+	private static void OnScaleMenuItemPressed(long id)
 	{
-		int multiplier = (int)index+1;
+		int multiplier = (int)id;
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
 	}
 

@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GodAmp.Autoload;
+using GodAmp.Components;
 using GodAmp.Controls.Equalizer;
 using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
+using GodAmp.Core;
 using GodAmp.Data;
-using GodAmp.Player;
 using GodAmp.Utils;
 using Godot;
 
@@ -25,7 +26,12 @@ public partial class Main : HBoxContainer
 	[Export] private Playlist _playlist;
 	[Export] private Visualizer.Visualizer _visualizer;
 	[Export] private TrackPlayer _trackPlayer;
+	[Export] private WindowManager _windowManager;
 
+	private Window _masterPanelWindow;
+	private WindowPanelContainer _windowContainerBeingDragged = null;
+	private bool _grabbingFocusLock = false;
+	
 	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
 
@@ -37,16 +43,9 @@ public partial class Main : HBoxContainer
 	private bool _masterLabelLockedByPositionSeeker = false;
 
 	private FileDialog _lastUsedFileDialog;
-	private Vector2I _originalWindowSize;
 	
 	public override void _Ready()
 	{
-		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
-		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
-		_originalWindowSize = new Vector2I(width, height);
-		
-		CenterWindow();
-
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
 		if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
@@ -106,6 +105,7 @@ public partial class Main : HBoxContainer
 
 	public override void _ExitTree()
 	{
+		_windowManager.SaveWindowStates();
 		SettingsManager.Instance.SaveAllSettings();
 	}
 
@@ -115,7 +115,7 @@ public partial class Main : HBoxContainer
 			_visualizer.Unpause();
 		else
 			_visualizer.Pause();
-		
+
 		if (!_masterLabelLocked)
 		{
 			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
@@ -398,8 +398,7 @@ public partial class Main : HBoxContainer
 	private void CropPlaylist()
 	{
 		var selected = _playlist.GetSelectedIndices();
-		// avoid index shifts
-		for (int i = _trackPlaylist.Count - 1; i >= 0; i--)
+		for (int i = _trackPlaylist.Count - 1; i >= 0; i--) // avoid index shifts
 		{
 			if (!selected.Contains(i))
 				_trackPlaylist.RemoveAt(i);
@@ -472,11 +471,13 @@ public partial class Main : HBoxContainer
 	private void OnToggleEqualizerRequested()
 	{
 		_equalizer.Visible = !_equalizer.Visible;
+		SettingsManager.Instance.SetWindowVisible("equalizer", _equalizer.Visible);
 	}
 
 	private void OnTogglePlaylistRequested()
 	{
 		_playlist.Visible = !_playlist.Visible;
+		SettingsManager.Instance.SetWindowVisible("playlist", _playlist.Visible);
 	}
 
 	private void LoadSettingsState()
@@ -485,34 +486,13 @@ public partial class Main : HBoxContainer
 		_masterPanel.SetVolumeValue(savedVolume);
 		_trackPlayer.VolumeLinear = savedVolume;
 
-		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
-		int multiplier = savedZoomMode switch
-		{
-			0 => 1,
-			1 => 2,
-			_ => savedZoomMode
-		};
-		SetZoomMode(multiplier);
+		var multiplier = SettingsManager.Instance.GetZoomMode();
+		_windowManager.SetZoomMode(multiplier);
 	}
 
 	private void OnZoomModeRequested(int multiplier)
 	{
-		SetZoomMode(multiplier);
-	}
-
-	private void SetZoomMode(int multiplier)
-	{
-		GetWindow().Size = new Vector2I(_originalWindowSize.X * multiplier, _originalWindowSize.Y * multiplier);
-		SettingsManager.Instance.SetZoomMode(multiplier);
-		CenterWindow();
-	}
-	
-	private void CenterWindow()
-	{
-		var screenSize = DisplayServer.ScreenGetSize();
-		var windowSize = GetWindow().Size;
-		var centeredPosition = (screenSize - windowSize) / 2;
-		DisplayServer.WindowSetPosition(centeredPosition);
+		_windowManager.SetZoomMode(multiplier);
 	}
 
 	private void OnEqualizerCloseButtonClicked()

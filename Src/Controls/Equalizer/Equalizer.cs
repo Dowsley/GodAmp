@@ -12,6 +12,7 @@ public partial class Equalizer : WindowPanelContainer
 
 	public override void _Ready()
 	{
+		base._Ready();
 		SetEqualizerEnabled(false);
 		UIUtils.SetSliderColor(
 			_preampSlider, (float) _preampSlider.Value, -12.0f, 12.0f);
@@ -40,52 +41,52 @@ public partial class Equalizer : WindowPanelContainer
 		UIUtils.SetSliderColor(_preampSlider, value, -12.0f, 12.0f);
 	}
 
-	private void On60SliderValueChanged(float value)
+	private static void On60SliderValueChanged(float value)
 	{
 		SetEq10Index(0, value);
 	}
 
-	private void On170SliderValueChanged(float value)
+	private static void On170SliderValueChanged(float value)
 	{
 		SetEq10Index(1, value);
 	}
 
-	private void On310SliderValueChanged(float value)
+	private static void On310SliderValueChanged(float value)
 	{
 		SetEq10Index(2, value);
 	}
 
-	private void On600SliderValueChanged(float value)
+	private static void On600SliderValueChanged(float value)
 	{
 		SetEq10Index(3, value);
 	}
 
-	private void On1KSliderValueChanged(float value)
+	private static void On1KSliderValueChanged(float value)
 	{
 		SetEq10Index(4, value);
 	}
 
-	private void On3KSliderValueChanged(float value)
+	private static void On3KSliderValueChanged(float value)
 	{
 		SetEq10Index(5, value);
 	}
 
-	private void On6KSliderValueChanged(float value)
+	private static void On6KSliderValueChanged(float value)
 	{
 		SetEq10Index(6, value);
 	}
 
-	private void On12KSliderValueChanged(float value)
+	private static void On12KSliderValueChanged(float value)
 	{
 		SetEq10Index(7, value);
 	}
 
-	private void On14SliderValueChanged(float value)
+	private static void On14SliderValueChanged(float value)
 	{
 		SetEq10Index(8, value);
 	}
 
-	private void On16SliderValueChanged(float value)
+	private static void On16SliderValueChanged(float value)
 	{
 		SetEq10Index(9, value);
 	}

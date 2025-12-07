@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=42 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" uid="uid://bjkjs64jbeujb" path="res://Src/Controls/Equalizer/Equalizer.cs" id="1_3v461"]
 [ext_resource type="Texture2D" uid="uid://c58qh2npimswe" path="res://Data/SkinResources/EqualizerBackground.tres" id="2_h2kye"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://x4rfo6tnvekc" path="res://Data/SkinResources/EqualizerMinimizeButtonPressed.tres" id="5_4k323"]
 [ext_resource type="Texture2D" uid="uid://bfqq6k4lvgetp" path="res://Data/SkinResources/EqualizerCloseButtonNormal.tres" id="6_klai7"]
 [ext_resource type="Texture2D" uid="uid://gjbj1xm2lqof" path="res://Data/SkinResources/EqualizerCloseButtonPressed.tres" id="7_k83ll"]
-[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_r0ulg"]
 [ext_resource type="Texture2D" uid="uid://w6owntvxdsg3" path="res://Data/SkinResources/EqualizerToggleButtonNormal.tres" id="8_f3of5"]
 [ext_resource type="Texture2D" uid="uid://bg575vkt0rmad" path="res://Data/SkinResources/EqualizerToggleButtonPressed.tres" id="9_ya3m1"]
 [ext_resource type="Texture2D" uid="uid://bgwq6y4v7mt62" path="res://Data/SkinResources/AutoEqualizeToggleButtonNormal.tres" id="10_rf8gf"]
@@ -111,15 +110,19 @@ texture_margin_top = 5.0
 texture_margin_right = 7.0
 texture_margin_bottom = 5.0
 
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "Contents")]
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_preampSlider", "_equalizerToggleButton", "_contents", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
-offset_right = 275.0
-offset_bottom = 116.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_3v461")
 _preampSlider = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/PreampSlider")
 _equalizerToggleButton = NodePath("VBoxContainer/AllContent/MarginContainer/VBoxContainer/ButtonsAndGraphSection/EqualizerToggleButton")
-Contents = NodePath("VBoxContainer/AllContent")
+_contents = NodePath("VBoxContainer")
+_draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
@@ -387,9 +390,11 @@ min_value = -12.0
 max_value = 12.0
 script = ExtResource("18_w3pak")
 
-[node name="DraggablePanel" parent="." instance=ExtResource("7_r0ulg")]
+[node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
 
 [connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
@@ -405,4 +410,3 @@ layout_mode = 2
 [connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/12KSlider" to="." method="On12KSliderValueChanged"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/14KSlider" to="." method="On14KSliderValueChanged"]
 [connection signal="value_changed" from="VBoxContainer/AllContent/MarginContainer/VBoxContainer/Sliders/16KSlider" to="." method="On16KSliderValueChanged"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

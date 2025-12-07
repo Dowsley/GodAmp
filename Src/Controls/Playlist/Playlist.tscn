@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://diw508vd3gr8k"]
+[gd_scene load_steps=29 format=3 uid="uid://diw508vd3gr8k"]
 
 [ext_resource type="Script" uid="uid://35td6b067wck" path="res://Src/Controls/Playlist/Playlist.cs" id="1_qbsw1"]
 [ext_resource type="PackedScene" uid="uid://b0lgw7guxv7tw" path="res://Src/Controls/Playlist/PlaylistTrackEntry.tscn" id="2_ecqcu"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://wc57x2wc60q1" path="res://Data/SkinResources/PlaylistCloseButtonNormal.tres" id="6_esdbs"]
 [ext_resource type="Texture2D" uid="uid://d0bojntuwrhck" path="res://Data/SkinResources/PlaylistTopRightCorner.tres" id="6_njjkq"]
 [ext_resource type="Texture2D" uid="uid://cxk0cy7jmrluf" path="res://Data/SkinResources/PlaylistCloseButtonPressed.tres" id="7_bltap"]
-[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_pgi81"]
 [ext_resource type="PackedScene" uid="uid://c8do4imjy7rnv" path="res://Src/Controls/Playlist/ButtonDropdowns/AddButtonDropdown.tscn" id="9_bcdvx"]
 [ext_resource type="PackedScene" uid="uid://cvky7cixi5gbr" path="res://Src/Controls/Playlist/ButtonDropdowns/RemoveButtonDropdown.tscn" id="10_ibn1u"]
 [ext_resource type="PackedScene" uid="uid://ryfqbifwt78y" path="res://Src/Controls/Playlist/ButtonDropdowns/SelectButtonDropdown.tscn" id="11_esdbs"]
@@ -31,10 +30,13 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibn1u"]
 
-[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "Contents")]
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
-offset_right = 275.0
-offset_bottom = 116.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_qbsw1")
 TrackLabelScene = ExtResource("2_ecqcu")
@@ -50,7 +52,8 @@ RemoveButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContaine
 SelectButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton")
 MiscButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton")
 ListOptionsButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton")
-Contents = NodePath("VBoxContainer/AllContent")
+_contents = NodePath("VBoxContainer")
+_draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -163,7 +166,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 6
+theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 2
 
 [node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer"]
@@ -193,7 +196,7 @@ size_flags_horizontal = 2
 texture = ExtResource("14_7604m")
 
 [node name="AddButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 14.0
 offset_top = 8.0
 offset_right = 36.0
@@ -206,7 +209,7 @@ texture_pressed = ExtResource("16_l1iyi")
 stretch_mode = 5
 
 [node name="RemoveButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 43.0
 offset_top = 8.0
 offset_right = 65.0
@@ -219,7 +222,7 @@ texture_pressed = ExtResource("17_xtgbh")
 stretch_mode = 5
 
 [node name="SelectButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 72.0
 offset_top = 8.0
 offset_right = 94.0
@@ -232,7 +235,7 @@ texture_pressed = ExtResource("18_28pe4")
 stretch_mode = 5
 
 [node name="MiscButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 101.0
 offset_top = 8.0
 offset_right = 123.0
@@ -267,9 +270,11 @@ texture_normal = ExtResource("22_kvkyn")
 texture_pressed = ExtResource("22_kvkyn")
 stretch_mode = 5
 
-[node name="DraggablePanel" parent="." instance=ExtResource("7_pgi81")]
+[node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
 
 [node name="AddButtonDropdown" parent="." instance=ExtResource("9_bcdvx")]
 visible = false
@@ -293,4 +298,3 @@ visible = false
 [connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton" to="." method="OnSelectButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton" to="." method="OnMiscButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton" to="." method="OnListOptionsButtonPressed"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

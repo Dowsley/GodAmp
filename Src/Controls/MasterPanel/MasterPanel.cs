@@ -1,6 +1,6 @@
 using GodAmp.Autoload;
 using GodAmp.Components;
-using GodAmp.Player;
+using GodAmp.Core;
 using GodAmp.Utils;
 using Godot;
 
@@ -41,6 +41,7 @@ public partial class MasterPanel : WindowPanelContainer
 	
 	public override void _Ready()
 	{
+		base._Ready();
 		UIUtils.SetSliderColor(
 			_pannerAudioSlider, (float)_pannerAudioSlider.Value, -1.0f, 1.0f);
 
@@ -195,7 +196,7 @@ public partial class MasterPanel : WindowPanelContainer
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, false);
 	}
 	
-	private static void OnSliderDragEnded(float value = 0.0f)
+	private static void OnSliderDragEnded(bool valueChanged = false)
 	{
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.UnlockMasterLabel);
 	}

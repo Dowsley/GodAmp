@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=20 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://dkkcq2jvv4s58" path="res://Data/SkinResources/VisualizerTopLeftCornerEnd.tres" id="4_gnf20"]
 [ext_resource type="Texture2D" uid="uid://cwv0lqctdihgq" path="res://Data/SkinResources/VisualizerTopRightCornerStart.tres" id="6_cwlo7"]
 [ext_resource type="Texture2D" uid="uid://bdkilg3i3gcm" path="res://Data/SkinResources/VisualizerTopRightCorner.tres" id="7_cwlo7"]
-[ext_resource type="PackedScene" uid="uid://btjg3gj5nwcqw" path="res://Src/Components/DraggablePanel.tscn" id="7_jduyf"]
 [ext_resource type="Texture2D" uid="uid://cgm3dk1wrgc17" path="res://Data/SkinResources/VisualizerCloseButtonNormal.tres" id="8_qpg3j"]
 [ext_resource type="Texture2D" uid="uid://dmpwfopuxlbsa" path="res://Data/SkinResources/VisualizerCloseButtonPressed.tres" id="9_qpg3j"]
 [ext_resource type="Texture2D" uid="uid://b70wgp5ay8qlc" path="res://Data/SkinResources/VisualizerTilableLeftEdge.tres" id="10_c0tab"]
@@ -21,7 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://bl2vrtdloq57o" path="res://Data/SkinResources/VisualizerBottomLeftCorner.tres" id="15_c0tab"]
 [ext_resource type="Texture2D" uid="uid://1o265qd5jybc" path="res://Data/SkinResources/VisualizerBottomRightCorner.tres" id="16_700eo"]
 
-[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "Contents")]
+[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "_contents", "_draggableHitbox")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -33,7 +32,8 @@ mouse_filter = 2
 script = ExtResource("1_6dse3")
 _audioVisualizer = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer")
 _vizOptsButton = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton")
-Contents = NodePath("VBoxContainer")
+_contents = NodePath("VBoxContainer")
+_draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -183,10 +183,11 @@ texture = ExtResource("14_5e0r8")
 layout_mode = 2
 texture = ExtResource("16_700eo")
 
-[node name="DraggablePanel" parent="." instance=ExtResource("7_jduyf")]
+[node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
 
 [connection signal="gui_input" from="VBoxContainer/AllContent/Middle/MiddleTexture" to="." method="OnVisualizerGuiInput"]
 [connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
-[connection signal="OnDraggablePanelInput" from="DraggablePanel" to="." method="OnDraggablePanelInput"]

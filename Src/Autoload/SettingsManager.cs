@@ -11,6 +11,8 @@ public partial class SettingsManager : Node
 	private const string ZoomModeKey = "zoom_mode";
 	private const string VolumeKey = "volume";
 	private const string ActiveSkinKey = "active_skin";
+	private const string WindowPositionKeyFormat = "window_{0}_position";
+	private const string WindowVisibleKeyFormat = "window_{0}_visible";
 
 	[Signal] public delegate void SettingChangedEventHandler(string key, Variant value);
 	[Signal] public delegate void LastPlaylistPathChangedEventHandler(string path);
@@ -107,7 +109,7 @@ public partial class SettingsManager : Node
 	/// </summary>
 	public int GetZoomMode()
 	{
-		return (int)GetSetting(ZoomModeKey, 0);
+		return (int)GetSetting(ZoomModeKey, 2);
 	}
 
 	/// <summary>
@@ -148,6 +150,35 @@ public partial class SettingsManager : Node
 	public void SetActiveSkin(string skinFileName)
 	{
 		SetSetting(ActiveSkinKey, skinFileName);
+	}
+
+	public Vector2I GetWindowPosition(string windowName, Vector2I defaultPos)
+	{
+		string key = string.Format(WindowPositionKeyFormat, windowName);
+		string value = (string)GetSetting(key, "");
+		if (string.IsNullOrEmpty(value))
+			return defaultPos;
+
+		var parts = value.Split(',');
+		return new Vector2I(int.Parse(parts[0]), int.Parse(parts[1]));
+	}
+
+	public void SetWindowPosition(string windowName, Vector2I position)
+	{
+		string key = string.Format(WindowPositionKeyFormat, windowName);
+		SetSetting(key, $"{position.X},{position.Y}");
+	}
+
+	public bool GetWindowVisible(string windowName, bool defaultVisible)
+	{
+		string key = string.Format(WindowVisibleKeyFormat, windowName);
+		return (bool)GetSetting(key, defaultVisible);
+	}
+
+	public void SetWindowVisible(string windowName, bool visible)
+	{
+		string key = string.Format(WindowVisibleKeyFormat, windowName);
+		SetSetting(key, visible);
 	}
 
 	/// <summary>

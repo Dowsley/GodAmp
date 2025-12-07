@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cvk3sjyjvxxxi"]
+
+[ext_resource type="Shader" uid="uid://0fvptowbtexm" path="res://Data/Shaders/SelectiveTransparency.gdshader" id="1_3tvtv"]
+
+[resource]
+shader = ExtResource("1_3tvtv")
+shader_parameter/transparent_color = Color(0, 0, 0, 1)
+shader_parameter/threshold = 0.1
