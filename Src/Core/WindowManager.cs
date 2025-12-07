@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Controls.Equalizer;
@@ -27,9 +28,12 @@ public partial class WindowManager : Node
 
     private Vector2I _originalWindowSize;
     private Vector2I _originalVisualizerWindowSize;
-    
+
     private List<WindowPanelContainer> _allContainerRefs;
     private List<Window> _allWindowsRefs;
+
+    private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = new();
+    private Vector2I _lastDraggedWindowPosition;
     
     public override void _Ready()
     {
@@ -37,17 +41,20 @@ public partial class WindowManager : Node
         _playlistWindow = _playlist.GetParent<Window>();
         _visualizerWindow = _visualizer.GetParent<Window>();
         _masterPanelWindow = _masterPanel.GetWindow();
-        
-        // CenterWindow();
-        
+
         _allContainerRefs = [ _masterPanel, _equalizer, _playlist, _visualizer ];
         _allWindowsRefs = [_masterPanelWindow, _equalizerWindow, _playlistWindow, _visualizerWindow];
-        
+
         int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
         int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
         _originalWindowSize = new Vector2I(width, height);
         _originalVisualizerWindowSize = _visualizerWindow.Size;
-        
+
+        foreach (var window in _allWindowsRefs)
+        {
+            _gluedWindows[window] = new HashSet<Window>();
+        }
+
         foreach (var container in _allContainerRefs)
         {
             container.DragStarted += OnWindowDragStart;
@@ -86,12 +93,17 @@ public partial class WindowManager : Node
     
     private void ProcessDragging()
     {
-        if (_windowContainerBeingDragged is { IsDragging: true })
-        {
-            var desiredPos = _windowContainerBeingDragged.GetDesiredPosition();
-            var snappedPos = GetSnappedDragPosition(_windowContainerBeingDragged.WindowRef, desiredPos);
-            _windowContainerBeingDragged.WindowRef.Position = snappedPos;
-        }
+        if (_windowContainerBeingDragged is not { IsDragging: true })
+            return;
+
+        var draggedWindow = _windowContainerBeingDragged.WindowRef;
+        var desiredPos = _windowContainerBeingDragged.GetDesiredPosition();
+        var snappedPos = GetSnappedDragPosition(draggedWindow, desiredPos);
+
+        var offset = snappedPos - draggedWindow.Position;
+        draggedWindow.Position = snappedPos;
+
+        MoveGluedWindows(draggedWindow, offset);
     }
 
     private Vector2I GetSnappedDragPosition(Window draggedWindow, Vector2I desiredPos)
@@ -108,6 +120,9 @@ public partial class WindowManager : Node
         {
             var otherWindow = container.WindowRef;
             if (otherWindow == draggedWindow)
+                continue;
+
+            if (_gluedWindows[draggedWindow].Contains(otherWindow))
                 continue;
 
             var otherPos = otherWindow.Position;
@@ -153,6 +168,33 @@ public partial class WindowManager : Node
 
         return new Vector2I(bestSnapX ?? desiredPos.X, bestSnapY ?? desiredPos.Y);
     }
+
+    private void MoveGluedWindows(Window movedWindow, Vector2I offset)
+    {
+        if (offset == Vector2I.Zero)
+            return;
+
+        var visited = new HashSet<Window> { movedWindow };
+        var toMove = new Queue<Window>();
+
+        foreach (var glued in _gluedWindows[movedWindow])
+            toMove.Enqueue(glued);
+
+        while (toMove.Count > 0)
+        {
+            var window = toMove.Dequeue();
+            if (!visited.Add(window))
+                continue;
+
+            window.Position += offset;
+
+            foreach (Window glued in _gluedWindows[window].Where(glued => !visited.Contains(glued)))
+            {
+                toMove.Enqueue(glued);
+            }
+        }
+    }
+
     
     private void OnAnyWindowFocused(Window focusedWindow)
     {
@@ -169,18 +211,78 @@ public partial class WindowManager : Node
     private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
     {
         _windowContainerBeingDragged = draggedContainerRef;
+
+        if (draggedContainerRef.WindowRef != _masterPanelWindow)
+        {
+            DetachFromAllWindows(draggedContainerRef.WindowRef);
+        }
     }
 
     private void OnWindowDragEnd(WindowPanelContainer draggedContainerRef)
     {
+        var draggedWindow = draggedContainerRef.WindowRef;
+
         _windowContainerBeingDragged = null;
+
+        var snappedToWindow = FindClosestSnappedWindow(draggedWindow);
+        if (snappedToWindow != null)
+        {
+            GlueWindows(draggedWindow, snappedToWindow);
+        }
     }
-    
-    // private void CenterWindow()
-    // {
-    //     var screenSize = DisplayServer.ScreenGetSize();
-    //     var windowSize = GetWindow().Size;
-    //     var centeredPosition = (screenSize - windowSize) / 2;
-    //     DisplayServer.WindowSetPosition(centeredPosition);
-    // }
+
+    private void DetachFromAllWindows(Window window)
+    {
+        foreach (var gluedWindow in _gluedWindows[window].ToList())
+        {
+            _gluedWindows[window].Remove(gluedWindow);
+            _gluedWindows[gluedWindow].Remove(window);
+        }
+    }
+
+    private void GlueWindows(Window w1, Window w2)
+    {
+        _gluedWindows[w1].Add(w2);
+        _gluedWindows[w2].Add(w1);
+    }
+
+    private Window FindClosestSnappedWindow(Window draggedWindow)
+    {
+        const int snapThreshold = 5;
+
+        return _allContainerRefs
+            .Select(container => container.WindowRef)
+            .Where(otherWindow => otherWindow != draggedWindow)
+            .FirstOrDefault(otherWindow => AreWindowsTouching(draggedWindow, otherWindow, snapThreshold));
+    }
+
+
+    private static bool AreWindowsTouching(Window w1, Window w2, int threshold)
+    {
+        var pos1 = w1.Position;
+        var size1 = w1.Size;
+        var pos2 = w2.Position;
+        var size2 = w2.Size;
+
+        bool yOverlap = !(pos1.Y + size1.Y < pos2.Y || pos1.Y > pos2.Y + size2.Y);
+        bool xOverlap = !(pos1.X + size1.X < pos2.X || pos1.X > pos2.X + size2.X);
+
+        if (yOverlap)
+        {
+            int distRightToLeft = Math.Abs(pos2.X - (pos1.X + size1.X));
+            int distLeftToRight = Math.Abs((pos2.X + size2.X) - pos1.X);
+            if (distRightToLeft <= threshold || distLeftToRight <= threshold)
+                return true;
+        }
+
+        if (xOverlap)
+        {
+            int distBottomToTop = Math.Abs(pos2.Y - (pos1.Y + size1.Y));
+            int distTopToBottom = Math.Abs((pos2.Y + size2.Y) - pos1.Y);
+            if (distBottomToTop <= threshold || distTopToBottom <= threshold)
+                return true;
+        }
+
+        return false;
+    }
 }
