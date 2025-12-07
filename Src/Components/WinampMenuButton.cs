@@ -32,7 +32,7 @@ public partial class WinampMenuButton : MenuButton
 		_scaleSubmenu.AddItem("3x", 3);
 		_scaleSubmenu.AddItem("4x", 4);
 
-		_scaleSubmenu.IndexPressed += OnScaleMenuItemPressed;
+		_scaleSubmenu.IdPressed += OnScaleMenuItemPressed;
 
 		_popup.AddSubmenuNodeItem("Scale UI", _scaleSubmenu, id);
 	}

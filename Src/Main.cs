@@ -492,6 +492,7 @@ public partial class Main : HBoxContainer
 
 	private void OnZoomModeRequested(int multiplier)
 	{
+		GD.Print($"Zoom mode changed to {multiplier}");
 		_windowManager.SetZoomMode(multiplier);
 	}
 

@@ -328,13 +328,8 @@ public partial class WindowManager : Node
 
     private void DetachFromAllWindows(Window window)
     {
-        var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
-        GD.Print($"[DetachFromAllWindows] Detaching {windowName} from all windows");
-
         foreach (var gluedWindow in _gluedWindows[window].ToList())
         {
-            var gluedWindowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == gluedWindow)?.Name;
-            GD.Print($"  Removing edge: {windowName} <-> {gluedWindowName}");
             _gluedWindows[window].Remove(gluedWindow);
             _gluedWindows[gluedWindow].Remove(window);
         }
@@ -343,42 +338,24 @@ public partial class WindowManager : Node
     private void GlueToAllTouchingWindows(Window window)
     {
         const int snapThreshold = 5;
-        var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
-        GD.Print($"[GlueToAllTouchingWindows] Checking glue opportunities for {windowName}");
-
         var touchingWindows = new List<Window>();
-
         foreach (var container in _allContainerRefs)
         {
             var otherWindow = container.WindowRef;
-            if (otherWindow == window)
+            if (otherWindow == window || _gluedWindows[window].Contains(otherWindow))
                 continue;
-
-            if (_gluedWindows[window].Contains(otherWindow))
-            {
-                GD.Print($"  {container.Name}: Already glued, skipping");
-                continue;
-            }
 
             bool touching = AreWindowsTouching(window, otherWindow, snapThreshold);
-            GD.Print($"  {container.Name}: Touching={touching}");
-
             if (touching)
-            {
                 touchingWindows.Add(otherWindow);
-            }
         }
 
         if (touchingWindows.Count > 0)
         {
-            GD.Print($"  Found {touchingWindows.Count} touching window(s), merging their groups...");
             var allWindowsToGlueTo = GetAllWindowsInGroups(touchingWindows);
 
-            GD.Print($"  Total windows to glue to (after merging groups): {allWindowsToGlueTo.Count}");
             foreach (var w in allWindowsToGlueTo)
             {
-                var name = _allContainerRefs.FirstOrDefault(c => c.WindowRef == w)?.Name;
-                GD.Print($"    Creating bidirectional edge: {windowName} <-> {name}");
                 _gluedWindows[window].Add(w);
                 _gluedWindows[w].Add(window);
             }
@@ -389,13 +366,11 @@ public partial class WindowManager : Node
     {
         var result = new HashSet<Window>();
 
-        foreach (var touchedWindow in touchingWindows)
+        foreach (var w in touchingWindows
+                     .Select(GetConnectedGroup)
+                     .SelectMany(group => group))
         {
-            var group = GetConnectedGroup(touchedWindow);
-            foreach (var w in group)
-            {
-                result.Add(w);
-            }
+            result.Add(w);
         }
 
         return result;
@@ -411,13 +386,11 @@ public partial class WindowManager : Node
         while (toVisit.Count > 0)
         {
             var current = toVisit.Dequeue();
-            foreach (var connected in _gluedWindows[current])
+            foreach (Window connected in _gluedWindows[current]
+                         .Where(visited.Add))
             {
-                if (visited.Add(connected))
-                {
-                    group.Add(connected);
-                    toVisit.Enqueue(connected);
-                }
+                group.Add(connected);
+                toVisit.Enqueue(connected);
             }
         }
 
@@ -519,8 +492,6 @@ public partial class WindowManager : Node
     private void DetectAndRestoreGlueRelationships()
     {
         const int glueThreshold = 5;
-        GD.Print("[DetectAndRestoreGlueRelationships] Starting glue detection...");
-
         foreach (var container1 in _allContainerRefs)
         {
             foreach (var container2 in _allContainerRefs)
@@ -534,59 +505,14 @@ public partial class WindowManager : Node
                 if (_gluedWindows[window1].Contains(window2))
                     continue;
 
-                GD.Print($"  Checking {container1.Name} vs {container2.Name}:");
-                GD.Print($"    Window1 pos: {window1.Position}, size: {window1.Size}");
-                GD.Print($"    Window2 pos: {window2.Position}, size: {window2.Size}");
-
                 bool touching = AreWindowsTouching(window1, window2, glueThreshold);
-                GD.Print($"    Touching: {touching}");
 
                 if (touching)
                 {
-                    GD.Print($"    -> Creating edge: {container1.Name} <-> {container2.Name}");
                     _gluedWindows[window1].Add(window2);
                     _gluedWindows[window2].Add(window1);
                 }
             }
-        }
-
-        GD.Print("[DetectAndRestoreGlueRelationships] Detection complete. Final graph state:");
-        foreach (var kvp in _gluedWindows)
-        {
-            var containerName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == kvp.Key)?.Name;
-            if (kvp.Value.Count > 0)
-            {
-                var connections = string.Join(", ", kvp.Value.Select(w =>
-                    _allContainerRefs.FirstOrDefault(c => c.WindowRef == w)?.Name ?? "Unknown"));
-                GD.Print($"  {containerName} -> [{connections}]");
-            }
-            else
-            {
-                GD.Print($"  {containerName} -> []");
-            }
-        }
-
-        GD.Print("[DetectAndRestoreGlueRelationships] Verifying graph integrity:");
-        bool graphValid = true;
-        foreach (var kvp in _gluedWindows)
-        {
-            var window = kvp.Key;
-            var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
-
-            foreach (var connectedWindow in kvp.Value)
-            {
-                if (!_gluedWindows[connectedWindow].Contains(window))
-                {
-                    var connectedName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == connectedWindow)?.Name;
-                    GD.PrintErr($"  ERROR: Edge {windowName} -> {connectedName} is not bidirectional!");
-                    graphValid = false;
-                }
-            }
-        }
-
-        if (graphValid)
-        {
-            GD.Print("  Graph integrity: OK (all edges are bidirectional)");
         }
     }
 }
