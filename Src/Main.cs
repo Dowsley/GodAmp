@@ -105,6 +105,7 @@ public partial class Main : HBoxContainer
 
 	public override void _ExitTree()
 	{
+		_windowManager.SaveWindowStates();
 		SettingsManager.Instance.SaveAllSettings();
 	}
 
@@ -470,11 +471,13 @@ public partial class Main : HBoxContainer
 	private void OnToggleEqualizerRequested()
 	{
 		_equalizer.Visible = !_equalizer.Visible;
+		SettingsManager.Instance.SetWindowVisible("equalizer", _equalizer.Visible);
 	}
 
 	private void OnTogglePlaylistRequested()
 	{
 		_playlist.Visible = !_playlist.Visible;
+		SettingsManager.Instance.SetWindowVisible("playlist", _playlist.Visible);
 	}
 
 	private void LoadSettingsState()
@@ -483,13 +486,7 @@ public partial class Main : HBoxContainer
 		_masterPanel.SetVolumeValue(savedVolume);
 		_trackPlayer.VolumeLinear = savedVolume;
 
-		int savedZoomMode = SettingsManager.Instance.GetZoomMode();
-		int multiplier = savedZoomMode switch
-		{
-			0 => 1,
-			1 => 2,
-			_ => savedZoomMode
-		};
+		int multiplier = SettingsManager.Instance.GetZoomMode();
 		_windowManager.SetZoomMode(multiplier);
 	}
 

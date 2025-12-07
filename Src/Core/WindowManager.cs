@@ -12,12 +12,17 @@ namespace GodAmp.Core;
 
 public partial class WindowManager : Node
 {
+    private const string MasterPanelWindowName = "masterPanel";
+    private const string EqualizerWindowName = "equalizer";
+    private const string PlaylistWindowName = "playlist";
+    private const string VisualizerWindowName = "visualizer";
+
     [ExportGroup("References")]
     [Export] private MasterPanel _masterPanel;
     [Export] private Equalizer _equalizer;
     [Export] private Playlist _playlist;
     [Export] private Visualizer.Visualizer _visualizer;
-    
+
     private WindowPanelContainer _windowContainerBeingDragged;
     private bool _grabbingFocusLock;
 
@@ -61,6 +66,8 @@ public partial class WindowManager : Node
             container.DragEnded += OnWindowDragEnd;
             container.WindowRef.FocusEntered += () => OnAnyWindowFocused(container.WindowRef);
         }
+
+        RestoreWindowStates();
     }
 
     public override void _Process(double delta)
@@ -70,25 +77,37 @@ public partial class WindowManager : Node
     
     public void SetZoomMode(int multiplier)
     {
+        int oldMultiplier = SettingsManager.Instance.GetZoomMode();
+        float zoomRatio = (float)multiplier / oldMultiplier;
+
+        var masterPos = _masterPanelWindow.Position;
         var scale = new Vector2(multiplier, multiplier);
 
         var newSize = _originalWindowSize * multiplier;
         GetWindow().Size = newSize;
-		
+
         _equalizerWindow.Size = newSize;
         _equalizer.Size = _originalWindowSize;
         _equalizer.Scale = scale;
-		
+
         _playlistWindow.Size = newSize;
         _playlist.Size = _originalWindowSize;
         _playlist.Scale = scale;
-		
+
         _visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
         _visualizer.Size = _originalVisualizerWindowSize;
         _visualizer.Scale = scale;
-		
+
         SettingsManager.Instance.SetZoomMode(multiplier);
-        // CenterWindow();
+
+        ScaleWindowPositions(masterPos, zoomRatio);
+    }
+
+    private void ScaleWindowPositions(Vector2I groupOrigin, float ratio)
+    {
+        _equalizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_equalizerWindow.Position - groupOrigin) * ratio);
+        _playlistWindow.Position = groupOrigin + (Vector2I)((Vector2)(_playlistWindow.Position - groupOrigin) * ratio);
+        _visualizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_visualizerWindow.Position - groupOrigin) * ratio);
     }
     
     private void ProcessDragging()
@@ -304,38 +323,106 @@ public partial class WindowManager : Node
 
         _windowContainerBeingDragged = null;
 
-        var snappedToWindow = FindClosestSnappedWindow(draggedWindow);
-        if (snappedToWindow != null)
-        {
-            GlueWindows(draggedWindow, snappedToWindow);
-        }
+        GlueToAllTouchingWindows(draggedWindow);
     }
 
     private void DetachFromAllWindows(Window window)
     {
+        var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
+        GD.Print($"[DetachFromAllWindows] Detaching {windowName} from all windows");
+
         foreach (var gluedWindow in _gluedWindows[window].ToList())
         {
+            var gluedWindowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == gluedWindow)?.Name;
+            GD.Print($"  Removing edge: {windowName} <-> {gluedWindowName}");
             _gluedWindows[window].Remove(gluedWindow);
             _gluedWindows[gluedWindow].Remove(window);
         }
     }
 
-    private void GlueWindows(Window w1, Window w2)
-    {
-        _gluedWindows[w1].Add(w2);
-        _gluedWindows[w2].Add(w1);
-    }
-
-    private Window FindClosestSnappedWindow(Window draggedWindow)
+    private void GlueToAllTouchingWindows(Window window)
     {
         const int snapThreshold = 5;
+        var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
+        GD.Print($"[GlueToAllTouchingWindows] Checking glue opportunities for {windowName}");
 
-        return _allContainerRefs
-            .Select(container => container.WindowRef)
-            .Where(otherWindow => otherWindow != draggedWindow)
-            .FirstOrDefault(otherWindow => AreWindowsTouching(draggedWindow, otherWindow, snapThreshold));
+        var touchingWindows = new List<Window>();
+
+        foreach (var container in _allContainerRefs)
+        {
+            var otherWindow = container.WindowRef;
+            if (otherWindow == window)
+                continue;
+
+            if (_gluedWindows[window].Contains(otherWindow))
+            {
+                GD.Print($"  {container.Name}: Already glued, skipping");
+                continue;
+            }
+
+            bool touching = AreWindowsTouching(window, otherWindow, snapThreshold);
+            GD.Print($"  {container.Name}: Touching={touching}");
+
+            if (touching)
+            {
+                touchingWindows.Add(otherWindow);
+            }
+        }
+
+        if (touchingWindows.Count > 0)
+        {
+            GD.Print($"  Found {touchingWindows.Count} touching window(s), merging their groups...");
+            var allWindowsToGlueTo = GetAllWindowsInGroups(touchingWindows);
+
+            GD.Print($"  Total windows to glue to (after merging groups): {allWindowsToGlueTo.Count}");
+            foreach (var w in allWindowsToGlueTo)
+            {
+                var name = _allContainerRefs.FirstOrDefault(c => c.WindowRef == w)?.Name;
+                GD.Print($"    Creating bidirectional edge: {windowName} <-> {name}");
+                _gluedWindows[window].Add(w);
+                _gluedWindows[w].Add(window);
+            }
+        }
     }
 
+    private HashSet<Window> GetAllWindowsInGroups(List<Window> touchingWindows)
+    {
+        var result = new HashSet<Window>();
+
+        foreach (var touchedWindow in touchingWindows)
+        {
+            var group = GetConnectedGroup(touchedWindow);
+            foreach (var w in group)
+            {
+                result.Add(w);
+            }
+        }
+
+        return result;
+    }
+
+    private HashSet<Window> GetConnectedGroup(Window startWindow)
+    {
+        var group = new HashSet<Window> { startWindow };
+        var visited = new HashSet<Window> { startWindow };
+        var toVisit = new Queue<Window>();
+        toVisit.Enqueue(startWindow);
+
+        while (toVisit.Count > 0)
+        {
+            var current = toVisit.Dequeue();
+            foreach (var connected in _gluedWindows[current])
+            {
+                if (visited.Add(connected))
+                {
+                    group.Add(connected);
+                    toVisit.Enqueue(connected);
+                }
+            }
+        }
+
+        return group;
+    }
 
     private static bool AreWindowsTouching(Window w1, Window w2, int threshold)
     {
@@ -364,5 +451,142 @@ public partial class WindowManager : Node
         }
 
         return false;
+    }
+
+    public void SaveWindowStates()
+    {
+        SettingsManager.Instance.SetWindowPosition(MasterPanelWindowName, _masterPanelWindow.Position);
+
+        SettingsManager.Instance.SetWindowPosition(EqualizerWindowName, _equalizerWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(EqualizerWindowName, _equalizer.Visible);
+
+        SettingsManager.Instance.SetWindowPosition(PlaylistWindowName, _playlistWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(PlaylistWindowName, _playlist.Visible);
+
+        SettingsManager.Instance.SetWindowPosition(VisualizerWindowName, _visualizerWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(VisualizerWindowName, _visualizer.Visible);
+    }
+
+    private void RestoreWindowStates()
+    {
+        int zoomMultiplier = SettingsManager.Instance.GetZoomMode();
+
+        SetZoomModeWithoutScalingPositions(zoomMultiplier);
+
+        var screenSize = DisplayServer.ScreenGetSize();
+        var windowSize = _masterPanelWindow.Size;
+        var totalGroupSize = new Vector2I(windowSize.X + _visualizerWindow.Size.X, windowSize.Y * 3);
+        var groupCenteredPos = (screenSize - totalGroupSize) / 2;
+
+        var masterPos = SettingsManager.Instance.GetWindowPosition(MasterPanelWindowName, groupCenteredPos);
+        _masterPanelWindow.Position = masterPos;
+
+        var eqPos = SettingsManager.Instance.GetWindowPosition(EqualizerWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y));
+        _equalizerWindow.Position = eqPos;
+        _equalizer.Visible = SettingsManager.Instance.GetWindowVisible(EqualizerWindowName, true);
+
+        var plPos = SettingsManager.Instance.GetWindowPosition(PlaylistWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y * 2));
+        _playlistWindow.Position = plPos;
+        _playlist.Visible = SettingsManager.Instance.GetWindowVisible(PlaylistWindowName, true);
+
+        var vizPos = SettingsManager.Instance.GetWindowPosition(VisualizerWindowName, groupCenteredPos + new Vector2I(windowSize.X, 0));
+        _visualizerWindow.Position = vizPos;
+        _visualizer.Visible = SettingsManager.Instance.GetWindowVisible(VisualizerWindowName, true);
+
+        DetectAndRestoreGlueRelationships();
+    }
+
+    private void SetZoomModeWithoutScalingPositions(int multiplier)
+    {
+        var scale = new Vector2(multiplier, multiplier);
+
+        var newSize = _originalWindowSize * multiplier;
+        GetWindow().Size = newSize;
+
+        _equalizerWindow.Size = newSize;
+        _equalizer.Size = _originalWindowSize;
+        _equalizer.Scale = scale;
+
+        _playlistWindow.Size = newSize;
+        _playlist.Size = _originalWindowSize;
+        _playlist.Scale = scale;
+
+        _visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
+        _visualizer.Size = _originalVisualizerWindowSize;
+        _visualizer.Scale = scale;
+    }
+
+    private void DetectAndRestoreGlueRelationships()
+    {
+        const int glueThreshold = 5;
+        GD.Print("[DetectAndRestoreGlueRelationships] Starting glue detection...");
+
+        foreach (var container1 in _allContainerRefs)
+        {
+            foreach (var container2 in _allContainerRefs)
+            {
+                if (container1 == container2)
+                    continue;
+
+                var window1 = container1.WindowRef;
+                var window2 = container2.WindowRef;
+
+                if (_gluedWindows[window1].Contains(window2))
+                    continue;
+
+                GD.Print($"  Checking {container1.Name} vs {container2.Name}:");
+                GD.Print($"    Window1 pos: {window1.Position}, size: {window1.Size}");
+                GD.Print($"    Window2 pos: {window2.Position}, size: {window2.Size}");
+
+                bool touching = AreWindowsTouching(window1, window2, glueThreshold);
+                GD.Print($"    Touching: {touching}");
+
+                if (touching)
+                {
+                    GD.Print($"    -> Creating edge: {container1.Name} <-> {container2.Name}");
+                    _gluedWindows[window1].Add(window2);
+                    _gluedWindows[window2].Add(window1);
+                }
+            }
+        }
+
+        GD.Print("[DetectAndRestoreGlueRelationships] Detection complete. Final graph state:");
+        foreach (var kvp in _gluedWindows)
+        {
+            var containerName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == kvp.Key)?.Name;
+            if (kvp.Value.Count > 0)
+            {
+                var connections = string.Join(", ", kvp.Value.Select(w =>
+                    _allContainerRefs.FirstOrDefault(c => c.WindowRef == w)?.Name ?? "Unknown"));
+                GD.Print($"  {containerName} -> [{connections}]");
+            }
+            else
+            {
+                GD.Print($"  {containerName} -> []");
+            }
+        }
+
+        GD.Print("[DetectAndRestoreGlueRelationships] Verifying graph integrity:");
+        bool graphValid = true;
+        foreach (var kvp in _gluedWindows)
+        {
+            var window = kvp.Key;
+            var windowName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == window)?.Name;
+
+            foreach (var connectedWindow in kvp.Value)
+            {
+                if (!_gluedWindows[connectedWindow].Contains(window))
+                {
+                    var connectedName = _allContainerRefs.FirstOrDefault(c => c.WindowRef == connectedWindow)?.Name;
+                    GD.PrintErr($"  ERROR: Edge {windowName} -> {connectedName} is not bidirectional!");
+                    graphValid = false;
+                }
+            }
+        }
+
+        if (graphValid)
+        {
+            GD.Print("  Graph integrity: OK (all edges are bidirectional)");
+        }
     }
 }

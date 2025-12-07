@@ -64,7 +64,7 @@ public partial class WinampMenuButton : MenuButton
 
 	private static void OnScaleMenuItemPressed(long index)
 	{
-		int multiplier = (int)index+1;
+		int multiplier = (int)index;
 		SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
 	}
 
