@@ -166,7 +166,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 6
+theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 2
 
 [node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer"]
@@ -196,7 +196,7 @@ size_flags_horizontal = 2
 texture = ExtResource("14_7604m")
 
 [node name="AddButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 14.0
 offset_top = 8.0
 offset_right = 36.0
@@ -209,7 +209,7 @@ texture_pressed = ExtResource("16_l1iyi")
 stretch_mode = 5
 
 [node name="RemoveButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 43.0
 offset_top = 8.0
 offset_right = 65.0
@@ -222,7 +222,7 @@ texture_pressed = ExtResource("17_xtgbh")
 stretch_mode = 5
 
 [node name="SelectButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 72.0
 offset_top = 8.0
 offset_right = 94.0
@@ -235,7 +235,7 @@ texture_pressed = ExtResource("18_28pe4")
 stretch_mode = 5
 
 [node name="MiscButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 101.0
 offset_top = 8.0
 offset_right = 123.0

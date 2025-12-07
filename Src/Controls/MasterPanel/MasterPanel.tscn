@@ -147,7 +147,7 @@ theme_override_constants/separation = 0
 layout_mode = 2
 
 [node name="MasterLabel" parent="VBoxContainer/AllContent/Control" instance=ExtResource("2_y6dre")]
-layout_mode = 2
+layout_mode = 0
 offset_left = 111.0
 offset_top = -33.0
 offset_right = 265.0
