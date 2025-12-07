@@ -1,13 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://db6b3hi4hou7w"]
+[gd_scene load_steps=8 format=3 uid="uid://db6b3hi4hou7w"]
 
 [ext_resource type="Script" uid="uid://bmff2loty0s32" path="res://Src/Main.cs" id="1_gh0ne"]
+[ext_resource type="Script" uid="uid://oykoef1pbjhy" path="res://Src/Core/TrackPlayer.cs" id="3_4ajm2"]
 [ext_resource type="PackedScene" uid="uid://6yi01spga8fj" path="res://Src/Visualizer/Visualizer.tscn" id="3_5q4o7"]
 [ext_resource type="PackedScene" uid="uid://cpme6jm30nl1o" path="res://Src/Controls/MasterPanel/MasterPanel.tscn" id="3_rlaii"]
-[ext_resource type="PackedScene" uid="uid://bgre2g06eswwm" path="res://Src/Player/TrackPlayer.tscn" id="4_3cfgd"]
 [ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
 [ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
+[ext_resource type="Script" uid="uid://bk43amrt51gfy" path="res://Src/Core/WindowManager.cs" id="7_4ajm2"]
 
-[node name="Main" type="HBoxContainer" node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_equalizerWindow", "_playlistWindow", "_visualizerWindow")]
+[node name="Main" type="HBoxContainer" node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_windowManager")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,14 +22,13 @@ _equalizer = NodePath("EqualizerWindow/Equalizer")
 _playlist = NodePath("PlaylistWindow/Playlist")
 _visualizer = NodePath("VisualizerWindow/Visualizer")
 _trackPlayer = NodePath("TrackPlayer")
-_equalizerWindow = NodePath("EqualizerWindow")
-_playlistWindow = NodePath("PlaylistWindow")
-_visualizerWindow = NodePath("VisualizerWindow")
+_windowManager = NodePath("WindowManager")
 
 [node name="MasterPanel" parent="." instance=ExtResource("3_rlaii")]
 layout_mode = 2
 
-[node name="TrackPlayer" parent="." instance=ExtResource("4_3cfgd")]
+[node name="TrackPlayer" type="AudioStreamPlayer" parent="."]
+script = ExtResource("3_4ajm2")
 
 [node name="EqualizerWindow" type="Window" parent="."]
 canvas_item_default_texture_filter = 0
@@ -78,6 +78,13 @@ offset_right = 333.0
 offset_bottom = 87.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="WindowManager" type="Node" parent="." node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer")]
+script = ExtResource("7_4ajm2")
+_masterPanel = NodePath("../MasterPanel")
+_equalizer = NodePath("../EqualizerWindow/Equalizer")
+_playlist = NodePath("../PlaylistWindow/Playlist")
+_visualizer = NodePath("../VisualizerWindow/Visualizer")
 
 [connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]
 [connection signal="focus_entered" from="PlaylistWindow" to="." method="Test2"]

@@ -1,6 +1,6 @@
 using GodAmp.Autoload;
 using GodAmp.Components;
-using GodAmp.Player;
+using GodAmp.Core;
 using GodAmp.Utils;
 using Godot;
 

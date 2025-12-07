@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
+using GodAmp.Core;
 using GodAmp.Data;
-using GodAmp.Player;
 using GodAmp.Utils;
 using Godot;
 

@@ -8,8 +8,8 @@ using GodAmp.Components;
 using GodAmp.Controls.Equalizer;
 using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
+using GodAmp.Core;
 using GodAmp.Data;
-using GodAmp.Player;
 using GodAmp.Utils;
 using Godot;
 
@@ -26,9 +26,7 @@ public partial class Main : HBoxContainer
 	[Export] private Playlist _playlist;
 	[Export] private Visualizer.Visualizer _visualizer;
 	[Export] private TrackPlayer _trackPlayer;
-	[Export] private Window _equalizerWindow;
-	[Export] private Window _playlistWindow;
-	[Export] private Window _visualizerWindow;
+	[Export] private WindowManager _windowManager;
 
 	private Window _masterPanelWindow;
 	private WindowPanelContainer _windowContainerBeingDragged = null;
@@ -45,25 +43,9 @@ public partial class Main : HBoxContainer
 	private bool _masterLabelLockedByPositionSeeker = false;
 
 	private FileDialog _lastUsedFileDialog;
-	private Vector2I _originalWindowSize;
-	private Vector2I _originalVisualizerWindowSize;
-
-	private List<WindowPanelContainer> _allContainerRefs;
-	private List<Window> _allWindowsRefs;
 	
 	public override void _Ready()
 	{
-		_masterPanelWindow = GetWindow();
-		_allContainerRefs = [ _masterPanel, _equalizer, _playlist, _visualizer ];
-		_allWindowsRefs = [_masterPanelWindow, _equalizerWindow, _playlistWindow, _visualizerWindow];
-
-		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
-		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
-		_originalWindowSize = new Vector2I(width, height);
-		_originalVisualizerWindowSize = _visualizerWindow.Size;
-		
-		CenterWindow();
-
 		// Try to load the last used playlist, fall back to default songs path
 		string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
 		if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
@@ -117,13 +99,6 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
 		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
-		
-		foreach (var container in _allContainerRefs)
-		{
-			container.DragStarted += OnWindowDragStart;
-			container.DragEnded += OnWindowDragEnd;
-			container.WindowRef.FocusEntered += () => OnAnyWindowFocused(container.WindowRef);
-		}
 
 		LoadSettingsState();
 	}
@@ -143,18 +118,6 @@ public partial class Main : HBoxContainer
 		if (!_masterLabelLocked)
 		{
 			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
-		}
-
-		ProcessDragging();
-	}
-
-	private void ProcessDragging()
-	{
-		if (_windowContainerBeingDragged is { IsDragging: true })
-		{
-			var desiredPos = _windowContainerBeingDragged.GetDesiredPosition();
-			var snappedPos = GetSnappedDragPosition(_windowContainerBeingDragged.WindowRef, desiredPos);
-			_windowContainerBeingDragged.WindowRef.Position = snappedPos;
 		}
 	}
 
@@ -527,43 +490,12 @@ public partial class Main : HBoxContainer
 			1 => 2,
 			_ => savedZoomMode
 		};
-		SetZoomMode(multiplier);
+		_windowManager.SetZoomMode(multiplier);
 	}
 
 	private void OnZoomModeRequested(int multiplier)
 	{
-		SetZoomMode(multiplier);
-	}
-
-	private void SetZoomMode(int multiplier)
-	{
-		var scale = new Vector2(multiplier, multiplier);
-
-		var newSize = _originalWindowSize * multiplier;
-		GetWindow().Size = newSize;
-		
-		_equalizerWindow.Size = newSize;
-		_equalizer.Size = _originalWindowSize;
-		_equalizer.Scale = scale;
-		
-		_playlistWindow.Size = newSize;
-		_playlist.Size = _originalWindowSize;
-		_playlist.Scale = scale;
-		
-		_visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
-		_visualizer.Size = _originalVisualizerWindowSize;
-		_visualizer.Scale = scale;
-		
-		SettingsManager.Instance.SetZoomMode(multiplier);
-		CenterWindow();
-	}
-	
-	private void CenterWindow()
-	{
-		var screenSize = DisplayServer.ScreenGetSize();
-		var windowSize = GetWindow().Size;
-		var centeredPosition = (screenSize - windowSize) / 2;
-		DisplayServer.WindowSetPosition(centeredPosition);
+		_windowManager.SetZoomMode(multiplier);
 	}
 
 	private void OnEqualizerCloseButtonClicked()
@@ -574,87 +506,5 @@ public partial class Main : HBoxContainer
 	private void OnPlaylistCloseButtonClicked()
 	{
 		_masterPanel.TogglePlaylistButton.ButtonPressed = false;
-	}
-
-	private void OnAnyWindowFocused(Window focusedWindow)
-	{
-		if (_grabbingFocusLock)
-			return;
-		_grabbingFocusLock = true;
-		foreach (var window in _allWindowsRefs)
-			window.GrabFocus();
-		focusedWindow.GrabFocus();
-		_masterPanelWindow.GrabFocus(); // We need this one always in the front.
-		_grabbingFocusLock = false;
-	}
-	
-	private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
-	{
-		_windowContainerBeingDragged = draggedContainerRef;
-	}
-
-	private void OnWindowDragEnd(WindowPanelContainer draggedContainerRef)
-	{
-		_windowContainerBeingDragged = null;
-	}
-
-	private Vector2I GetSnappedDragPosition(Window draggedWindow, Vector2I desiredPos)
-	{
-		const int snapThreshold = 60;
-		var draggedSize = draggedWindow.Size;
-
-		int? bestSnapX = null;
-		int? bestSnapY = null;
-		int minDistX = int.MaxValue;
-		int minDistY = int.MaxValue;
-
-		foreach (WindowPanelContainer container in _allContainerRefs)
-		{
-			var otherWindow = container.WindowRef;
-			if (otherWindow == draggedWindow)
-				continue;
-
-			var otherPos = otherWindow.Position;
-			var otherSize = otherWindow.Size;
-
-			bool yOverlap = !(desiredPos.Y + draggedSize.Y < otherPos.Y || desiredPos.Y > otherPos.Y + otherSize.Y);
-			bool xOverlap = !(desiredPos.X + draggedSize.X < otherPos.X || desiredPos.X > otherPos.X + otherSize.X);
-
-			if (yOverlap)
-			{
-				int distRightToLeft = otherPos.X - (desiredPos.X + draggedSize.X);
-				if (Math.Abs(distRightToLeft) < snapThreshold && Math.Abs(distRightToLeft) < minDistX)
-				{
-					minDistX = Math.Abs(distRightToLeft);
-					bestSnapX = otherPos.X - draggedSize.X;
-				}
-
-				int distLeftToRight = (otherPos.X + otherSize.X) - desiredPos.X;
-				if (Math.Abs(distLeftToRight) < snapThreshold && Math.Abs(distLeftToRight) < minDistX)
-				{
-					minDistX = Math.Abs(distLeftToRight);
-					bestSnapX = otherPos.X + otherSize.X;
-				}
-			}
-
-			if (xOverlap)
-			{
-				int distBottomToTop = otherPos.Y - (desiredPos.Y + draggedSize.Y);
-				if (Math.Abs(distBottomToTop) < snapThreshold && Math.Abs(distBottomToTop) < minDistY)
-				{
-					minDistY = Math.Abs(distBottomToTop);
-					bestSnapY = otherPos.Y - draggedSize.Y;
-				}
-
-				int distTopToBottom = (otherPos.Y + otherSize.Y) - desiredPos.Y;
-				if (Math.Abs(distTopToBottom) < snapThreshold && Math.Abs(distTopToBottom) < minDistY)
-				{
-					minDistY = Math.Abs(distTopToBottom);
-					bestSnapY = otherPos.Y + otherSize.Y;
-				}
-			}
-		}
-
-		return new Vector2I(bestSnapX ?? desiredPos.X, bestSnapY ?? desiredPos.Y);
 	}
 }
