@@ -486,13 +486,12 @@ public partial class Main : HBoxContainer
 		_masterPanel.SetVolumeValue(savedVolume);
 		_trackPlayer.VolumeLinear = savedVolume;
 
-		int multiplier = SettingsManager.Instance.GetZoomMode();
+		var multiplier = SettingsManager.Instance.GetZoomMode();
 		_windowManager.SetZoomMode(multiplier);
 	}
 
 	private void OnZoomModeRequested(int multiplier)
 	{
-		GD.Print($"Zoom mode changed to {multiplier}");
 		_windowManager.SetZoomMode(multiplier);
 	}
 

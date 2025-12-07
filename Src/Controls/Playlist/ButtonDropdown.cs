@@ -11,13 +11,15 @@ public partial class ButtonDropdown : Node2D
        _container.FocusReleased += Disable;
    }
 
-   public void Activate(Vector2 buttonPos, Vector2 buttonSize)
+   public void Activate(Rect2 buttonRect)
     {
-        Vector2 pos = new(
-            buttonPos.X,
-            buttonPos.Y - _container.Size.Y + buttonSize.Y
-        ); 
-        GlobalPosition = pos;
+        var buttonBottomY = buttonRect.Position.Y + buttonRect.Size.Y;
+        var containerRect = _container.GetGlobalRect();
+        var dropdownTopY = buttonBottomY - containerRect.Size.Y;
+
+        Vector2 dropdownPos = new(buttonRect.Position.X, dropdownTopY);
+
+        GlobalPosition = dropdownPos;
         Show();
     }
 

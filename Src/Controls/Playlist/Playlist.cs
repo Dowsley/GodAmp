@@ -154,28 +154,27 @@ public partial class Playlist : WindowPanelContainer
 
 	private void OnAddButtonPressed()
 	{
-		AddButtonDropdown.Activate(AddButton.GlobalPosition, AddButton.Size);
+		AddButtonDropdown.Activate(AddButton.GetGlobalRect());
 	}
-	
+
 	private void OnRemoveButtonPressed()
 	{
-		RemoveButtonDropdown.Activate(RemoveButton.GlobalPosition, RemoveButton.Size);
+		RemoveButtonDropdown.Activate(RemoveButton.GetGlobalRect());
 	}
-	
+
 	private void OnSelectButtonPressed()
 	{
-		SelectButtonDropdown.Activate(SelectButton.GlobalPosition, SelectButton.Size);
+		SelectButtonDropdown.Activate(SelectButton.GetGlobalRect());
 	}
-	
+
 	private void OnMiscButtonPressed()
 	{
-		MiscButtonDropdown.Activate(MiscButton.GlobalPosition, MiscButton.Size);
+		MiscButtonDropdown.Activate(MiscButton.GetGlobalRect());
 	}
-	
+
 	private void OnListOptionsButtonPressed()
 	{
-		ListOptionsButtonDropdown.Activate(
-			ListOptionsButton.GlobalPosition, ListOptionsButton.Size);
+		ListOptionsButtonDropdown.Activate(ListOptionsButton.GetGlobalRect());
 	}
 
 	private void OnInverseSelectionRequested()
