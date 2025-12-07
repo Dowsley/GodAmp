@@ -32,6 +32,7 @@ layout_mode = 2
 
 [node name="EqualizerWindow" type="Window" parent="."]
 canvas_item_default_texture_filter = 0
+oversampling_override = 1.0
 position = Vector2i(0, 116)
 size = Vector2i(275, 116)
 borderless = true
@@ -47,6 +48,7 @@ grow_vertical = 1
 
 [node name="PlaylistWindow" type="Window" parent="."]
 canvas_item_default_texture_filter = 0
+oversampling_override = 1.0
 position = Vector2i(0, 232)
 size = Vector2i(275, 116)
 borderless = true
@@ -63,6 +65,7 @@ grow_vertical = 1
 [node name="VisualizerWindow" type="Window" parent="."]
 auto_translate_mode = 1
 canvas_item_default_texture_filter = 0
+oversampling_override = 1.0
 position = Vector2i(275, 0)
 size = Vector2i(348, 348)
 borderless = true

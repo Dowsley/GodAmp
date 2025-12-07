@@ -249,19 +249,13 @@ public partial class Playlist : WindowPanelContainer
 		if (insertIndex > _playlistRef.Count - normalized.Count)
 			insertIndex = _playlistRef.Count - normalized.Count;
 
-		// extract tracks to move in original order
 		var movedTracks = new List<Track>(normalized.Count);
 		movedTracks.AddRange(normalized.Select(idx => _playlistRef[idx]));
-
-		// remove from end to start to avoid shifting
-		for (int k = normalized.Count - 1; k >= 0; k--)
+		for (int k = normalized.Count - 1; k >= 0; k--) // remove from end to start to avoid shifting
 			_playlistRef.RemoveAt(normalized[k]);
 
-		// insert block at computed index
 		_playlistRef.InsertRange(insertIndex, movedTracks);
-
-		// preserve selection of moved tracks
-		_selectedTracks = new HashSet<Track>(movedTracks);
+		_selectedTracks = new HashSet<Track>(movedTracks); // preserve selection of moved tracks
 		_selectionAnchorIndex = insertIndex;
 
 		Refresh();

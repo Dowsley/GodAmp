@@ -5,6 +5,8 @@ namespace GodAmp.Components;
 public partial class WindowPanelContainer : PanelContainer
 {
 	[Signal] public delegate void CloseButtonClickedEventHandler();
+	[Signal] public delegate void DragStartedEventHandler(WindowPanelContainer c);
+	[Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
 	
 	[ExportGroup("References")]
 	[Export] private Control _contents;
@@ -15,8 +17,8 @@ public partial class WindowPanelContainer : PanelContainer
 
 	protected bool Minimized = false;
 	protected bool Closed = false;
-
 	private bool _wasMousePressed;
+	private Vector2I _dragOffset;
 
 	public override void _Ready()
 	{
@@ -26,21 +28,34 @@ public partial class WindowPanelContainer : PanelContainer
 	public override void _Process(double delta)
 	{
 		bool mousePressed = (DisplayServer.MouseGetButtonState() & MouseButtonMask.Left) != 0;
+
 		if (!mousePressed)
 		{
-			IsDragging = false;
+			if (IsDragging)
+			{
+				IsDragging = false;
+				EmitSignal(SignalName.DragEnded, this);
+			}
 			_wasMousePressed = false;
 			return;
 		}
-		
+
 		var mousePos = _draggableHitbox.GetGlobalMousePosition();
+
 		if (!_wasMousePressed && _draggableHitbox.GetGlobalRect().HasPoint(mousePos))
 		{
 			IsDragging = true;
-			WindowRef.StartDrag();
+			var globalMousePos = DisplayServer.MouseGetPosition();
+			_dragOffset = WindowRef.Position - globalMousePos;
+			EmitSignal(SignalName.DragStarted, this);
 		}
-		
+
 		_wasMousePressed = true;
+	}
+
+	public Vector2I GetDesiredPosition()
+	{
+		return DisplayServer.MouseGetPosition() + _dragOffset;
 	}
 
 	public virtual void OnCloseButtonPressed()

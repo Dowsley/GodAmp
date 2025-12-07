@@ -30,6 +30,10 @@ public partial class Main : HBoxContainer
 	[Export] private Window _playlistWindow;
 	[Export] private Window _visualizerWindow;
 
+	private Window _masterPanelWindow;
+	private WindowPanelContainer _windowContainerBeingDragged = null;
+	private bool _grabbingFocusLock = false;
+	
 	private List<Track> _trackPlaylist;
 	private int _currentTrackIndex = 0;
 
@@ -43,22 +47,21 @@ public partial class Main : HBoxContainer
 	private FileDialog _lastUsedFileDialog;
 	private Vector2I _originalWindowSize;
 	private Vector2I _originalVisualizerWindowSize;
-	private bool _bringingWindowsToForeground;
 
 	private List<WindowPanelContainer> _allContainerRefs;
 	private List<Window> _allWindowsRefs;
 	
 	public override void _Ready()
 	{
+		_masterPanelWindow = GetWindow();
 		_allContainerRefs = [ _masterPanel, _equalizer, _playlist, _visualizer ];
-		_allWindowsRefs = [GetWindow(), _equalizerWindow, _playlistWindow, _visualizerWindow];
+		_allWindowsRefs = [_masterPanelWindow, _equalizerWindow, _playlistWindow, _visualizerWindow];
 
 		int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
 		int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
 		_originalWindowSize = new Vector2I(width, height);
 		_originalVisualizerWindowSize = _visualizerWindow.Size;
-
-		// GetWindow().AlwaysOnTop = true; // Keep main window on top to prevent occlusion-based throttling
+		
 		CenterWindow();
 
 		// Try to load the last used playlist, fall back to default songs path
@@ -114,11 +117,13 @@ public partial class Main : HBoxContainer
 		SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
 		SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
 		SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
-
-		GetWindow().FocusEntered += () => OnAnyWindowFocused(GetWindow());
-		_equalizerWindow.FocusEntered += () => OnAnyWindowFocused(_equalizerWindow);
-		_playlistWindow.FocusEntered += () => OnAnyWindowFocused(_playlistWindow);
-		_visualizerWindow.FocusEntered += () => OnAnyWindowFocused(_visualizerWindow);
+		
+		foreach (var container in _allContainerRefs)
+		{
+			container.DragStarted += OnWindowDragStart;
+			container.DragEnded += OnWindowDragEnd;
+			container.WindowRef.FocusEntered += () => OnAnyWindowFocused(container.WindowRef);
+		}
 
 		LoadSettingsState();
 	}
@@ -134,13 +139,23 @@ public partial class Main : HBoxContainer
 			_visualizer.Unpause();
 		else
 			_visualizer.Pause();
-		
+
 		if (!_masterLabelLocked)
 		{
 			_masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
 		}
 
-		CheckWindowsForSnapping();
+		ProcessDragging();
+	}
+
+	private void ProcessDragging()
+	{
+		if (_windowContainerBeingDragged is { IsDragging: true })
+		{
+			var desiredPos = _windowContainerBeingDragged.GetDesiredPosition();
+			var snappedPos = GetSnappedDragPosition(_windowContainerBeingDragged.WindowRef, desiredPos);
+			_windowContainerBeingDragged.WindowRef.Position = snappedPos;
+		}
 	}
 
 	private void OnNextTrackRequested()
@@ -419,8 +434,7 @@ public partial class Main : HBoxContainer
 	private void CropPlaylist()
 	{
 		var selected = _playlist.GetSelectedIndices();
-		// avoid index shifts
-		for (int i = _trackPlaylist.Count - 1; i >= 0; i--)
+		for (int i = _trackPlaylist.Count - 1; i >= 0; i--) // avoid index shifts
 		{
 			if (!selected.Contains(i))
 				_trackPlaylist.RemoveAt(i);
@@ -564,43 +578,83 @@ public partial class Main : HBoxContainer
 
 	private void OnAnyWindowFocused(Window focusedWindow)
 	{
-		// if (_bringingWindowsToForeground)
-		// 	return;
-		//
-		// _bringingWindowsToForeground = true;
-		//
-		// foreach (var window in _allWindowsRefs.Where(window => window != focusedWindow))
-		// {
-		// 	window.GrabFocus();
-		// }
-		// focusedWindow.GrabFocus();
-		//
-		// _bringingWindowsToForeground = false;
+		if (_grabbingFocusLock)
+			return;
+		_grabbingFocusLock = true;
+		foreach (var window in _allWindowsRefs)
+			window.GrabFocus();
+		focusedWindow.GrabFocus();
+		_masterPanelWindow.GrabFocus(); // We need this one always in the front.
+		_grabbingFocusLock = false;
+	}
+	
+	private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
+	{
+		_windowContainerBeingDragged = draggedContainerRef;
 	}
 
-	private void CheckWindowsForSnapping()
+	private void OnWindowDragEnd(WindowPanelContainer draggedContainerRef)
 	{
+		_windowContainerBeingDragged = null;
+	}
+
+	private Vector2I GetSnappedDragPosition(Window draggedWindow, Vector2I desiredPos)
+	{
+		const int snapThreshold = 60;
+		var draggedSize = draggedWindow.Size;
+
+		int? bestSnapX = null;
+		int? bestSnapY = null;
+		int minDistX = int.MaxValue;
+		int minDistY = int.MaxValue;
+
 		foreach (WindowPanelContainer container in _allContainerRefs)
 		{
-			// GD.Print(container.WindowRef.Position);
-		}
-	}
+			var otherWindow = container.WindowRef;
+			if (otherWindow == draggedWindow)
+				continue;
 
-	private void ComputeWindowSnap(Window windowBeingMoved)
-	{
-		foreach (var window in _allWindowsRefs)
-		{
-			
+			var otherPos = otherWindow.Position;
+			var otherSize = otherWindow.Size;
+
+			bool yOverlap = !(desiredPos.Y + draggedSize.Y < otherPos.Y || desiredPos.Y > otherPos.Y + otherSize.Y);
+			bool xOverlap = !(desiredPos.X + draggedSize.X < otherPos.X || desiredPos.X > otherPos.X + otherSize.X);
+
+			if (yOverlap)
+			{
+				int distRightToLeft = otherPos.X - (desiredPos.X + draggedSize.X);
+				if (Math.Abs(distRightToLeft) < snapThreshold && Math.Abs(distRightToLeft) < minDistX)
+				{
+					minDistX = Math.Abs(distRightToLeft);
+					bestSnapX = otherPos.X - draggedSize.X;
+				}
+
+				int distLeftToRight = (otherPos.X + otherSize.X) - desiredPos.X;
+				if (Math.Abs(distLeftToRight) < snapThreshold && Math.Abs(distLeftToRight) < minDistX)
+				{
+					minDistX = Math.Abs(distLeftToRight);
+					bestSnapX = otherPos.X + otherSize.X;
+				}
+			}
+
+			if (xOverlap)
+			{
+				int distBottomToTop = otherPos.Y - (desiredPos.Y + draggedSize.Y);
+				if (Math.Abs(distBottomToTop) < snapThreshold && Math.Abs(distBottomToTop) < minDistY)
+				{
+					minDistY = Math.Abs(distBottomToTop);
+					bestSnapY = otherPos.Y - draggedSize.Y;
+				}
+
+				int distTopToBottom = (otherPos.Y + otherSize.Y) - desiredPos.Y;
+				if (Math.Abs(distTopToBottom) < snapThreshold && Math.Abs(distTopToBottom) < minDistY)
+				{
+					minDistY = Math.Abs(distTopToBottom);
+					bestSnapY = otherPos.Y + otherSize.Y;
+				}
+			}
 		}
-	}
-	
-	private void Test(InputEvent ev)
-	{
-		GD.Print(ev);
-	}
-	
-	private void Test2()
-	{
-		GD.Print("Got focus");
+
+		return new Vector2I(bestSnapX ?? desiredPos.X, bestSnapY ?? desiredPos.Y);
 	}
 }
