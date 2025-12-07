@@ -52,7 +52,7 @@ public partial class WindowManager : Node
 
         foreach (var window in _allWindowsRefs)
         {
-            _gluedWindows[window] = new HashSet<Window>();
+            _gluedWindows[window] = [];
         }
 
         foreach (var container in _allContainerRefs)
@@ -166,7 +166,87 @@ public partial class WindowManager : Node
             }
         }
 
-        return new Vector2I(bestSnapX ?? desiredPos.X, bestSnapY ?? desiredPos.Y);
+        var finalX = bestSnapX ?? desiredPos.X;
+        var finalY = bestSnapY ?? desiredPos.Y;
+
+        const int subSnapThreshold = 20;
+        if (bestSnapX.HasValue)
+        {
+            finalY = GetVerticalSubSnap(draggedWindow, new Vector2I(finalX, desiredPos.Y), subSnapThreshold) ?? finalY;
+        }
+
+        if (bestSnapY.HasValue)
+        {
+            finalX = GetHorizontalSubSnap(draggedWindow, new Vector2I(desiredPos.X, finalY), subSnapThreshold) ?? finalX;
+        }
+
+        return new Vector2I(finalX, finalY);
+    }
+
+    private int? GetVerticalSubSnap(Window draggedWindow, Vector2I snappedPos, int threshold)
+    {
+        var draggedSize = draggedWindow.Size;
+        int? bestY = null;
+        int minDist = int.MaxValue;
+
+        foreach (WindowPanelContainer container in _allContainerRefs)
+        {
+            var otherWindow = container.WindowRef;
+            if (otherWindow == draggedWindow || _gluedWindows[draggedWindow].Contains(otherWindow))
+                continue;
+
+            var otherPos = otherWindow.Position;
+            var otherSize = otherWindow.Size;
+
+            int distTop = Math.Abs(otherPos.Y - snappedPos.Y);
+            if (distTop < threshold && distTop < minDist)
+            {
+                minDist = distTop;
+                bestY = otherPos.Y;
+            }
+
+            int distBottom = Math.Abs((otherPos.Y + otherSize.Y) - (snappedPos.Y + draggedSize.Y));
+            if (distBottom < threshold && distBottom < minDist)
+            {
+                minDist = distBottom;
+                bestY = otherPos.Y + otherSize.Y - draggedSize.Y;
+            }
+        }
+
+        return bestY;
+    }
+
+    private int? GetHorizontalSubSnap(Window draggedWindow, Vector2I snappedPos, int threshold)
+    {
+        var draggedSize = draggedWindow.Size;
+        int? bestX = null;
+        int minDist = int.MaxValue;
+
+        foreach (WindowPanelContainer container in _allContainerRefs)
+        {
+            var otherWindow = container.WindowRef;
+            if (otherWindow == draggedWindow || _gluedWindows[draggedWindow].Contains(otherWindow))
+                continue;
+
+            var otherPos = otherWindow.Position;
+            var otherSize = otherWindow.Size;
+
+            int distLeft = Math.Abs(otherPos.X - snappedPos.X);
+            if (distLeft < threshold && distLeft < minDist)
+            {
+                minDist = distLeft;
+                bestX = otherPos.X;
+            }
+
+            int distRight = Math.Abs((otherPos.X + otherSize.X) - (snappedPos.X + draggedSize.X));
+            if (distRight < threshold && distRight < minDist)
+            {
+                minDist = distRight;
+                bestX = otherPos.X + otherSize.X - draggedSize.X;
+            }
+        }
+
+        return bestX;
     }
 
     private void MoveGluedWindows(Window movedWindow, Vector2I offset)
