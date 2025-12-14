@@ -4,70 +4,70 @@ namespace GodAmp.Components;
 
 public partial class WindowPanelContainer : PanelContainer
 {
-	[Signal] public delegate void CloseButtonClickedEventHandler();
-	[Signal] public delegate void DragStartedEventHandler(WindowPanelContainer c);
-	[Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
-	
-	[ExportGroup("References")]
-	[Export] private Control _contents;
-	[Export] private Control _draggableHitbox;
+    [Signal] public delegate void CloseButtonClickedEventHandler();
+    [Signal] public delegate void DragStartedEventHandler(WindowPanelContainer c);
+    [Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
 
-	public Window WindowRef;
-	public bool IsDragging { get; private set; }
+    [ExportGroup("References")]
+    [Export] private Control _contents;
+    [Export] private Control _draggableHitbox;
 
-	protected bool Minimized = false;
-	protected bool Closed = false;
-	private bool _wasMousePressed;
-	private Vector2I _dragOffset;
+    public Window WindowRef;
+    public bool IsDragging { get; private set; }
 
-	public override void _Ready()
-	{
-		WindowRef = GetWindow();
-	}
+    protected bool Minimized = false;
+    protected bool Closed = false;
+    private bool _wasMousePressed;
+    private Vector2I _dragOffset;
 
-	public override void _Process(double delta)
-	{
-		bool mousePressed = (DisplayServer.MouseGetButtonState() & MouseButtonMask.Left) != 0;
+    public override void _Ready()
+    {
+        WindowRef = GetWindow();
+    }
 
-		if (!mousePressed)
-		{
-			if (IsDragging)
-			{
-				IsDragging = false;
-				EmitSignal(SignalName.DragEnded, this);
-			}
-			_wasMousePressed = false;
-			return;
-		}
+    public override void _Process(double delta)
+    {
+        bool mousePressed = (DisplayServer.MouseGetButtonState() & MouseButtonMask.Left) != 0;
 
-		var mousePos = _draggableHitbox.GetGlobalMousePosition();
+        if (!mousePressed)
+        {
+            if (IsDragging)
+            {
+                IsDragging = false;
+                EmitSignal(SignalName.DragEnded, this);
+            }
+            _wasMousePressed = false;
+            return;
+        }
 
-		if (!_wasMousePressed && _draggableHitbox.GetGlobalRect().HasPoint(mousePos))
-		{
-			IsDragging = true;
-			var globalMousePos = DisplayServer.MouseGetPosition();
-			_dragOffset = WindowRef.Position - globalMousePos;
-			EmitSignal(SignalName.DragStarted, this);
-		}
+        var mousePos = _draggableHitbox.GetGlobalMousePosition();
 
-		_wasMousePressed = true;
-	}
+        if (!_wasMousePressed && _draggableHitbox.GetGlobalRect().HasPoint(mousePos))
+        {
+            IsDragging = true;
+            var globalMousePos = DisplayServer.MouseGetPosition();
+            _dragOffset = WindowRef.Position - globalMousePos;
+            EmitSignal(SignalName.DragStarted, this);
+        }
 
-	public Vector2I GetDesiredPosition()
-	{
-		return DisplayServer.MouseGetPosition() + _dragOffset;
-	}
+        _wasMousePressed = true;
+    }
 
-	public virtual void OnCloseButtonPressed()
-	{
-		Closed = !Closed;
-		Visible = !Visible;
-		EmitSignal(SignalName.CloseButtonClicked);
-	}
+    public Vector2I GetDesiredPosition()
+    {
+        return DisplayServer.MouseGetPosition() + _dragOffset;
+    }
 
-	public virtual void OnMinimizeButtonPressed()
-	{
-		Minimized = !Minimized;
-		_contents.Visible = !_contents.Visible;
-	}
+    public virtual void OnCloseButtonPressed()
+    {
+        Closed = !Closed;
+        Visible = !Visible;
+        EmitSignal(SignalName.CloseButtonClicked);
+    }
+
+    public virtual void OnMinimizeButtonPressed()
+    {
+        Minimized = !Minimized;
+        _contents.Visible = !_contents.Visible;
+    }
 }

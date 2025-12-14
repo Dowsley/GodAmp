@@ -8,12 +8,12 @@ public partial class ListOptionsButtonDropdown : ButtonDropdown
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.RemoveAllTracksFromPlaylistRequested);
     }
-    
+
     private static void OnLoadListButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadPlaylistRequested);
     }
-    
+
     private static void OnSaveListButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.SavePlaylistRequested);

@@ -7,11 +7,11 @@ namespace GodAmp.Controls.Playlist;
 public partial class PlaylistTrackEntry : PanelContainer
 {
     [Signal] public delegate void SelectedEventHandler(int index);
-    
+
     [Export] private Label _trackTitleLabel;
     [Export] private Label _durationLabel;
     [Export] private ColorRect _selectedBg;
-    
+
     public int Index;
 
     private bool _isSelected = false;
@@ -33,17 +33,17 @@ public partial class PlaylistTrackEntry : PanelContainer
         SignalBus.Instance.SkinChanged += _trackTitleLabel.QueueRedraw;
         SignalBus.Instance.SkinChanged += _durationLabel.QueueRedraw;
     }
-    
+
     public void Setup(string title, float duration, int index, bool selected, bool current = false)
     {
         IsSelected = selected;
-        
+
         Index = index;
         _trackTitleLabel.Text = title.ToUpper();
         _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
         if (!current)
             return;
-    
+
         _trackTitleLabel.AddThemeColorOverride("font_color", Colors.White);
         _durationLabel.AddThemeColorOverride("font_color", Colors.White);
     }

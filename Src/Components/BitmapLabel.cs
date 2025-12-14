@@ -5,8 +5,8 @@ namespace GodAmp.Components;
 
 public partial class BitmapLabel : Label
 {
-	public override void _Ready()
-	{
-		SignalBus.Instance.SkinChanged += QueueRedraw;
-	}
+    public override void _Ready()
+    {
+        SignalBus.Instance.SkinChanged += QueueRedraw;
+    }
 }

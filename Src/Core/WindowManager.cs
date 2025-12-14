@@ -39,7 +39,7 @@ public partial class WindowManager : Node
 
     private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = new();
     private Vector2I _lastDraggedWindowPosition;
-    
+
     public override void _Ready()
     {
         _equalizerWindow = _equalizer.GetParent<Window>();
@@ -47,7 +47,7 @@ public partial class WindowManager : Node
         _visualizerWindow = _visualizer.GetParent<Window>();
         _masterPanelWindow = _masterPanel.GetWindow();
 
-        _allContainerRefs = [ _masterPanel, _equalizer, _playlist, _visualizer ];
+        _allContainerRefs = [_masterPanel, _equalizer, _playlist, _visualizer];
         _allWindowsRefs = [_masterPanelWindow, _equalizerWindow, _playlistWindow, _visualizerWindow];
 
         int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
@@ -74,7 +74,7 @@ public partial class WindowManager : Node
     {
         ProcessDragging();
     }
-    
+
     public void SetZoomMode(int multiplier)
     {
         int oldMultiplier = SettingsManager.Instance.GetZoomMode();
@@ -109,7 +109,7 @@ public partial class WindowManager : Node
         _playlistWindow.Position = groupOrigin + (Vector2I)((Vector2)(_playlistWindow.Position - groupOrigin) * ratio);
         _visualizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_visualizerWindow.Position - groupOrigin) * ratio);
     }
-    
+
     private void ProcessDragging()
     {
         if (_windowContainerBeingDragged is not { IsDragging: true })
@@ -294,7 +294,7 @@ public partial class WindowManager : Node
         }
     }
 
-    
+
     private void OnAnyWindowFocused(Window focusedWindow)
     {
         if (_grabbingFocusLock)
@@ -306,7 +306,7 @@ public partial class WindowManager : Node
         _masterPanelWindow.GrabFocus(); // We need this one always in the front.
         _grabbingFocusLock = false;
     }
-	
+
     private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
     {
         _windowContainerBeingDragged = draggedContainerRef;

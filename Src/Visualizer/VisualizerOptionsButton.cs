@@ -7,60 +7,60 @@ namespace GodAmp.Visualizer;
 
 public partial class VisualizerOptionsButton : MenuButton
 {
-	[Signal] public delegate void VizChangedEventHandler(StringName vizId);
-	
-	private readonly List<StringName> _vizIds = [];
-	private PopupMenu _popup;
-	private PopupMenu _vizSubmenu;
-	private int _currentVizIndex = 0;
+    [Signal] public delegate void VizChangedEventHandler(StringName vizId);
 
-	public void Initialize(List<VisualizerStrategyType> strategyTypeMapRef)
-	{
-		_popup = GetPopup();
-		_popup.AboutToPopup += OnAboutToPopup;
+    private readonly List<StringName> _vizIds = [];
+    private PopupMenu _popup;
+    private PopupMenu _vizSubmenu;
+    private int _currentVizIndex = 0;
 
-		SetupVizMenu(strategyTypeMapRef);
-	}
+    public void Initialize(List<VisualizerStrategyType> strategyTypeMapRef)
+    {
+        _popup = GetPopup();
+        _popup.AboutToPopup += OnAboutToPopup;
 
-	private void OnAboutToPopup()
-	{
-		_popup.Size = new Vector2I(150, 0);
-		Vector2I mousePos = DisplayServer.MouseGetPosition();
-		_popup.Position = mousePos;
+        SetupVizMenu(strategyTypeMapRef);
+    }
 
-		UpdateCheckedItem();
-	}
+    private void OnAboutToPopup()
+    {
+        _popup.Size = new Vector2I(150, 0);
+        Vector2I mousePos = DisplayServer.MouseGetPosition();
+        _popup.Position = mousePos;
 
-	private void UpdateCheckedItem()
-	{
-		for (int i = 0; i < _vizSubmenu.ItemCount; i++)
-		{
-			_vizSubmenu.SetItemChecked(i, i == _currentVizIndex);
-		}
-	}
+        UpdateCheckedItem();
+    }
 
-	private void SetupVizMenu(List<VisualizerStrategyType> strategyTypes)
-	{
-		_vizSubmenu = new PopupMenu();
-		_vizSubmenu.Name = "VizSubmenu";
+    private void UpdateCheckedItem()
+    {
+        for (int i = 0; i < _vizSubmenu.ItemCount; i++)
+        {
+            _vizSubmenu.SetItemChecked(i, i == _currentVizIndex);
+        }
+    }
 
-		var subId = 0;
-		foreach (var strategy in strategyTypes)
-		{
-			_vizSubmenu.AddItem(strategy.DisplayName, subId);
-			_vizSubmenu.SetItemAsCheckable(subId, true);
-			_vizIds.Add(strategy.Id);
-			subId++;
-		}
+    private void SetupVizMenu(List<VisualizerStrategyType> strategyTypes)
+    {
+        _vizSubmenu = new PopupMenu();
+        _vizSubmenu.Name = "VizSubmenu";
 
-		_vizSubmenu.SetItemChecked(0, true);
-		_vizSubmenu.IndexPressed += OnVizMenuItemPressed;
-		_popup.AddSubmenuNodeItem("Visualizations", _vizSubmenu);
-	}
+        var subId = 0;
+        foreach (var strategy in strategyTypes)
+        {
+            _vizSubmenu.AddItem(strategy.DisplayName, subId);
+            _vizSubmenu.SetItemAsCheckable(subId, true);
+            _vizIds.Add(strategy.Id);
+            subId++;
+        }
 
-	private void OnVizMenuItemPressed(long index)
-	{
-		_currentVizIndex = (int)index;
-		EmitSignal(SignalName.VizChanged, _vizIds[_currentVizIndex]);
-	}
+        _vizSubmenu.SetItemChecked(0, true);
+        _vizSubmenu.IndexPressed += OnVizMenuItemPressed;
+        _popup.AddSubmenuNodeItem("Visualizations", _vizSubmenu);
+    }
+
+    private void OnVizMenuItemPressed(long index)
+    {
+        _currentVizIndex = (int)index;
+        EmitSignal(SignalName.VizChanged, _vizIds[_currentVizIndex]);
+    }
 }

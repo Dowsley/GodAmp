@@ -12,14 +12,14 @@ public partial class SkinnableVSlider : VSlider
     [Export] protected int FramesPerRow = 14;
     [Export] protected int TextureWidth = 14;
     [Export] protected int TextureHeight = 63;
-    
+
     private AtlasTexture _atlasTexture;
 
     public override void _Ready()
     {
         var styleBox = GetThemeStylebox("slider") as StyleBoxTexture;
         _atlasTexture = styleBox?.Texture as AtlasTexture;
-        
+
         ValueChanged += OnValueChanged;
         OnValueChanged(Value);
     }
@@ -28,7 +28,7 @@ public partial class SkinnableVSlider : VSlider
     {
         float normalized = (float)((value - MinValue) / (MaxValue - MinValue));
         int frame = Mathf.FloorToInt(normalized * FrameCount);
-        
+
         int x, y;
         if (frame < FramesPerRow)
         {
@@ -40,7 +40,7 @@ public partial class SkinnableVSlider : VSlider
             x = TextureX + (frame - FramesPerRow) * TextureStep;
             y = TextureY2;
         }
-        
+
         _atlasTexture.Region = new Rect2(x, y, TextureWidth, TextureHeight);
     }
 }

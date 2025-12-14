@@ -9,12 +9,12 @@ public partial class SelectButtonDropdown : ButtonDropdown
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.InverseSelectionRequested);
     }
-    
+
     private static void OnSelectZeroButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectZeroRequested);
     }
-    
+
     private static void OnSelectAllButtonPressed()
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectAllRequested);

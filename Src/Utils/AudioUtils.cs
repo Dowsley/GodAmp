@@ -81,7 +81,7 @@ public static class AudioUtils
             file.Close();
 
             AudioStream stream = factory(data);
-            
+
             // TagLib needs a real file; write to temp, read tags, then clean up
             var tempDir = Path.GetTempPath();
             var tempFile = Path.Combine(tempDir, Path.GetFileName(fullPath));

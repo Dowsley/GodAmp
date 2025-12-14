@@ -11,7 +11,7 @@ public partial class LineStrategy : VisualizerStrategy
     [Export] private int _sampleCount = 64;
     [Export] private int _pointsPerSegment = 5;
     [Export(PropertyHint.Range, "0.0,1.0")] private float _lineVerticalPosition = 0.75f;
-        
+
     private Line2D _line;
     private AudioEffectSpectrumAnalyzerInstance _spectrum;
     private Vector2[] _points;
@@ -20,7 +20,7 @@ public partial class LineStrategy : VisualizerStrategy
     {
         _line = GetNode<Line2D>("Line2D");
     }
-    
+
     public override void Initialize(Vector2 viewportSize)
     {
         base.Initialize(viewportSize);
@@ -38,13 +38,13 @@ public partial class LineStrategy : VisualizerStrategy
         UpdateAudioReactivity(delta);
         UpdateWaveform();
     }
-    
+
     private void InitializePoints()
     {
         _points = new Vector2[_sampleCount];
         ResetPoints();
     }
-    
+
     private void ResetPoints()
     {
         float width = ViewportSize.X;
@@ -58,7 +58,7 @@ public partial class LineStrategy : VisualizerStrategy
             );
         }
     }
-    
+
     private void InitializeLines()
     {
         _line.Width = 2.0f;
@@ -69,7 +69,7 @@ public partial class LineStrategy : VisualizerStrategy
         _line.Antialiased = true;
         _line.Points = _points;
     }
-    
+
     private void UpdateWaveform()
     {
         float baselineHeight = ViewportSize.Y * _lineVerticalPosition;
@@ -94,12 +94,12 @@ public partial class LineStrategy : VisualizerStrategy
         var smoothPoints = GenerateCatmullRomPoints(_points, _pointsPerSegment).ToArray();
         _line.Points = smoothPoints;
     }
-    
+
     private float GetFrequencyForSampleIndex(int index)
     {
         return Mathf.Exp(Mathf.Lerp(Mathf.Log(20f), Mathf.Log(22050f), (float)index / _sampleCount));
     }
-    
+
     private float GetAverageAudioMagnitude()
     {
         float sum = 0f;
@@ -111,13 +111,13 @@ public partial class LineStrategy : VisualizerStrategy
         }
         return sum / _sampleCount;
     }
-    
+
     private float GetFrequencyRangeMagnitude(float minHz, float maxHz)
     {
         var magnitude = Spectrum.GetMagnitudeForFrequencyRange(minHz, maxHz);
         return (magnitude.X + magnitude.Y) * 0.5f;
     }
-    
+
     private static List<Vector2> GenerateCatmullRomPoints(Vector2[] controlPoints, int pointsPerSegment = 5)
     {
         var smoothPoints = new List<Vector2>();
@@ -149,26 +149,26 @@ public partial class LineStrategy : VisualizerStrategy
         smoothPoints.Add(controlPoints[^1]);
         return smoothPoints;
     }
-    
+
     private void UpdateAudioReactivity(double delta)
     {
         float currentMagnitude = GetAverageAudioMagnitude();
         SmoothedMagnitude = Mathf.Lerp(SmoothedMagnitude, currentMagnitude, SmoothingFactor);
-            
+
         float lowFreqMagnitude = GetFrequencyRangeMagnitude(20f, 200f);
         float highFreqMagnitude = GetFrequencyRangeMagnitude(2000f, 20000f);
         float totalMagnitude = lowFreqMagnitude + highFreqMagnitude;
-            
+
         if (totalMagnitude > 0.001f)
         {
             float normalizedBalance = (highFreqMagnitude - lowFreqMagnitude) / totalMagnitude;
             float directionTarget = Mathf.Tanh(normalizedBalance * DirectionSensitivity);
             SmoothedDirection = Mathf.Lerp(SmoothedDirection, directionTarget, DirectionSmoothingFactor);
-                
+
             float depthTarget = Mathf.Tanh(totalMagnitude * DepthSensitivity);
             SmoothedDepth = Mathf.Lerp(SmoothedDepth, depthTarget, DepthSmoothingFactor);
         }
-            
+
         TimeOffset = FixedRotationValue * (1.0f + (SmoothedDirection * RotationSpeedFactor));
         ColorHue = (ColorHue + ColorChangeSpeed * (float)delta) % 1.0f;
     }
