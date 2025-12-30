@@ -9,14 +9,11 @@ public partial class WindowPanelContainer : PanelContainer
     [Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
 
     [ExportGroup("References")]
-    [Export] private Control _contents;
     [Export] private Control _draggableHitbox;
 
     public Window WindowRef;
     public bool IsDragging { get; private set; }
 
-    protected bool Minimized = false;
-    protected bool Closed = false;
     private bool _wasMousePressed;
     private Vector2I _dragOffset;
 
@@ -60,14 +57,11 @@ public partial class WindowPanelContainer : PanelContainer
 
     public virtual void OnCloseButtonPressed()
     {
-        Closed = !Closed;
-        Visible = !Visible;
         EmitSignal(SignalName.CloseButtonClicked);
     }
 
     public virtual void OnMinimizeButtonPressed()
     {
-        Minimized = !Minimized;
-        _contents.Visible = !_contents.Visible;
+        // TODO
     }
 }

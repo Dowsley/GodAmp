@@ -7,6 +7,10 @@ namespace GodAmp.Components;
 
 public partial class WinampMenuButton : MenuButton
 {
+    private const int EqualizerItemId = 100;
+    private const int PlaylistItemId = 101;
+    private const int VisualizerItemId = 102;
+
     private PopupMenu _popup;
     private PopupMenu _scaleSubmenu;
     private PopupMenu _skinSubmenu;
@@ -15,16 +19,52 @@ public partial class WinampMenuButton : MenuButton
     public override void _Ready()
     {
         _popup = GetPopup();
-
+        _popup.HideOnCheckableItemSelection = false;
 
         var id = 0;
         SetupScaleMenu(id++);
-        SetupSkinMenu(id);
+        SetupSkinMenu(id++);
+        SetupWindowToggles();
+
+        _popup.IdPressed += OnPopupItemPressed;
+    }
+
+    public void SetEqualizerChecked(bool value) => _popup.SetItemChecked(_popup.GetItemIndex(EqualizerItemId), value);
+    public void SetPlaylistChecked(bool value) => _popup.SetItemChecked(_popup.GetItemIndex(PlaylistItemId), value);
+    public void SetVisualizerChecked(bool value) => _popup.SetItemChecked(_popup.GetItemIndex(VisualizerItemId), value);
+
+    private void SetupWindowToggles()
+    {
+        _popup.AddSeparator();
+        _popup.AddCheckItem("Equalizer", EqualizerItemId);
+        _popup.AddCheckItem("Playlist", PlaylistItemId);
+        _popup.AddCheckItem("Visualizer", VisualizerItemId);
+
+        _popup.SetItemChecked(_popup.GetItemIndex(EqualizerItemId), true);
+        _popup.SetItemChecked(_popup.GetItemIndex(PlaylistItemId), true);
+        _popup.SetItemChecked(_popup.GetItemIndex(VisualizerItemId), true);
+    }
+
+    private void OnPopupItemPressed(long id)
+    {
+        switch (id)
+        {
+            case EqualizerItemId:
+                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ToggleEqualizerRequested);
+                break;
+            case PlaylistItemId:
+                SignalBus.Instance.EmitSignal(SignalBus.SignalName.TogglePlaylistRequested);
+                break;
+            case VisualizerItemId:
+                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ToggleVisualizerRequested);
+                break;
+        }
     }
 
     private void SetupScaleMenu(int id)
     {
         _scaleSubmenu = new PopupMenu();
+        _scaleSubmenu.HideOnCheckableItemSelection = false;
         _scaleSubmenu.Name = "ScaleSubmenu";
 
         _scaleSubmenu.AddItem("1x", 1);

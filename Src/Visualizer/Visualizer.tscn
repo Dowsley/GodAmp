@@ -191,3 +191,4 @@ mouse_filter = 2
 
 [connection signal="gui_input" from="VBoxContainer/AllContent/Middle/MiddleTexture" to="." method="OnVisualizerGuiInput"]
 [connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]

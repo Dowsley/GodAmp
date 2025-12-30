@@ -15,7 +15,7 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] public double ClockBlinkEverySeconds = 1.0f;
 
     [ExportGroup("References")]
-    [Export] public MenuButton WinampMenuButton;
+    [Export] public WinampMenuButton WinampMenuButton;
     [Export] public TextureButton ToggleEqualizerButton;
     [Export] public TextureButton TogglePlaylistButton;
     [Export] private MarqueeLabel _masterLabel;

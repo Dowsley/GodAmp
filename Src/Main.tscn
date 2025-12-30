@@ -87,5 +87,8 @@ _playlist = NodePath("../PlaylistWindow/Playlist")
 _visualizer = NodePath("../VisualizerWindow/Visualizer")
 
 [connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]
+[connection signal="CloseButtonClicked" from="EqualizerWindow/Equalizer" to="." method="OnEqualizerCloseButtonClicked"]
 [connection signal="focus_entered" from="PlaylistWindow" to="." method="Test2"]
 [connection signal="window_input" from="PlaylistWindow" to="." method="Test"]
+[connection signal="CloseButtonClicked" from="PlaylistWindow/Playlist" to="." method="OnPlaylistCloseButtonClicked"]
+[connection signal="CloseButtonClicked" from="VisualizerWindow/Visualizer" to="." method="OnVisualizerCloseButtonClicked"]

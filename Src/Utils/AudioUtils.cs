@@ -5,7 +5,6 @@ using System.Linq;
 using GodAmp.Data;
 using Godot;
 using FileAccess = Godot.FileAccess;
-using TagLib;
 using File = System.IO.File;
 
 namespace GodAmp.Utils;

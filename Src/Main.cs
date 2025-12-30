@@ -99,6 +99,9 @@ public partial class Main : HBoxContainer
         SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
         SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
         SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
+        SignalBus.Instance.ToggleEqualizerRequested += OnToggleEqualizerRequested;
+        SignalBus.Instance.TogglePlaylistRequested += OnTogglePlaylistRequested;
+        SignalBus.Instance.ToggleVisualizerRequested += OnToggleVisualizerRequested;
 
         LoadSettingsState();
     }
@@ -468,18 +471,6 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = null;
     }
 
-    private void OnToggleEqualizerRequested()
-    {
-        _equalizer.Visible = !_equalizer.Visible;
-        SettingsManager.Instance.SetWindowVisible("equalizer", _equalizer.Visible);
-    }
-
-    private void OnTogglePlaylistRequested()
-    {
-        _playlist.Visible = !_playlist.Visible;
-        SettingsManager.Instance.SetWindowVisible("playlist", _playlist.Visible);
-    }
-
     private void LoadSettingsState()
     {
         float savedVolume = SettingsManager.Instance.GetVolume();
@@ -497,11 +488,47 @@ public partial class Main : HBoxContainer
 
     private void OnEqualizerCloseButtonClicked()
     {
+        _equalizer.WindowRef.Hide();
         _masterPanel.ToggleEqualizerButton.ButtonPressed = false;
+        _masterPanel.WinampMenuButton.SetEqualizerChecked(false);
+        SettingsManager.Instance.SetWindowVisible("equalizer", false);
     }
 
     private void OnPlaylistCloseButtonClicked()
     {
+        _playlist.WindowRef.Hide();
         _masterPanel.TogglePlaylistButton.ButtonPressed = false;
+        _masterPanel.WinampMenuButton.SetPlaylistChecked(false);
+        SettingsManager.Instance.SetWindowVisible("playlist", false);
+    }
+
+    private void OnVisualizerCloseButtonClicked()
+    {
+        _visualizer.WindowRef.Hide();
+        _masterPanel.WinampMenuButton.SetVisualizerChecked(false);
+        SettingsManager.Instance.SetWindowVisible("visualizer", false);
+    }
+
+    private void OnToggleEqualizerRequested()
+    {
+        _equalizer.WindowRef.Visible = !_equalizer.WindowRef.Visible;
+        _masterPanel.ToggleEqualizerButton.ButtonPressed = _equalizer.WindowRef.Visible;
+        _masterPanel.WinampMenuButton.SetEqualizerChecked(_equalizer.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible("equalizer", _equalizer.WindowRef.Visible);
+    }
+
+    private void OnTogglePlaylistRequested()
+    {
+        _playlist.WindowRef.Visible = !_playlist.WindowRef.Visible;
+        _masterPanel.TogglePlaylistButton.ButtonPressed = _playlist.WindowRef.Visible;
+        _masterPanel.WinampMenuButton.SetPlaylistChecked(_playlist.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible("playlist", _playlist.WindowRef.Visible);
+    }
+
+    private void OnToggleVisualizerRequested()
+    {
+        _visualizer.WindowRef.Visible = !_visualizer.WindowRef.Visible;
+        _masterPanel.WinampMenuButton.SetVisualizerChecked(_visualizer.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible("visualizer", _visualizer.WindowRef.Visible);
     }
 }

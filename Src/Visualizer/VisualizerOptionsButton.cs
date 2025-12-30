@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using GodAmp.Autoload;
 using GodAmp.Data;
 using Godot;
 
@@ -18,6 +17,7 @@ public partial class VisualizerOptionsButton : MenuButton
     {
         _popup = GetPopup();
         _popup.AboutToPopup += OnAboutToPopup;
+        _popup.HideOnCheckableItemSelection = false;
 
         SetupVizMenu(strategyTypeMapRef);
     }
@@ -42,6 +42,7 @@ public partial class VisualizerOptionsButton : MenuButton
     private void SetupVizMenu(List<VisualizerStrategyType> strategyTypes)
     {
         _vizSubmenu = new PopupMenu();
+        _vizSubmenu.HideOnCheckableItemSelection = false;
         _vizSubmenu.Name = "VizSubmenu";
 
         var subId = 0;
@@ -61,6 +62,7 @@ public partial class VisualizerOptionsButton : MenuButton
     private void OnVizMenuItemPressed(long index)
     {
         _currentVizIndex = (int)index;
+        UpdateCheckedItem();
         EmitSignal(SignalName.VizChanged, _vizIds[_currentVizIndex]);
     }
 }

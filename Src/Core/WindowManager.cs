@@ -301,8 +301,12 @@ public partial class WindowManager : Node
             return;
         _grabbingFocusLock = true;
         foreach (var window in _allWindowsRefs)
-            window.GrabFocus();
-        focusedWindow.GrabFocus();
+        {
+            if (window.Visible)
+                window.GrabFocus();
+        }
+        if (focusedWindow.Visible)
+            focusedWindow.GrabFocus();
         _masterPanelWindow.GrabFocus(); // We need this one always in the front.
         _grabbingFocusLock = false;
     }
@@ -431,13 +435,13 @@ public partial class WindowManager : Node
         SettingsManager.Instance.SetWindowPosition(MasterPanelWindowName, _masterPanelWindow.Position);
 
         SettingsManager.Instance.SetWindowPosition(EqualizerWindowName, _equalizerWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(EqualizerWindowName, _equalizer.Visible);
+        SettingsManager.Instance.SetWindowVisible(EqualizerWindowName, _equalizerWindow.Visible);
 
         SettingsManager.Instance.SetWindowPosition(PlaylistWindowName, _playlistWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(PlaylistWindowName, _playlist.Visible);
+        SettingsManager.Instance.SetWindowVisible(PlaylistWindowName, _playlistWindow.Visible);
 
         SettingsManager.Instance.SetWindowPosition(VisualizerWindowName, _visualizerWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(VisualizerWindowName, _visualizer.Visible);
+        SettingsManager.Instance.SetWindowVisible(VisualizerWindowName, _visualizerWindow.Visible);
     }
 
     private void RestoreWindowStates()
@@ -456,15 +460,20 @@ public partial class WindowManager : Node
 
         var eqPos = SettingsManager.Instance.GetWindowPosition(EqualizerWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y));
         _equalizerWindow.Position = eqPos;
-        _equalizer.Visible = SettingsManager.Instance.GetWindowVisible(EqualizerWindowName, true);
+        _equalizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(EqualizerWindowName, true);
+        _masterPanel.ToggleEqualizerButton.ButtonPressed = _equalizerWindow.Visible;
+        _masterPanel.WinampMenuButton.SetEqualizerChecked(_equalizerWindow.Visible);
 
         var plPos = SettingsManager.Instance.GetWindowPosition(PlaylistWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y * 2));
         _playlistWindow.Position = plPos;
-        _playlist.Visible = SettingsManager.Instance.GetWindowVisible(PlaylistWindowName, true);
+        _playlistWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlaylistWindowName, true);
+        _masterPanel.TogglePlaylistButton.ButtonPressed = _playlistWindow.Visible;
+        _masterPanel.WinampMenuButton.SetPlaylistChecked(_playlistWindow.Visible);
 
         var vizPos = SettingsManager.Instance.GetWindowPosition(VisualizerWindowName, groupCenteredPos + new Vector2I(windowSize.X, 0));
         _visualizerWindow.Position = vizPos;
-        _visualizer.Visible = SettingsManager.Instance.GetWindowVisible(VisualizerWindowName, true);
+        _visualizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(VisualizerWindowName, true);
+        _masterPanel.WinampMenuButton.SetVisualizerChecked(_visualizerWindow.Visible);
 
         DetectAndRestoreGlueRelationships();
     }
