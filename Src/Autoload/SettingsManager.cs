@@ -23,15 +23,13 @@ public partial class SettingsManager : Node
     [Signal] public delegate void ZoomModeChangedEventHandler(int zoomMode);
     [Signal] public delegate void VolumeChangedEventHandler(float volume);
 
-    private ConfigFile _configFile;
-    private string _settingsFilePath;
+    private ConfigFile _configFile= null!;
+    private string _settingsFilePath= null!;
 
-    public static SettingsManager Instance { get; private set; }
+    public static SettingsManager Instance { get; private set; } = null!;
 
     public override void _EnterTree()
     {
-        if (Instance != null)
-            QueueFree();
         Instance = this;
         InitializeSettings();
     }

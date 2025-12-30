@@ -7,8 +7,8 @@ namespace GodAmp.Visualizer;
 public partial class Visualizer : WindowPanelContainer
 {
     [ExportGroup("References")]
-    [Export] private AudioVisualizer _audioVisualizer;
-    [Export] private VisualizerOptionsButton _vizOptsButton;
+    [Export] private AudioVisualizer _audioVisualizer = null!;
+    [Export] private VisualizerOptionsButton _vizOptsButton = null!;
 
     public override void _Ready()
     {

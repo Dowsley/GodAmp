@@ -9,7 +9,7 @@ namespace GodAmp.Autoload;
 
 public partial class SkinLoader : Node
 {
-    public static SkinLoader Instance { get; private set; }
+    public static SkinLoader Instance { get; private set; } = null!;
 
     private const string SkinResourcesPath = "res://Data/SkinResources/";
     private const string TempExtractionFolder = "user://temp_skin/";
@@ -22,18 +22,16 @@ public partial class SkinLoader : Node
     private static readonly Dictionary<string, Texture2D> OriginalTextures = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, string> AtlasToTextureName = new();
 
-    private static string _skinsDirectory;
-    private static string _currentSkinName;
+    private static string _skinsDirectory = null!;
+    private static string? _currentSkinName;
 
-    private static FontFile _bitmapFont;
-    private static FontFile _bitmapNumbersFont;
-    private static Image _originalBitmapFontImage;
-    private static Image _originalBitmapNumbersFontImage;
+    private static FontFile _bitmapFont = null!;
+    private static FontFile _bitmapNumbersFont = null!;
+    private static Image _originalBitmapFontImage = null!;
+    private static Image _originalBitmapNumbersFontImage = null!;
 
     public override void _EnterTree()
     {
-        if (Instance != null)
-            QueueFree();
         Instance = this;
 
         InitializeSkinsDirectory();
@@ -95,8 +93,7 @@ public partial class SkinLoader : Node
                 return;
             }
 
-            string tempPath = ExtractWszFile(filePath);
-            if (string.IsNullOrEmpty(tempPath))
+            if (ExtractWszFile(filePath) is not { } tempPath)
             {
                 GD.PrintErr("Failed to extract .wsz file");
                 return;
@@ -167,7 +164,7 @@ public partial class SkinLoader : Node
         return true;
     }
 
-    public static string GetCurrentSkinName()
+    public static string? GetCurrentSkinName()
     {
         return _currentSkinName;
     }
@@ -184,14 +181,14 @@ public partial class SkinLoader : Node
 
         return Directory.GetFiles(_skinsDirectory, "*.wsz")
             .Select(Path.GetFileName)
+            .OfType<string>()
             .ToArray();
     }
 
-    private static string ExtractWszFile(string filePath)
+    private static string? ExtractWszFile(string filePath)
     {
         try
         {
-            // Convert Godot path to system path
             string systemPath = ProjectSettings.GlobalizePath(filePath);
 
             if (!File.Exists(systemPath))
@@ -200,7 +197,6 @@ public partial class SkinLoader : Node
                 return null;
             }
 
-            // Extract zip file
             string tempPath = ProjectSettings.GlobalizePath(TempExtractionFolder);
             if (Directory.Exists(tempPath))
             {
@@ -307,14 +303,16 @@ public partial class SkinLoader : Node
 
     private static void UpdateBitmapFont()
     {
-        string matchingKey = FindMatchingImageKey("TEXT.PNG");
-        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[matchingKey]);
-        matchingKey = FindMatchingImageKey("NUMBERS.PNG");
-        _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[matchingKey]);
+        if (FindMatchingImageKey("TEXT.PNG") is { } textKey)
+            _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[textKey]);
+
+        if (FindMatchingImageKey("NUMBERS.PNG") is { } numbersKey)
+            _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[numbersKey]);
+
         GD.Print("Updated bitmap font texture");
     }
 
-    private static string FindMatchingImageKey(string imageName)
+    private static string? FindMatchingImageKey(string imageName)
     {
         string baseNameWithoutExt = Path.GetFileNameWithoutExtension(imageName);
         return LoadedImages.Keys.FirstOrDefault(k =>
@@ -332,15 +330,13 @@ public partial class SkinLoader : Node
                 return false;
             }
 
-            string textureName = GetOrStoreTextureName(resourcePath, atlasTexture);
-            if (string.IsNullOrEmpty(textureName))
+            if (GetOrStoreTextureName(resourcePath, atlasTexture) is not { } textureName)
             {
                 GD.PrintErr($"Could not determine texture name for: {resourcePath}");
                 return false;
             }
 
-            string matchingKey = FindMatchingTextureKey(textureName);
-            if (matchingKey == null)
+            if (FindMatchingTextureKey(textureName) is not { } matchingKey)
             {
                 GD.Print($"No matching texture found for: {textureName}");
                 return false;
@@ -356,7 +352,7 @@ public partial class SkinLoader : Node
         }
     }
 
-    private static string GetOrStoreTextureName(string resourcePath, AtlasTexture atlasTexture)
+    private static string? GetOrStoreTextureName(string resourcePath, AtlasTexture atlasTexture)
     {
         if (AtlasToTextureName.TryGetValue(resourcePath, out var textureName))
             return textureName;
@@ -375,7 +371,7 @@ public partial class SkinLoader : Node
         return textureName;
     }
 
-    private static string FindMatchingTextureKey(string textureName)
+    private static string? FindMatchingTextureKey(string textureName)
     {
         string baseNameWithoutExt = Path.GetFileNameWithoutExtension(textureName);
         return LoadedTextures.Keys.FirstOrDefault(k =>

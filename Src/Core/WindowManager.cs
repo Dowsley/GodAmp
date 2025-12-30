@@ -18,24 +18,24 @@ public partial class WindowManager : Node
     private const string VisualizerWindowName = "visualizer";
 
     [ExportGroup("References")]
-    [Export] private MasterPanel _masterPanel;
-    [Export] private Equalizer _equalizer;
-    [Export] private Playlist _playlist;
-    [Export] private Visualizer.Visualizer _visualizer;
+    [Export] private MasterPanel _masterPanel = null!;
+    [Export] private Equalizer _equalizer = null!;
+    [Export] private Playlist _playlist = null!;
+    [Export] private Visualizer.Visualizer _visualizer = null!;
 
-    private WindowPanelContainer _windowContainerBeingDragged;
+    private WindowPanelContainer? _windowContainerBeingDragged;
     private bool _grabbingFocusLock;
 
-    private Window _equalizerWindow;
-    private Window _playlistWindow;
-    private Window _visualizerWindow;
-    private Window _masterPanelWindow;
+    private Window _equalizerWindow = null!;
+    private Window _playlistWindow = null!;
+    private Window _visualizerWindow = null!;
+    private Window _masterPanelWindow = null!;
 
     private Vector2I _originalWindowSize;
     private Vector2I _originalVisualizerWindowSize;
 
-    private List<WindowPanelContainer> _allContainerRefs;
-    private List<Window> _allWindowsRefs;
+    private List<WindowPanelContainer> _allContainerRefs = [];
+    private List<Window> _allWindowsRefs = [];
 
     private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = new();
     private Vector2I _lastDraggedWindowPosition;

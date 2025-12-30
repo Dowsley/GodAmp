@@ -32,12 +32,10 @@ public partial class SignalBus : Node
     [Signal] public delegate void PannerBalanceChangedEventHandler(float value);
     [Signal] public delegate void PositionSeekerChangedEventHandler(float value);
 
-    public static SignalBus Instance { get; private set; }
+    public static SignalBus Instance { get; private set; } = null!;
 
     public override void _EnterTree()
     {
-        if (Instance != null)
-            QueueFree();
         Instance = this;
     }
 }

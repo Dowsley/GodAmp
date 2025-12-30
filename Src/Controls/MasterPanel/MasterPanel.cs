@@ -15,23 +15,23 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] public double ClockBlinkEverySeconds = 1.0f;
 
     [ExportGroup("References")]
-    [Export] public WinampMenuButton WinampMenuButton;
-    [Export] public TextureButton ToggleEqualizerButton;
-    [Export] public TextureButton TogglePlaylistButton;
-    [Export] private MarqueeLabel _masterLabel;
-    [Export] private HSlider _positionSeekerSlider;
-    [Export] private SkinnableHSlider _volumeSlider;
-    [Export] private SkinnableHSlider _pannerAudioSlider;
-    [Export] private Label _bitrateLabel;
-    [Export] private Label _sampleRateLabel;
+    [Export] public WinampMenuButton WinampMenuButton = null!;
+    [Export] public TextureButton ToggleEqualizerButton = null!;
+    [Export] public TextureButton TogglePlaylistButton = null!;
+    [Export] private MarqueeLabel _masterLabel = null!;
+    [Export] private HSlider _positionSeekerSlider = null!;
+    [Export] private SkinnableHSlider _volumeSlider = null!;
+    [Export] private SkinnableHSlider _pannerAudioSlider = null!;
+    [Export] private Label _bitrateLabel = null!;
+    [Export] private Label _sampleRateLabel = null!;
     [ExportSubgroup("Time display")]
-    [Export] private Label _timeMinutesTensLabel;
-    [Export] private Label _timeMinutesOnesLabel;
-    [Export] private Label _timeSecondsTensLabel;
-    [Export] private Label _timeSecondsOnesLabel;
+    [Export] private Label _timeMinutesTensLabel = null!;
+    [Export] private Label _timeMinutesOnesLabel = null!;
+    [Export] private Label _timeSecondsTensLabel = null!;
+    [Export] private Label _timeSecondsOnesLabel = null!;
 
-    private TrackPlayer _trackPlayerRef;
-    private ButtonGroup _buttonGroup;
+    private TrackPlayer _trackPlayerRef = null!;
+    private ButtonGroup _buttonGroup = null!;
 
     private bool _dragging = false;
     private bool _hasStarted = false;
@@ -61,8 +61,8 @@ public partial class MasterPanel : WindowPanelContainer
         _positionSeekerSlider.MaxValue = _trackPlayerRef.Stream.GetLength();
 
         var track = _trackPlayerRef.CurrentTrack;
-        _bitrateLabel.Text = $"{track.BitrateKbps}";
-        _sampleRateLabel.Text = $"{track.SampleRateHz / 1000}";
+        _bitrateLabel.Text = $"{track?.BitrateKbps}";
+        _sampleRateLabel.Text = $"{track?.SampleRateHz / 1000}";
         if (_hasStarted)
         {
             if (!_dragging && !_trackPlayerRef.StreamPaused)

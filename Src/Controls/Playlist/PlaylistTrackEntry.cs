@@ -8,9 +8,9 @@ public partial class PlaylistTrackEntry : PanelContainer
 {
     [Signal] public delegate void SelectedEventHandler(int index);
 
-    [Export] private Label _trackTitleLabel;
-    [Export] private Label _durationLabel;
-    [Export] private ColorRect _selectedBg;
+    [Export] private Label _trackTitleLabel = null!;
+    [Export] private Label _durationLabel = null!;
+    [Export] private ColorRect _selectedBg = null!;
 
     public int Index;
 
@@ -116,9 +116,8 @@ public partial class PlaylistTrackEntry : PanelContainer
         var indices = new System.Collections.Generic.List<int>(arr);
         bool insertAfter = atPosition.Y > Size.Y * 0.5f;
 
-        // Find ancestor Playlist
-        Node ancestor = GetParent();
-        Playlist playlist = null;
+        Node? ancestor = GetParent();
+        Playlist? playlist = null;
         while (ancestor != null)
         {
             if (ancestor is Playlist p)

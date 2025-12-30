@@ -18,21 +18,21 @@ namespace GodAmp;
 public partial class Main : HBoxContainer
 {
     [ExportGroup("Config")]
-    [Export] public string DefaultSongsPath;
+    [Export] public string DefaultSongsPath = null!;
 
     [ExportGroup("References")]
-    [Export] private MasterPanel _masterPanel;
-    [Export] private Equalizer _equalizer;
-    [Export] private Playlist _playlist;
-    [Export] private Visualizer.Visualizer _visualizer;
-    [Export] private TrackPlayer _trackPlayer;
-    [Export] private WindowManager _windowManager;
+    [Export] private MasterPanel _masterPanel = null!;
+    [Export] private Equalizer _equalizer = null!;
+    [Export] private Playlist _playlist = null!;
+    [Export] private Visualizer.Visualizer _visualizer = null!;
+    [Export] private TrackPlayer _trackPlayer = null!;
+    [Export] private WindowManager _windowManager = null!;
 
-    private Window _masterPanelWindow;
-    private WindowPanelContainer _windowContainerBeingDragged = null;
+    private Window _masterPanelWindow = null!;
+    private WindowPanelContainer? _windowContainerBeingDragged = null;
     private bool _grabbingFocusLock = false;
 
-    private List<Track> _trackPlaylist;
+    private List<Track> _trackPlaylist = null!;
     private int _currentTrackIndex = 0;
 
     private bool _repeatMode = false;
@@ -42,7 +42,7 @@ public partial class Main : HBoxContainer
     private bool _masterLabelLocked = false;
     private bool _masterLabelLockedByPositionSeeker = false;
 
-    private FileDialog _lastUsedFileDialog;
+    private FileDialog? _lastUsedFileDialog = null;
 
     public override void _Ready()
     {
@@ -119,9 +119,9 @@ public partial class Main : HBoxContainer
         else
             _visualizer.Pause();
 
-        if (!_masterLabelLocked)
+        if (!_masterLabelLocked && _trackPlayer.CurrentTrack is { } currentTrack)
         {
-            _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(_trackPlayer.CurrentTrack, _currentTrackIndex + 1));
+            _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _currentTrackIndex + 1));
         }
     }
 
@@ -355,7 +355,7 @@ public partial class Main : HBoxContainer
         if (string.IsNullOrWhiteSpace(ext))
             path += ".m3u";
         var absolutePaths = _trackPlaylist
-            .Select(t => t?.SourcePath)
+            .Select(t => t.SourcePath)
             .Where(p => !string.IsNullOrWhiteSpace(p));
         M3UParser.Write(path, absolutePaths, relativePaths: false);
         OnFileDialogClosed();

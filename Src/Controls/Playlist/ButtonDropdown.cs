@@ -4,7 +4,7 @@ namespace GodAmp.Controls.Playlist;
 
 public partial class ButtonDropdown : Node2D
 {
-    [Export] private FocusManagedVBoxContainer _container;
+    [Export] private FocusManagedVBoxContainer _container = null!;
 
     public override void _Ready()
     {

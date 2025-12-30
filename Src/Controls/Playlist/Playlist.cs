@@ -12,30 +12,30 @@ namespace GodAmp.Controls.Playlist;
 public partial class Playlist : WindowPanelContainer
 {
     [ExportGroup("Config")]
-    [Export] public PackedScene TrackLabelScene;
+    [Export] public PackedScene TrackLabelScene = null!;
 
     [ExportGroup("References")]
     [ExportSubgroup("Controls")]
-    [Export] private VBoxContainer _trackEntryContainer;
-    [Export] private ScrollContainer _scrollContainer;
+    [Export] private VBoxContainer _trackEntryContainer = null!;
+    [Export] private ScrollContainer _scrollContainer = null!;
 
     [ExportSubgroup("Button dropdowns")]
-    [Export] public ButtonDropdown AddButtonDropdown;
-    [Export] public ButtonDropdown RemoveButtonDropdown;
-    [Export] public ButtonDropdown SelectButtonDropdown;
-    [Export] public ButtonDropdown MiscButtonDropdown;
-    [Export] public ButtonDropdown ListOptionsButtonDropdown;
+    [Export] public ButtonDropdown AddButtonDropdown = null!;
+    [Export] public ButtonDropdown RemoveButtonDropdown = null!;
+    [Export] public ButtonDropdown SelectButtonDropdown = null!;
+    [Export] public ButtonDropdown MiscButtonDropdown = null!;
+    [Export] public ButtonDropdown ListOptionsButtonDropdown = null!;
 
     [ExportSubgroup("Buttons")]
-    [Export] public TextureButton AddButton;
-    [Export] public TextureButton RemoveButton;
-    [Export] public TextureButton SelectButton;
-    [Export] public TextureButton MiscButton;
-    [Export] public TextureButton ListOptionsButton;
+    [Export] public TextureButton AddButton = null!;
+    [Export] public TextureButton RemoveButton = null!;
+    [Export] public TextureButton SelectButton = null!;
+    [Export] public TextureButton MiscButton = null!;
+    [Export] public TextureButton ListOptionsButton = null!;
 
     private HashSet<Track> _selectedTracks = [];
-    private List<Track> _playlistRef;
-    private TrackPlayer _trackPlayerRef;
+    private List<Track> _playlistRef = null!;
+    private TrackPlayer _trackPlayerRef = null!;
     private int? _selectionAnchorIndex;
 
     public override void _Ready()
@@ -219,7 +219,7 @@ public partial class Playlist : WindowPanelContainer
 
     public void ReorderSelectedTracks(List<int> selectedIndices, int targetIndex, bool insertAfter)
     {
-        if (_playlistRef is null || selectedIndices is null || selectedIndices.Count == 0)
+        if (selectedIndices.Count == 0)
             return;
 
         // normalize and validate indices

@@ -17,12 +17,11 @@ public partial class SquareStrategy : VisualizerStrategy
     [Export] public float MidFrequencyMax = 2000.0f;
     [Export] public float SizeReactivity = 3.0f;
 
-    private RigidBody2D _body;
-    private ColorRect _square;
-    private float _currentSize;
+    private RigidBody2D _body = null!;
+    private ColorRect _square = null!;
+    private float _currentSize = 0.0f;
     private float _timeAccumulator = 0.0f;
-    private Vector2[] _forceDirections = new Vector2[4];
-    private PhysicsMaterial _bouncyMaterial;
+    private readonly Vector2[] _forceDirections = new Vector2[4];
 
     public override void _Ready()
     {

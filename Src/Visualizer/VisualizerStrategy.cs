@@ -38,7 +38,7 @@ public abstract partial class VisualizerStrategy : Node2D
     public Color FinalColor = Colors.Cyan;
     public float TimeOffset = 0.0f;
 
-    protected AudioEffectSpectrumAnalyzerInstance Spectrum;
+    protected AudioEffectSpectrumAnalyzerInstance Spectrum = null!;
     protected int FrameCount = 0;
     protected Vector2 ViewportSize;
 
@@ -55,6 +55,6 @@ public abstract partial class VisualizerStrategy : Node2D
     private void InitializeAudioSpectrum()
     {
         int masterBus = AudioServer.GetBusIndex("Master");
-        Spectrum = AudioServer.GetBusEffectInstance(masterBus, AudioUtils.SpectrumAnalyzerAudioEffectIndex) as AudioEffectSpectrumAnalyzerInstance;
+        Spectrum = (AudioEffectSpectrumAnalyzerInstance)AudioServer.GetBusEffectInstance(masterBus, AudioUtils.SpectrumAnalyzerAudioEffectIndex);
     }
 }

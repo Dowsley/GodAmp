@@ -7,8 +7,8 @@ namespace GodAmp.Controls.Equalizer;
 public partial class Equalizer : WindowPanelContainer
 {
     [ExportGroup("References")]
-    [Export] private VSlider _preampSlider;
-    [Export] private TextureButton _equalizerToggleButton;
+    [Export] private VSlider _preampSlider = null!;
+    [Export] private TextureButton _equalizerToggleButton = null!;
 
     public override void _Ready()
     {

@@ -12,9 +12,8 @@ public partial class LineStrategy : VisualizerStrategy
     [Export] private int _pointsPerSegment = 5;
     [Export(PropertyHint.Range, "0.0,1.0")] private float _lineVerticalPosition = 0.75f;
 
-    private Line2D _line;
-    private AudioEffectSpectrumAnalyzerInstance _spectrum;
-    private Vector2[] _points;
+    private Line2D _line = null!;
+    private Vector2[] _points = null!;
 
     public override void _Ready()
     {

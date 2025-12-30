@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace GodAmp.Controls.Equalizer;
@@ -13,12 +14,12 @@ public partial class SkinnableVSlider : VSlider
     [Export] protected int TextureWidth = 14;
     [Export] protected int TextureHeight = 63;
 
-    private AtlasTexture _atlasTexture;
+    private AtlasTexture _atlasTexture = null!;
 
     public override void _Ready()
     {
         var styleBox = GetThemeStylebox("slider") as StyleBoxTexture;
-        _atlasTexture = styleBox?.Texture as AtlasTexture;
+        _atlasTexture = styleBox?.Texture as AtlasTexture ?? throw new Exception("StyleBox shouldn't be null");
 
         ValueChanged += OnValueChanged;
         OnValueChanged(Value);

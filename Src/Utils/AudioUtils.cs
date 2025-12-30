@@ -57,12 +57,11 @@ public static class AudioUtils
         return result;
     }
 
-    // Overload that figures out the factory by extension and loads/creates the stream
-    public static Track LoadTrack(string fullPath)
+    public static Track? LoadTrack(string fullPath)
     {
         try
         {
-            var ext = Path.GetExtension(fullPath)?.ToLowerInvariant();
+            var ext = Path.GetExtension(fullPath).ToLowerInvariant();
             if (string.IsNullOrEmpty(ext) || !StreamFactories.TryGetValue(ext, out var factory))
             {
                 GD.PrintErr("Unsupported audio extension for file: " + fullPath);
@@ -98,7 +97,7 @@ public static class AudioUtils
                 SourcePath = fullPath,
                 Name = useFileName ? fileNameNoExt : tag.Title,
                 Artist = tag.FirstPerformer ?? "Unknown",
-                Album = tag.Album,
+                Album = tag.Album ?? "",
                 TrackNumber = (int)tag.Track,
                 Duration = (float)props.Duration.TotalSeconds,
                 BitrateKbps = props.AudioBitrate,
@@ -119,18 +118,16 @@ public static class AudioUtils
         }
     }
 
-    public static List<Track> LoadTracksFromPathList(string[] pathList)
+    public static List<Track> LoadTracksFromPathList(IEnumerable<string> pathList)
     {
         return pathList.Where(p => !string.IsNullOrWhiteSpace(p))
                        .Select(LoadTrack)
-                       .Where(t => t != null)
+                       .OfType<Track>()
                        .ToList();
     }
 
     public static string GetFullTrackTitle(Track track, int trackNumber)
     {
-        if (track == null)
-            return "Unknown Track";
         return track.UseFileName
             ? track.Name
             : $"{trackNumber}. {track.Artist} - {track.Name}";

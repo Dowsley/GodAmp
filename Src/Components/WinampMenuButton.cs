@@ -11,9 +11,9 @@ public partial class WinampMenuButton : MenuButton
     private const int PlaylistItemId = 101;
     private const int VisualizerItemId = 102;
 
-    private PopupMenu _popup;
-    private PopupMenu _scaleSubmenu;
-    private PopupMenu _skinSubmenu;
+    private PopupMenu _popup = null!;
+    private PopupMenu _scaleSubmenu = null!;
+    private PopupMenu _skinSubmenu = null!;
     private readonly List<string> _skinFilenames = [];
 
     public override void _Ready()
@@ -45,7 +45,7 @@ public partial class WinampMenuButton : MenuButton
         _popup.SetItemChecked(_popup.GetItemIndex(VisualizerItemId), true);
     }
 
-    private void OnPopupItemPressed(long id)
+    private static void OnPopupItemPressed(long id)
     {
         switch (id)
         {

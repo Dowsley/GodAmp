@@ -5,7 +5,7 @@ namespace GodAmp.Core;
 
 public partial class TrackPlayer : AudioStreamPlayer
 {
-    public Track CurrentTrack;
+    public Track? CurrentTrack = null;
 
     public void SetCurrentTrack(Track track, bool autoplay = true)
     {

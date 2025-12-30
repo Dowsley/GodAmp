@@ -9,9 +9,9 @@ public partial class WindowPanelContainer : PanelContainer
     [Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
 
     [ExportGroup("References")]
-    [Export] private Control _draggableHitbox;
+    [Export] private Control _draggableHitbox = null!;
 
-    public Window WindowRef;
+    public Window WindowRef = null!;
     public bool IsDragging { get; private set; }
 
     private bool _wasMousePressed;
