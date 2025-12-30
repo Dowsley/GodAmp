@@ -9,8 +9,8 @@ public partial class VisualizerOptionsButton : MenuButton
     [Signal] public delegate void VizChangedEventHandler(StringName vizId);
 
     private readonly List<StringName> _vizIds = [];
-    private PopupMenu _popup= null!;
-    private PopupMenu _vizSubmenu= null!;
+    private PopupMenu _popup = null!;
+    private PopupMenu _vizSubmenu = null!;
     private int _currentVizIndex = 0;
 
     public void Initialize(List<VisualizerStrategyType> strategyTypeMapRef)

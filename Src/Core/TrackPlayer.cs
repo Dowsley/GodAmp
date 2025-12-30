@@ -14,4 +14,11 @@ public partial class TrackPlayer : AudioStreamPlayer
         Seek(0.0f);
         Playing = autoplay;
     }
+
+    public void ClearCurrentTrack()
+    {
+        Stop();
+        CurrentTrack = null;
+        Stream = null;
+    }
 }

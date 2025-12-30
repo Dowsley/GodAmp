@@ -23,8 +23,8 @@ public partial class SettingsManager : Node
     [Signal] public delegate void ZoomModeChangedEventHandler(int zoomMode);
     [Signal] public delegate void VolumeChangedEventHandler(float volume);
 
-    private ConfigFile _configFile= null!;
-    private string _settingsFilePath= null!;
+    private ConfigFile _configFile = null!;
+    private string _settingsFilePath = null!;
 
     public static SettingsManager Instance { get; private set; } = null!;
 

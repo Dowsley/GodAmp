@@ -46,32 +46,13 @@ public partial class Main : HBoxContainer
 
     public override void _Ready()
     {
-        // Try to load the last used playlist, fall back to default songs path
-        string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
-        if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
-        {
-            try
-            {
-                var resolved = M3UParser.Parse(lastPlaylistPath);
-                _trackPlaylist = AudioUtils.LoadTracksFromPathList(resolved);
-            }
-            catch (Exception ex)
-            {
-                GD.PrintErr($"Failed to load last playlist: {ex.Message}. Falling back to default songs path.");
-                _trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
-            }
-        }
-        else
-        {
-            _trackPlaylist = AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
-        }
+        _trackPlaylist = LoadInitialPlaylist();
 
-        if (_trackPlaylist.Count == 0)
+        if (_trackPlaylist.Count > 0)
         {
-            GD.PrintErr("No tracks found.");
+            _trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
+            _trackPlayer.SetCurrentTrack(_trackPlaylist[_currentTrackIndex], false);
         }
-        _trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
-        _trackPlayer.SetCurrentTrack(_trackPlaylist[_currentTrackIndex], false);
         _visualizer.Pause();
 
         _masterPanel.ToggleEqualizerRequested += OnToggleEqualizerRequested;
@@ -119,9 +100,12 @@ public partial class Main : HBoxContainer
         else
             _visualizer.Pause();
 
-        if (!_masterLabelLocked && _trackPlayer.CurrentTrack is { } currentTrack)
+        if (!_masterLabelLocked)
         {
-            _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _currentTrackIndex + 1));
+            if (_trackPlayer.CurrentTrack is { } currentTrack)
+                _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _currentTrackIndex + 1));
+            else
+                _masterPanel.SetMasterLabelText("");
         }
     }
 
@@ -187,7 +171,10 @@ public partial class Main : HBoxContainer
 
     private void OnPositionSeekerChanged(float value)
     {
-        var totalTimeSecs = _trackPlayer.CurrentTrack.Duration;
+        if (_trackPlayer.CurrentTrack is not { } track)
+            return;
+
+        var totalTimeSecs = track.Duration;
         if (_masterLabelLocked && _masterLabelLockedByPositionSeeker)
             _masterPanel.SetMasterLabelText(
                 $"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(totalTimeSecs)} ({value / totalTimeSecs * 100:F0}%)");
@@ -395,29 +382,40 @@ public partial class Main : HBoxContainer
     private void RemoveAllTracksFromPlaylist()
     {
         _trackPlaylist.Clear();
+        ClearCurrentTrackIfPlaylistEmpty();
         _playlist.Refresh();
     }
 
     private void CropPlaylist()
     {
         var selected = _playlist.GetSelectedIndices();
-        for (int i = _trackPlaylist.Count - 1; i >= 0; i--) // avoid index shifts
+        for (int i = _trackPlaylist.Count - 1; i >= 0; i--)
         {
             if (!selected.Contains(i))
                 _trackPlaylist.RemoveAt(i);
         }
+        ClearCurrentTrackIfPlaylistEmpty();
         _playlist.Refresh();
     }
 
     private void RemoveSelectedTracksFromPlaylist()
     {
         var selected = _playlist.GetSelectedIndices();
-        // avoid index shifts
         foreach (var i in selected.OrderByDescending(x => x))
         {
             _trackPlaylist.RemoveAt(i);
         }
+        ClearCurrentTrackIfPlaylistEmpty();
         _playlist.Refresh();
+    }
+
+    private void ClearCurrentTrackIfPlaylistEmpty()
+    {
+        if (_trackPlaylist.Count == 0)
+        {
+            _trackPlayer.ClearCurrentTrack();
+            _masterPanel.Refresh();
+        }
     }
 
     private static string[] GetAudioFilesFromDirectory(string directoryPath)
@@ -450,9 +448,15 @@ public partial class Main : HBoxContainer
 
     private void LoadTracks(string[] paths, bool overridePlaylist = false)
     {
+        var tracks = AudioUtils.LoadTracksFromPathList(paths);
+        if (tracks.Count == 0)
+        {
+            OnFileDialogClosed();
+            return;
+        }
+
         if (overridePlaylist)
             _trackPlaylist.Clear();
-        var tracks = AudioUtils.LoadTracksFromPathList(paths);
         tracks.Sort((a, b) => a.TrackNumber - b.TrackNumber);
         _trackPlaylist.AddRange(tracks);
         _trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
@@ -469,6 +473,26 @@ public partial class Main : HBoxContainer
             return;
         _lastUsedFileDialog.QueueFree();
         _lastUsedFileDialog = null;
+    }
+
+    private List<Track> LoadInitialPlaylist()
+    {
+        string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
+        if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
+        {
+            try
+            {
+                var resolved = M3UParser.Parse(lastPlaylistPath);
+                var tracks = AudioUtils.LoadTracksFromPathList(resolved);
+                if (tracks.Count > 0)
+                    return tracks;
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"Failed to load last playlist: {ex.Message}");
+            }
+        }
+        return AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
     }
 
     private void LoadSettingsState()

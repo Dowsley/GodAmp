@@ -56,14 +56,16 @@ public partial class MasterPanel : WindowPanelContainer
     {
         base._Process(delta);
 
-        _positionSeekerSlider.Editable = _hasStarted;
-        _positionSeekerSlider.MinValue = 0.0f;
-        _positionSeekerSlider.MaxValue = _trackPlayerRef.Stream.GetLength();
-
         var track = _trackPlayerRef.CurrentTrack;
-        _bitrateLabel.Text = $"{track?.BitrateKbps}";
-        _sampleRateLabel.Text = $"{track?.SampleRateHz / 1000}";
-        if (_hasStarted)
+        var hasTrack = track != null && _trackPlayerRef.Stream != null;
+
+        _positionSeekerSlider.Editable = _hasStarted && hasTrack;
+        _positionSeekerSlider.MinValue = 0.0f;
+        _positionSeekerSlider.MaxValue = hasTrack ? _trackPlayerRef.Stream.GetLength() : 1.0;
+
+        _bitrateLabel.Text = hasTrack ? $"{track!.BitrateKbps}" : "0";
+        _sampleRateLabel.Text = hasTrack ? $"{track!.SampleRateHz / 1000}" : "0";
+        if (_hasStarted && hasTrack)
         {
             if (!_dragging && !_trackPlayerRef.StreamPaused)
             {
@@ -138,6 +140,11 @@ public partial class MasterPanel : WindowPanelContainer
 
     private void OnPlayTrackButtonPressed()
     {
+        if (_trackPlayerRef.CurrentTrack == null)
+        {
+            SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, true);
+            return;
+        }
         _trackPlayerRef.Play(0.0f);
         _hasStarted = true;
     }
