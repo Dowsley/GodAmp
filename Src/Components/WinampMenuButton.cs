@@ -81,6 +81,16 @@ public partial class WinampMenuButton : MenuButton
     {
         _skinSubmenu = new PopupMenu();
         _skinSubmenu.Name = "SkinSubmenu";
+        _skinSubmenu.AboutToPopup += RefreshSkinList;
+        _skinSubmenu.IndexPressed += OnSkinMenuItemPressed;
+
+        _popup.AddSubmenuNodeItem("Skins", _skinSubmenu, id);
+    }
+
+    private void RefreshSkinList()
+    {
+        _skinSubmenu.Clear();
+        _skinFilenames.Clear();
 
         var subId = 0;
         _skinSubmenu.AddItem("Open Skins directory", subId++);
@@ -96,10 +106,6 @@ public partial class WinampMenuButton : MenuButton
             _skinSubmenu.AddItem(displayName, subId++);
             _skinFilenames.Add(skinFile);
         }
-
-        _skinSubmenu.IndexPressed += OnSkinMenuItemPressed;
-
-        _popup.AddSubmenuNodeItem("Skins", _skinSubmenu, id);
     }
 
     private static void OnScaleMenuItemPressed(long id)
