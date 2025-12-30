@@ -4,8 +4,12 @@ namespace GodAmp.Autoload;
 
 public partial class SettingsManager : Node
 {
+    private const int CurrentVersion = 1;
     private const string SettingsFileName = "godamp.ini";
     private const string SettingsDir = "GodAmp";
+
+    private const string MetaSection = "meta";
+    private const string VersionKey = "version";
 
     private const string LastPlaylistPathKey = "last_playlist_path";
     private const string ZoomModeKey = "zoom_mode";
@@ -52,6 +56,24 @@ public partial class SettingsManager : Node
                 GD.PrintErr($"Failed to load settings file: {error}");
             }
         }
+
+        int fileVersion = GetVersion();
+        if (fileVersion < CurrentVersion)
+        {
+            SetVersion(CurrentVersion);
+        }
+    }
+
+    private int GetVersion()
+    {
+        if (_configFile.HasSectionKey(MetaSection, VersionKey))
+            return (int)_configFile.GetValue(MetaSection, VersionKey);
+        return 0;
+    }
+
+    private void SetVersion(int version)
+    {
+        _configFile.SetValue(MetaSection, VersionKey, version);
     }
 
     /// <summary>
