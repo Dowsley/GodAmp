@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="PackedScene" path="res://Src/Components/SkinWindowShape.tscn" id="shape"]
 [ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
 [ext_resource type="Theme" path="res://Data/Others/BitmapNumberTheme.tres" id="number_theme"]
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/PlaybackIndicators.cs" id="indicators"]
@@ -72,6 +73,9 @@ _timeMinutesOnesLabel = NodePath("TextDisplay/TimeMinutesOnesLabel")
 _timeSecondsTensLabel = NodePath("TextDisplay/TimeSecondsTensLabel")
 _timeSecondsOnesLabel = NodePath("TextDisplay/TimeSecondsOnesLabel")
 _draggableHitbox = NodePath("DraggableHitbox")
+
+[node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
+Panel = NodePath("..")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2

@@ -38,6 +38,8 @@ SkinLoader="*res://Src/Autoload/SkinLoader.cs"
 window/size/viewport_width=275
 window/size/viewport_height=116
 window/size/borderless=true
+window/size/transparent=true
+window/per_pixel_transparency/allowed=true
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 

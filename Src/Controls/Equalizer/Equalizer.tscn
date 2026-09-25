@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=14 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/Equalizer.cs" id="script"]
+[ext_resource type="PackedScene" path="res://Src/Components/SkinWindowShape.tscn" id="shape"]
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/EqualizerGraph.cs" id="graph"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerBackground.tres" id="background"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerTitleBar.tres" id="titlebar"]
@@ -25,6 +26,10 @@ _equalizerToggleButton = NodePath("Controls/EqualizerToggleButton")
 _graph = NodePath("Controls/Graph")
 _draggableHitbox = NodePath("DraggableHitbox")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
+
+[node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
+Panel = NodePath("..")
+Mode = 2
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
