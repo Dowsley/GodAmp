@@ -14,6 +14,10 @@ public sealed class SkinArchive
 {
     private const int MaximumAssetBytes = 16 * 1024 * 1024;
     private readonly Dictionary<string, Image> _images = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<SkinCursorRole, SkinCursor> _cursors = [];
+
+    /// <summary>Gets supported decoded cursors; omitted or invalid assets use system defaults.</summary>
+    public IReadOnlyDictionary<SkinCursorRole, SkinCursor> Cursors => _cursors;
 
     /// <summary>Gets decoded sheets keyed by case-insensitive filenames without extensions.</summary>
     public IReadOnlyDictionary<string, Image> Images => _images;
@@ -52,18 +56,23 @@ public sealed class SkinArchive
         bool hasStyle = false;
         bool hasPalette = false;
         bool hasRegions = false;
+        var seenCursors = new HashSet<SkinCursorRole>();
         foreach (var entry in entries)
         {
             string name = entry.FullName.Replace('\\', '/').Split('/')[^1];
             string stem = Path.GetFileNameWithoutExtension(name);
             string extension = Path.GetExtension(name).ToLowerInvariant();
+            bool cursor = Enum.TryParse(stem, true, out SkinCursorRole role) &&
+                Enum.GetName(role)?.Equals(stem, StringComparison.OrdinalIgnoreCase) == true && extension == ".cur";
+            if (cursor && !seenCursors.Add(role))
+                continue;
             bool playlistMetadata = name.Equals("pledit.txt", StringComparison.OrdinalIgnoreCase);
             bool paletteMetadata = name.Equals("viscolor.txt", StringComparison.OrdinalIgnoreCase);
             bool regionMetadata = name.Equals("region.txt", StringComparison.OrdinalIgnoreCase);
             bool metadata = playlistMetadata || paletteMetadata || regionMetadata;
             if ((playlistMetadata && hasStyle) || (paletteMetadata && hasPalette) || (regionMetadata && hasRegions))
                 continue;
-            if (!metadata && (!MinimumSizes.ContainsKey(stem) || skin.Images.ContainsKey(stem) ||
+            if (!metadata && !cursor && (!MinimumSizes.ContainsKey(stem) || skin.Images.ContainsKey(stem) ||
                               extension is not (".bmp" or ".png" or ".jpg" or ".jpeg")))
                 continue;
             if (entry.Length > MaximumAssetBytes)
@@ -72,6 +81,15 @@ public sealed class SkinArchive
             using var buffer = new MemoryStream();
             input.CopyTo(buffer);
             byte[] bytes = buffer.ToArray();
+            if (cursor)
+            {
+                SkinCursor? decoded = SkinCursorDecoder.Decode(bytes);
+                if (decoded != null)
+                    skin._cursors.Add(role, decoded);
+                else
+                    GD.PushWarning($"Using the system cursor for unsupported or invalid skin asset: {name}");
+                continue;
+            }
             if (metadata)
             {
                 string text;

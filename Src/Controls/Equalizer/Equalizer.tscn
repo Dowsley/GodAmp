@@ -1,7 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=19 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/Equalizer.cs" id="script"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinWindowShape.tscn" id="shape"]
+[ext_resource type="Script" path="res://Src/Components/SkinCursorController.cs" id="cursors"]
+[ext_resource type="Script" path="res://Src/Data/SkinCursorBinding.cs" id="cursor_binding"]
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/EqualizerGraph.cs" id="graph"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerBackground.tres" id="background"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerTitleBar.tres" id="titlebar"]
@@ -13,6 +15,21 @@
 [ext_resource type="Texture2D" path="res://Data/SkinResources/PresetsButtonNormal.tres" id="presets"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="PackedScene" path="res://Src/Controls/Equalizer/EqualizerBand.tscn" id="band"]
+
+[sub_resource type="Resource" id="cursor_title"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../DraggableHitbox")])
+Role = 22
+
+[sub_resource type="Resource" id="cursor_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/CloseButton")])
+Role = 21
+
+[sub_resource type="Resource" id="cursor_sliders"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/PreampSlider"), NodePath("../Controls/60Slider"), NodePath("../Controls/170Slider"), NodePath("../Controls/310Slider"), NodePath("../Controls/600Slider"), NodePath("../Controls/1KSlider"), NodePath("../Controls/3KSlider"), NodePath("../Controls/6KSlider"), NodePath("../Controls/12KSlider"), NodePath("../Controls/14KSlider"), NodePath("../Controls/16KSlider")])
+Role = 20
 
 [node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
@@ -30,6 +47,11 @@ TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
 [node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
 Panel = NodePath("..")
 Mode = 2
+
+[node name="SkinCursors" type="Node" parent="."]
+script = ExtResource("cursors")
+DefaultRole = 23
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_close"), SubResource("cursor_sliders")])
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2

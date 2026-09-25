@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="panel"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinWindowShape.tscn" id="shape"]
+[ext_resource type="Script" path="res://Src/Components/SkinCursorController.cs" id="cursors"]
+[ext_resource type="Script" path="res://Src/Data/SkinCursorBinding.cs" id="cursor_binding"]
 [ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
 [ext_resource type="Theme" path="res://Data/Others/BitmapNumberTheme.tres" id="number_theme"]
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/PlaybackIndicators.cs" id="indicators"]
@@ -43,6 +45,41 @@
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonNormal.tres" id="menu_normal"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonPressed.tres" id="menu_pressed"]
 
+[sub_resource type="Resource" id="cursor_title"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../DraggableHitbox")])
+Role = 7
+
+[sub_resource type="Resource" id="cursor_volume"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/VolumeSlider"), NodePath("../Controls/PannerAudioSlider")])
+Role = 1
+
+[sub_resource type="Resource" id="cursor_seek"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/PositionSeeker")])
+Role = 2
+
+[sub_resource type="Resource" id="cursor_minimize"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/MinimizeButton")])
+Role = 4
+
+[sub_resource type="Resource" id="cursor_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/CloseButton")])
+Role = 5
+
+[sub_resource type="Resource" id="cursor_menu"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/WinampMenuButton")])
+Role = 6
+
+[sub_resource type="Resource" id="cursor_song"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../TextDisplay/MasterLabel")])
+Role = 8
+
 [sub_resource type="StyleBoxTexture" id="menu_normal_style"]
 texture = ExtResource("menu_normal")
 
@@ -76,6 +113,10 @@ _draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
 Panel = NodePath("..")
+
+[node name="SkinCursors" type="Node" parent="."]
+script = ExtResource("cursors")
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_volume"), SubResource("cursor_seek"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_menu"), SubResource("cursor_song")])
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
