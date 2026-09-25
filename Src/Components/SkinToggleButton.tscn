@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Src/Components/SkinToggleButton.cs" id="script"]
+
+[node name="SkinToggleButton" type="TextureButton"]
+focus_mode = 0
+toggle_mode = true
+script = ExtResource("script")
+
+[connection signal="button_down" from="." to="." method="OnButtonDown"]
+[connection signal="button_up" from="." to="." method="OnButtonUp"]

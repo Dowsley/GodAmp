@@ -49,6 +49,26 @@ test failure.
 Set `GODAMP_TEST_SKINS` to a directory of `.wsz` files to include real-skin loading
 checks. The source directory is read-only to the runner.
 
+## Control geometry and interaction
+
+```sh
+GODAMP_DATA_DIR="$godamp_test_data" \
+  "$godamp_godot" --path . --rendering-method gl_compatibility \
+  --audio-driver Dummy --log-file "$godamp_test_data/controls.log" \
+  res://Tests/ControlTests.tscn
+```
+
+This requires a graphical desktop. It checks the actual application scene
+rectangles and EQ audio bindings. Copies of scene controls receive pointer
+events through an isolated viewport at 1x and 2x, keeping native OS mouse
+movement from interfering with held-state assertions. Coverage includes slider
+endpoints and track frames, disabled input, toggle on/off and held states,
+hovering, release outside the hitbox, completed clicks, and titlebar focus-signal
+transitions. Supplied skins are read from the isolated `Skins` directory.
+
+The runner prints `PASS: classic control regression tests` and returns zero on
+success. Native rendering is checked separately with the capture runner.
+
 ## Rendering and live updates
 
 Copy the desired `.wsz` files into `$godamp_test_data/Skins` after running the
@@ -107,9 +127,12 @@ zoom, with linear filtering on playlist labels. Bitmap display fonts and skin
 artwork retain their pixel rendering. Font rendering is visually checked at 1x,
 2x, and 4x with the default, Playstation-Amp, and Unreal skins.
 
+Milestone 3 checks cover fixed main/EQ coordinates, slider endpoints and track
+frames, toggle interaction states, menu and close-button atlas regions, and
+active/inactive titlebar frames. The installed collection passes the control
+suite at 1x and 2x. Native captures retain the playlist font smoothing.
+
 These checks do not establish Windows/Linux behavior, packaged-build behavior,
-window-region/cursor support, button-state fidelity, or analyzer/EQ graph support.
-Those remain in the corresponding milestones. The renderer may log the existing
-window-focus teardown error from `WindowManager.OnAnyWindowFocused`; the theme
-assertions and captures finish before teardown. A nullable-reference warning in
-`MasterPanel._Process` is also outside this theme change.
+window-region/cursor support, or analyzer/EQ graph support. Windowshade,
+auto-EQ, and preset management are not interactive features. Native Winamp
+screenshot comparisons and broader platform checks remain in later milestones.

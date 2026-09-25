@@ -24,7 +24,6 @@ public partial class WindowManager : Node
     [Export] private Visualizer.Visualizer _visualizer = null!;
 
     private WindowPanelContainer? _windowContainerBeingDragged;
-    private bool _grabbingFocusLock;
 
     private Window _equalizerWindow = null!;
     private Window _playlistWindow = null!;
@@ -37,7 +36,7 @@ public partial class WindowManager : Node
     private List<WindowPanelContainer> _allContainerRefs = [];
     private List<Window> _allWindowsRefs = [];
 
-    private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = new();
+    private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = [];
     private Vector2I _lastDraggedWindowPosition;
 
     public override void _Ready()
@@ -58,13 +57,6 @@ public partial class WindowManager : Node
         foreach (var window in _allWindowsRefs)
         {
             _gluedWindows[window] = [];
-        }
-
-        foreach (var container in _allContainerRefs)
-        {
-            container.DragStarted += OnWindowDragStart;
-            container.DragEnded += OnWindowDragEnd;
-            container.WindowRef.FocusEntered += () => OnAnyWindowFocused(container.WindowRef);
         }
 
         RestoreWindowStates();
@@ -294,22 +286,6 @@ public partial class WindowManager : Node
         }
     }
 
-
-    private void OnAnyWindowFocused(Window focusedWindow)
-    {
-        if (_grabbingFocusLock)
-            return;
-        _grabbingFocusLock = true;
-        foreach (var window in _allWindowsRefs)
-        {
-            if (window.Visible)
-                window.GrabFocus();
-        }
-        if (focusedWindow.Visible)
-            focusedWindow.GrabFocus();
-        _masterPanelWindow.GrabFocus(); // We need this one always in the front.
-        _grabbingFocusLock = false;
-    }
 
     private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
     {

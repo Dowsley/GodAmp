@@ -109,7 +109,8 @@ public partial class ThemeCapture : Node
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, scale);
         for (int i = 0; i < LayoutSettleFrames; i++)
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-        await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);
+        /* Native windows may stop scheduling redraws when another application covers them. */
+        RenderingServer.ForceDraw(false);
         var digits = app.GetNode<Label>("MasterPanel/TextDisplay/TimeMinutesTensLabel");
         if (digits.GlobalPosition != new Vector2(48, 26) || digits.GetThemeFontSize("font_size") != 13)
             throw new InvalidOperationException("Clock digits must retain Winamp's logical coordinates and size at each scale.");

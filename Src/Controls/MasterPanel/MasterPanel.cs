@@ -19,9 +19,9 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] public TextureButton ToggleEqualizerButton = null!;
     [Export] public TextureButton TogglePlaylistButton = null!;
     [Export] private MarqueeLabel _masterLabel = null!;
-    [Export] private HSlider _positionSeekerSlider = null!;
-    [Export] private SkinnableHSlider _volumeSlider = null!;
-    [Export] private SkinnableHSlider _pannerAudioSlider = null!;
+    [Export] private SkinSlider _positionSeekerSlider = null!;
+    [Export] private SkinSlider _volumeSlider = null!;
+    [Export] private SkinSlider _pannerAudioSlider = null!;
     [Export] private Label _bitrateLabel = null!;
     [Export] private Label _sampleRateLabel = null!;
     [ExportSubgroup("Time display")]
@@ -31,7 +31,6 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private Label _timeSecondsOnesLabel = null!;
 
     private TrackPlayer _trackPlayerRef = null!;
-    private ButtonGroup _buttonGroup = null!;
 
     private bool _dragging = false;
     private bool _hasStarted = false;
@@ -39,29 +38,25 @@ public partial class MasterPanel : WindowPanelContainer
     private double _clockBlinkTimer = 1.0f;
     private bool _clockBlinking = false;
 
+    /// <inheritdoc />
     public override void _Ready()
     {
         base._Ready();
-        UIUtils.SetSliderColor(
-            _pannerAudioSlider, (float)_pannerAudioSlider.Value, -1.0f, 1.0f);
-
-        _buttonGroup = new ButtonGroup();
         _positionSeekerSlider.Value = 0.0f;
-
-        UIUtils.SetSliderColor(
-            _volumeSlider, (float)_volumeSlider.Value, 0.0f, 1.0f);
     }
 
+    /// <inheritdoc />
     public override void _Process(double delta)
     {
         base._Process(delta);
 
         var track = _trackPlayerRef.CurrentTrack;
-        var hasTrack = track != null && _trackPlayerRef.Stream != null;
+        var stream = _trackPlayerRef.Stream;
+        var hasTrack = track != null && stream != null;
 
         _positionSeekerSlider.Editable = _hasStarted && hasTrack;
         _positionSeekerSlider.MinValue = 0.0f;
-        _positionSeekerSlider.MaxValue = hasTrack ? _trackPlayerRef.Stream.GetLength() : 1.0;
+        _positionSeekerSlider.MaxValue = hasTrack ? stream!.GetLength() : 1.0;
 
         _bitrateLabel.Text = hasTrack ? $"{track!.BitrateKbps}" : "0";
         _sampleRateLabel.Text = hasTrack ? $"{track!.SampleRateHz / 1000}" : "0";
@@ -179,7 +174,9 @@ public partial class MasterPanel : WindowPanelContainer
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, true);
     }
 
-    private void OnPositionSeekerDragEnded(bool valueChanged)
+    /// <summary>Seeks after the pointer or keyboard interaction and unlocks the marquee.</summary>
+    /// <param name="_">Signal payload indicating whether the slider value changed.</param>
+    private void OnPositionSeekerDragEnded(bool _)
     {
         _dragging = false;
         _resumeTrackAtPosition = (float)_positionSeekerSlider.Value;
@@ -190,10 +187,11 @@ public partial class MasterPanel : WindowPanelContainer
         OnSliderDragEnded();
     }
 
+    /// <summary>Applies the volume and persists the setting.</summary>
+    /// <param name="value">Linear volume from zero to one.</param>
     private void OnVolumeSliderValueChanged(float value)
     {
         _trackPlayerRef.VolumeLinear = value;
-        UIUtils.SetSliderColor(_volumeSlider, value, 0.0f, 1.0f);
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.VolumeChanged, value);
         SettingsManager.Instance.SetVolume(value);
     }
@@ -203,19 +201,22 @@ public partial class MasterPanel : WindowPanelContainer
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, false);
     }
 
-    private static void OnSliderDragEnded(bool valueChanged = false)
+    /// <summary>Restores the track title after a slider interaction.</summary>
+    /// <param name="_">Optional change flag supplied by slider signals.</param>
+    private static void OnSliderDragEnded(bool _ = false)
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.UnlockMasterLabel);
     }
 
-    private void OnPannerAudioSliderValueChanged(float value)
+    /// <summary>Updates the master bus balance and its display notification.</summary>
+    /// <param name="value">Balance from minus one (left) to one (right).</param>
+    private static void OnPannerAudioSliderValueChanged(float value)
     {
         var busIndex = AudioServer.GetBusIndex("Master");
         if (AudioServer.GetBusEffect(busIndex, AudioUtils.PannerAudioEffectIndex) is AudioEffectPanner effect)
         {
             effect.Pan = value;
         }
-        UIUtils.SetSliderColor(_pannerAudioSlider, value, -1.0f, 1.0f);
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.PannerBalanceChanged, value);
     }
 

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Src/Components/SkinSlider.cs" id="script"]
+
+[node name="SkinSlider" type="Range"]
+focus_mode = 2
+mouse_filter = 0
+script = ExtResource("script")
+
+[connection signal="value_changed" from="." to="." method="OnValueChanged"]
+[connection signal="changed" from="." to="." method="queue_redraw"]
+[connection signal="focus_exited" from="." to="." method="FinishDrag"]

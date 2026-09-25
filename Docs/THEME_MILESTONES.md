@@ -49,16 +49,23 @@ remain in milestones 7 and 8.
 
 ## 3. Pixel-accurate controls
 
-- [ ] Use fixed reference coordinates for non-resizable main-panel and EQ controls.
-- [ ] Audit atlas rectangles against Winamp, including EQ on/auto sprite boundaries.
-- [ ] Match slider track sizes, thumb positions, frame selection, and endpoints.
-- [ ] Implement separate on/off and mouse-pressed states for toggle controls.
-- [ ] Verify normal, pressed, hover, and disabled rendering where applicable.
-- [ ] Switch main, EQ, playlist, and generic titlebar artwork with window activation.
-- [ ] Verify alignment and hit targets at 1x and 2x scaling.
+- [x] Use fixed reference coordinates for non-resizable main-panel and EQ controls.
+- [x] Audit atlas rectangles against Winamp, including EQ on/auto sprite boundaries.
+- [x] Match slider track sizes, thumb positions, frame selection, and endpoints.
+- [x] Implement separate on/off and mouse-pressed states for toggle controls.
+- [x] Verify normal, pressed, hover, and disabled rendering where applicable.
+- [x] Switch main, EQ, playlist, and generic titlebar artwork with window activation.
+- [x] Verify alignment and hit targets at 1x and 2x scaling.
 
 **Done when:** controls align with the skin artwork at both scales, including
 slider endpoints and every supported interaction state.
+
+The control suite checks real scene geometry, EQ audio connections, slider
+endpoint input, toggle states, and reversible titlebar activation at 1x and 2x.
+Input tests use scene controls in an isolated viewport to avoid OS pointer
+interference. Native captures cover the installed collection on macOS.
+Auto-EQ and presets remain disabled; windowshade behavior and its extended
+artwork remain in milestone 6. Generic title lettering remains in milestone 4.
 
 ## 4. Complete skinned displays
 

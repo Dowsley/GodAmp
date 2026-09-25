@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://Src/Components/SkinSlider.tscn" id="slider"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerSlider.tres" id="sheet"]
+
+[node name="EqualizerBand" instance=ExtResource("slider")]
+offset_right = 14.0
+offset_bottom = 63.0
+min_value = -12.0
+max_value = 12.0
+step = 0.1
+Layout = 3
+Sheet = ExtResource("sheet")

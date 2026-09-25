@@ -1,89 +1,64 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
-[ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
-[ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="2_j1eng"]
-[ext_resource type="PackedScene" uid="uid://chry3b6bcrbpm" path="res://Src/Controls/MasterPanel/MarqueeLabel.tscn" id="2_y6dre"]
-[ext_resource type="Texture2D" uid="uid://yjpimygmljwp" path="res://Data/SkinResources/MasterPanelTitlebar.tres" id="3_oo7n4"]
-[ext_resource type="Texture2D" uid="uid://6i4yfo3524ke" path="res://Data/SkinResources/MasterPanelMinimizeButtonNormal.tres" id="4_b8aew"]
-[ext_resource type="Texture2D" uid="uid://712irenrpqqc" path="res://Data/SkinResources/MasterPanelMinimizeButtonPressed.tres" id="5_jkbgf"]
-[ext_resource type="Texture2D" uid="uid://dwhqep2pu0u1m" path="res://Data/SkinResources/MasterPanelCloseButtonNormal.tres" id="6_bgj4f"]
-[ext_resource type="Texture2D" uid="uid://ultq8stxfd80" path="res://Data/SkinResources/MasterPanelCloseButtonPressed.tres" id="7_oo7n4"]
-[ext_resource type="PackedScene" uid="uid://i0q31hsu8ojj" path="res://Src/Components/WinampMenuButton.tscn" id="8_2vlkh"]
-[ext_resource type="Texture2D" uid="uid://bv2vu3yypki2e" path="res://Data/SkinResources/VolumeSliderGrabber.tres" id="9_jkbgf"]
-[ext_resource type="Texture2D" uid="uid://c36trldiqrjwr" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="9_m25c3"]
-[ext_resource type="Texture2D" uid="uid://7jj1x5twau4e" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="10_2gtsh"]
-[ext_resource type="FontFile" uid="uid://dnt8jdk6j4exq" path="res://Assets/Winamp/Raw/TEXT.png" id="10_8kieg"]
-[ext_resource type="Texture2D" uid="uid://b4ro2wogdqcf8" path="res://Data/SkinResources/VolumeSlider.tres" id="10_b8aew"]
-[ext_resource type="Texture2D" uid="uid://bjfmxtdq2kt0l" path="res://Data/SkinResources/VolumeSliderGrabberHighlight.tres" id="10_bgj4f"]
-[ext_resource type="Texture2D" uid="uid://ck2phyu241jwi" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="11_j1eng"]
-[ext_resource type="Texture2D" uid="uid://dw2hupkgvxcj5" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="11_pboy1"]
-[ext_resource type="Texture2D" uid="uid://bujh07cr8mncs" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="12_6x7f4"]
-[ext_resource type="Script" uid="uid://u7v1n5jeyhwj" path="res://Src/Components/BitmapLabel.cs" id="12_ixbbo"]
-[ext_resource type="Texture2D" uid="uid://cxbsopf6tgkp6" path="res://Data/SkinResources/PannerAudioSliderGrabber.tres" id="12_oo7n4"]
-[ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="12_umuss"]
-[ext_resource type="Texture2D" uid="uid://dn0vs65qhodq4" path="res://Data/SkinResources/PannerAudioSliderGrabberHighlight.tres" id="13_2vlkh"]
-[ext_resource type="FontFile" uid="uid://dh6f1yc7o4y34" path="res://Assets/Winamp/Raw/NUMBERS.png" id="13_13jth"]
-[ext_resource type="Texture2D" uid="uid://dsp2hooqm7hu1" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="13_umuss"]
-[ext_resource type="Texture2D" uid="uid://o1n3pn051fgy" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="14_4muab"]
-[ext_resource type="Texture2D" uid="uid://08clhe1icnca" path="res://Data/SkinResources/PannerAudioSlider.tres" id="14_8kieg"]
-[ext_resource type="Texture2D" uid="uid://b2t1kuia68x2n" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="15_6x7f4"]
-[ext_resource type="Texture2D" uid="uid://cejh2ucgorivr" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="15_81lhg"]
-[ext_resource type="Texture2D" uid="uid://0slai6wqnltg" path="res://Data/SkinResources/PositionSeekerGrabberHighlight.tres" id="16_6x7f4"]
-[ext_resource type="Script" uid="uid://bgv63pklc41b7" path="res://Src/Controls/MasterPanel/SkinnableHSlider.cs" id="16_13jth"]
-[ext_resource type="Texture2D" uid="uid://767yrevn2quh" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="16_b6q8b"]
-[ext_resource type="Texture2D" uid="uid://cgcywfbr7bmo6" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="17_6nk5l"]
-[ext_resource type="Texture2D" uid="uid://cou0jaj38whh" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="18_b7f5n"]
-[ext_resource type="Texture2D" uid="uid://ii0nd3mxsvyq" path="res://Data/SkinResources/NextTrackButtonNormal.tres" id="19_0xpbf"]
-[ext_resource type="Texture2D" uid="uid://clxfppa4qfq43" path="res://Data/SkinResources/NextTrackButtonPressed.tres" id="20_wsc06"]
-[ext_resource type="Texture2D" uid="uid://d0i6n4f48l8aa" path="res://Data/SkinResources/LoadTracksButtonNormal.tres" id="21_b7f5n"]
-[ext_resource type="Texture2D" uid="uid://pyyuse41v3wi" path="res://Data/SkinResources/LoadTracksButtonPressed.tres" id="22_0xpbf"]
-[ext_resource type="Texture2D" uid="uid://ggl7b471cdw5" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="26_b8aew"]
-[ext_resource type="Texture2D" uid="uid://cvqxeibujqu01" path="res://Data/SkinResources/ShuffleModeButtonPressed.tres" id="27_jkbgf"]
-[ext_resource type="Texture2D" uid="uid://iqkq0rtuvb6y" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="28_bgj4f"]
-[ext_resource type="Texture2D" uid="uid://bdebbq0y5t8kf" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="29_oo7n4"]
+[ext_resource type="Script" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="PackedScene" path="res://Src/Components/SkinSlider.tscn" id="slider"]
+[ext_resource type="PackedScene" path="res://Src/Components/SkinToggleButton.tscn" id="toggle"]
+[ext_resource type="Script" path="res://Src/Components/BitmapLabel.cs" id="label"]
+[ext_resource type="PackedScene" path="res://Src/Controls/MasterPanel/MarqueeLabel.tscn" id="marquee"]
+[ext_resource type="PackedScene" path="res://Src/Components/WinampMenuButton.tscn" id="menu"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelBackground.tres" id="background"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelTitlebar.tres" id="titlebar"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelMinimizeButtonNormal.tres" id="minimize"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelMinimizeButtonPressed.tres" id="minimize_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelCloseButtonNormal.tres" id="close"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelCloseButtonPressed.tres" id="close_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/VolumeSlider.tres" id="volume"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PannerAudioSlider.tres" id="balance"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="seek"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="eq_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="eq_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="pl_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="pl_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="previous"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="previous_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="play"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="play_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="pause"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="pause_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="stop"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="stop_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/NextTrackButtonNormal.tres" id="next"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/NextTrackButtonPressed.tres" id="next_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/LoadTracksButtonNormal.tres" id="eject"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/LoadTracksButtonPressed.tres" id="eject_held"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="shuffle_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/ShuffleModeButtonPressed.tres" id="shuffle_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="repeat_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="repeat_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonNormal.tres" id="menu_normal"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonPressed.tres" id="menu_pressed"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6x7f4"]
-content_margin_left = 8.0
-content_margin_top = 6.0
-content_margin_right = 8.0
-content_margin_bottom = 6.0
-texture = ExtResource("10_b8aew")
+[sub_resource type="StyleBoxTexture" id="menu_normal_style"]
+texture = ExtResource("menu_normal")
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6x7f4"]
+[sub_resource type="StyleBoxTexture" id="menu_pressed_style"]
+texture = ExtResource("menu_pressed")
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b8aew"]
+[sub_resource type="StyleBoxEmpty" id="empty_style"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bgj4f"]
-content_margin_left = 8.0
-content_margin_top = 6.0
-content_margin_right = 8.0
-content_margin_bottom = 6.0
-texture = ExtResource("14_8kieg")
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jkbgf"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bgj4f"]
-
-[sub_resource type="ImageTexture" id="ImageTexture_j1eng"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m25c3"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mnxsc"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
-
-[node name="MasterPanel" type="PanelContainer" unique_id=290625967 node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
-script = ExtResource("1_wgfc2")
-WinampMenuButton = NodePath("VBoxContainer/TopBar/WinampMenuButton")
-ToggleEqualizerButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton")
-TogglePlaylistButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton")
+script = ExtResource("panel")
+TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
+WinampMenuButton = NodePath("Controls/WinampMenuButton")
+ToggleEqualizerButton = NodePath("Controls/ToggleEqualizerButton")
+TogglePlaylistButton = NodePath("Controls/TogglePlaylistButton")
 _masterLabel = NodePath("TextDisplay/MasterLabel")
-_positionSeekerSlider = NodePath("VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker")
-_volumeSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider")
-_pannerAudioSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider")
+_positionSeekerSlider = NodePath("Controls/PositionSeeker")
+_volumeSlider = NodePath("Controls/VolumeSlider")
+_pannerAudioSlider = NodePath("Controls/PannerAudioSlider")
 _bitrateLabel = NodePath("TextDisplay/BitrateLabel")
 _sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
 _timeMinutesTensLabel = NodePath("TextDisplay/TimeMinutesTensLabel")
@@ -92,353 +67,264 @@ _timeSecondsTensLabel = NodePath("TextDisplay/TimeSecondsTensLabel")
 _timeSecondsOnesLabel = NodePath("TextDisplay/TimeSecondsOnesLabel")
 _draggableHitbox = NodePath("DraggableHitbox")
 
-[node name="Background" type="TextureRect" parent="." unique_id=1283875978]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("2_j1eng")
+texture = ExtResource("background")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=329593217]
+[node name="Controls" type="Control" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 0
+mouse_filter = 2
 
-[node name="TopBar" type="TextureRect" parent="VBoxContainer" unique_id=1197652391]
-custom_minimum_size = Vector2(275, 14)
-layout_mode = 2
-size_flags_vertical = 2
-texture = ExtResource("3_oo7n4")
+[node name="TopBar" type="TextureRect" parent="Controls"]
+offset_right = 275.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("titlebar")
 
-[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/TopBar" unique_id=1489902899]
-layout_mode = 0
+[node name="MinimizeButton" type="TextureButton" parent="Controls"]
 offset_left = 254.0
 offset_top = 3.0
 offset_right = 263.0
 offset_bottom = 12.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-toggle_mode = true
-texture_normal = ExtResource("4_b8aew")
-texture_pressed = ExtResource("5_jkbgf")
+focus_mode = 0
+disabled = true
+texture_normal = ExtResource("minimize")
+texture_pressed = ExtResource("minimize_held")
 
-[node name="CloseButton" type="TextureButton" parent="VBoxContainer/TopBar" unique_id=784414225]
-layout_mode = 0
+[node name="CloseButton" type="TextureButton" parent="Controls"]
 offset_left = 264.0
 offset_top = 3.0
 offset_right = 273.0
 offset_bottom = 12.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("6_bgj4f")
-texture_pressed = ExtResource("7_oo7n4")
+focus_mode = 0
+texture_normal = ExtResource("close")
+texture_pressed = ExtResource("close_held")
 
-[node name="WinampMenuButton" parent="VBoxContainer/TopBar" unique_id=343481143 instance=ExtResource("8_2vlkh")]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 2.0
-offset_right = 17.0
-offset_bottom = 13.0
+[node name="WinampMenuButton" parent="Controls" instance=ExtResource("menu")]
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 15.0
+offset_bottom = 12.0
+theme_override_styles/normal = SubResource("menu_normal_style")
+theme_override_styles/hover = SubResource("menu_normal_style")
+theme_override_styles/pressed = SubResource("menu_pressed_style")
+theme_override_styles/focus = SubResource("empty_style")
+flat = false
 
-[node name="AllContent" type="VBoxContainer" parent="VBoxContainer" unique_id=1252614327]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 0
+[node name="VolumeSlider" parent="Controls" instance=ExtResource("slider")]
+offset_left = 107.0
+offset_top = 57.0
+offset_right = 175.0
+offset_bottom = 70.0
+max_value = 1.0
+step = 0.01
+Sheet = ExtResource("volume")
 
-[node name="Control" type="Control" parent="VBoxContainer/AllContent" unique_id=1955292069]
-layout_mode = 2
+[node name="PannerAudioSlider" parent="Controls" instance=ExtResource("slider")]
+offset_left = 177.0
+offset_top = 57.0
+offset_right = 215.0
+offset_bottom = 70.0
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+Layout = 1
+Sheet = ExtResource("balance")
+
+[node name="PositionSeeker" parent="Controls" instance=ExtResource("slider")]
+offset_left = 16.0
+offset_top = 72.0
+offset_right = 264.0
+offset_bottom = 82.0
+step = 0.01
+Layout = 2
+Sheet = ExtResource("seek")
+
+[node name="ToggleEqualizerButton" parent="Controls" instance=ExtResource("toggle")]
+offset_left = 219.0
+offset_top = 58.0
+offset_right = 242.0
+offset_bottom = 70.0
+toggle_mode = true
+button_pressed = true
+texture_normal = ExtResource("eq_off")
+texture_pressed = ExtResource("eq_on")
+HeldOffset = Vector2(46, 0)
+
+[node name="TogglePlaylistButton" parent="Controls" instance=ExtResource("toggle")]
+offset_left = 242.0
+offset_top = 58.0
+offset_right = 265.0
+offset_bottom = 70.0
+toggle_mode = true
+button_pressed = true
+texture_normal = ExtResource("pl_off")
+texture_pressed = ExtResource("pl_on")
+HeldOffset = Vector2(46, 0)
+
+[node name="PreviousTrackButton" type="TextureButton" parent="Controls"]
+offset_left = 16.0
+offset_top = 88.0
+offset_right = 39.0
+offset_bottom = 106.0
+focus_mode = 0
+texture_normal = ExtResource("previous")
+texture_pressed = ExtResource("previous_held")
+
+[node name="PlayTrackButton" type="TextureButton" parent="Controls"]
+offset_left = 39.0
+offset_top = 88.0
+offset_right = 62.0
+offset_bottom = 106.0
+focus_mode = 0
+texture_normal = ExtResource("play")
+texture_pressed = ExtResource("play_held")
+
+[node name="PauseTrackButton" type="TextureButton" parent="Controls"]
+offset_left = 62.0
+offset_top = 88.0
+offset_right = 85.0
+offset_bottom = 106.0
+focus_mode = 0
+texture_normal = ExtResource("pause")
+texture_pressed = ExtResource("pause_held")
+
+[node name="StopTrackButton" type="TextureButton" parent="Controls"]
+offset_left = 85.0
+offset_top = 88.0
+offset_right = 108.0
+offset_bottom = 106.0
+focus_mode = 0
+texture_normal = ExtResource("stop")
+texture_pressed = ExtResource("stop_held")
+
+[node name="NextTrackButton" type="TextureButton" parent="Controls"]
+offset_left = 108.0
+offset_top = 88.0
+offset_right = 130.0
+offset_bottom = 106.0
+focus_mode = 0
+texture_normal = ExtResource("next")
+texture_pressed = ExtResource("next_held")
+
+[node name="LoadTracksButton" type="TextureButton" parent="Controls"]
+offset_left = 136.0
+offset_top = 89.0
+offset_right = 158.0
+offset_bottom = 105.0
+focus_mode = 0
+texture_normal = ExtResource("eject")
+texture_pressed = ExtResource("eject_held")
+
+[node name="ShuffleModeButton" parent="Controls" instance=ExtResource("toggle")]
+offset_left = 164.0
+offset_top = 89.0
+offset_right = 211.0
+offset_bottom = 104.0
+toggle_mode = true
+texture_normal = ExtResource("shuffle_off")
+texture_pressed = ExtResource("shuffle_on")
+HeldOffset = Vector2(0, 15)
+
+[node name="RepeatModeButton" parent="Controls" instance=ExtResource("toggle")]
+offset_left = 210.0
+offset_top = 89.0
+offset_right = 238.0
+offset_bottom = 104.0
+toggle_mode = true
+texture_normal = ExtResource("repeat_off")
+texture_pressed = ExtResource("repeat_on")
+HeldOffset = Vector2(0, 15)
 
 [node name="TextDisplay" type="Control" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="MasterLabel" parent="TextDisplay" unique_id=752144238 instance=ExtResource("2_y6dre")]
-layout_mode = 0
+[node name="MasterLabel" parent="TextDisplay" instance=ExtResource("marquee")]
 offset_left = 111.0
 offset_top = 27.0
 offset_right = 265.0
 offset_bottom = 33.0
-theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 6
-text = "LINKIN PARK - NUMB"
 
-[node name="BitrateLabel" type="Label" parent="TextDisplay" unique_id=1646795332]
-layout_mode = 0
+[node name="BitrateLabel" type="Label" parent="TextDisplay"]
 offset_left = 111.0
 offset_top = 43.0
 offset_right = 126.0
 offset_bottom = 49.0
-theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 6
 text = "000"
 horizontal_alignment = 2
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 
-[node name="SampleRateLabel" type="Label" parent="TextDisplay" unique_id=1040356936]
-layout_mode = 0
+[node name="SampleRateLabel" type="Label" parent="TextDisplay"]
 offset_left = 156.0
 offset_top = 43.0
 offset_right = 166.0
 offset_bottom = 49.0
-theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 6
 text = "00"
 horizontal_alignment = 2
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 
-[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay" unique_id=1873440832]
-layout_mode = 0
+[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay"]
 offset_left = 48.0
 offset_top = 26.0
 offset_right = 57.0
 offset_bottom = 39.0
-theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 13
 text = "0"
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay" unique_id=1198995906]
-layout_mode = 0
+[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay"]
 offset_left = 60.0
 offset_top = 26.0
 offset_right = 69.0
 offset_bottom = 39.0
-theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 13
 text = "0"
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay" unique_id=1726317979]
-layout_mode = 0
+[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay"]
 offset_left = 78.0
 offset_top = 26.0
 offset_right = 87.0
 offset_bottom = 39.0
-theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 13
 text = "0"
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay" unique_id=42337253]
-layout_mode = 0
+[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay"]
 offset_left = 90.0
 offset_top = 26.0
 offset_right = 99.0
 offset_bottom = 39.0
-theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 13
 text = "0"
-script = ExtResource("12_ixbbo")
+script = ExtResource("label")
 UseNumberFont = true
 
-[node name="SlidersContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=1888382185]
-layout_mode = 2
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer" unique_id=817023366]
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 3
-theme_override_constants/separation = 6
-alignment = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer" unique_id=1807338805]
-layout_mode = 2
-size_flags_horizontal = 8
-theme_override_constants/separation = 0
-
-[node name="VolumeSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer" unique_id=934880875]
-custom_minimum_size = Vector2(68, 14)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 5
-focus_mode = 1
-theme_override_constants/grabber_offset = -1
-theme_override_icons/grabber = ExtResource("9_jkbgf")
-theme_override_icons/grabber_highlight = ExtResource("10_bgj4f")
-theme_override_styles/slider = SubResource("StyleBoxTexture_6x7f4")
-theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_6x7f4")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_b8aew")
-max_value = 1.0
-step = 0.01
-script = ExtResource("16_13jth")
-
-[node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer" unique_id=506802277]
-custom_minimum_size = Vector2(38, 14)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 5
-focus_mode = 1
-theme_override_constants/grabber_offset = -1
-theme_override_icons/grabber = ExtResource("12_oo7n4")
-theme_override_icons/grabber_highlight = ExtResource("13_2vlkh")
-theme_override_styles/slider = SubResource("StyleBoxTexture_bgj4f")
-theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_jkbgf")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_bgj4f")
-min_value = -1.0
-max_value = 1.0
-step = 0.1
-script = ExtResource("16_13jth")
-TextureX = 9
-TextureWidth = 38
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer" unique_id=543052345]
-layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 4
-theme_override_constants/separation = 0
-
-[node name="ToggleEqualizerButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2" unique_id=2084905920]
-layout_mode = 2
-toggle_mode = true
-button_pressed = true
-texture_normal = ExtResource("9_m25c3")
-texture_pressed = ExtResource("10_2gtsh")
-stretch_mode = 5
-
-[node name="TogglePlaylistButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2" unique_id=216664685]
-layout_mode = 2
-toggle_mode = true
-button_pressed = true
-texture_normal = ExtResource("11_j1eng")
-texture_pressed = ExtResource("12_6x7f4")
-stretch_mode = 5
-
-[node name="PositionSeekerContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=1441942957]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 6
-
-[node name="PositionSeeker" type="HSlider" parent="VBoxContainer/AllContent/PositionSeekerContainer" unique_id=852173347]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 8
-focus_mode = 0
-theme_override_icons/grabber = ExtResource("15_6x7f4")
-theme_override_icons/grabber_highlight = ExtResource("16_6x7f4")
-theme_override_icons/grabber_disabled = SubResource("ImageTexture_j1eng")
-theme_override_styles/slider = SubResource("StyleBoxEmpty_m25c3")
-theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_mnxsc")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_ueg7m")
-value = 16.0
-scrollable = false
-
-[node name="ButtonsContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=769880372]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 10
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer" unique_id=1292560506]
-layout_mode = 2
-size_flags_vertical = 10
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=515094942]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="PreviousTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1615889670]
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("11_pboy1")
-texture_pressed = ExtResource("12_umuss")
-stretch_mode = 5
-
-[node name="PlayTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=782247494]
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("13_umuss")
-texture_pressed = ExtResource("14_4muab")
-stretch_mode = 5
-
-[node name="PauseTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1540787399]
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("15_81lhg")
-texture_pressed = ExtResource("16_b6q8b")
-stretch_mode = 5
-
-[node name="StopTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=2018708649]
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("17_6nk5l")
-texture_pressed = ExtResource("18_b7f5n")
-stretch_mode = 5
-
-[node name="NextTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1437145953]
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("19_0xpbf")
-texture_pressed = ExtResource("20_wsc06")
-stretch_mode = 5
-
-[node name="HBoxContainer2" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=837307696]
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_right = 2
-
-[node name="LoadTracksButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer2" unique_id=312073732]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
-texture_normal = ExtResource("21_b7f5n")
-texture_pressed = ExtResource("22_0xpbf")
-stretch_mode = 5
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=1689469951]
-layout_mode = 2
-size_flags_horizontal = 10
-theme_override_constants/margin_top = 1
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer" unique_id=1719983216]
-layout_mode = 2
-size_flags_horizontal = 10
-theme_override_constants/separation = 0
-
-[node name="ShuffleModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3" unique_id=909445564]
-layout_mode = 2
-size_flags_vertical = 0
-toggle_mode = true
-texture_normal = ExtResource("26_b8aew")
-texture_pressed = ExtResource("27_jkbgf")
-
-[node name="RepeatModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3" unique_id=1278274446]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-toggle_mode = true
-texture_normal = ExtResource("28_bgj4f")
-texture_pressed = ExtResource("29_oo7n4")
-
-[node name="DraggableHitbox" type="Control" parent="." unique_id=637042024]
-custom_minimum_size = Vector2(0, 14.17)
+[node name="DraggableHitbox" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
-[connection signal="pressed" from="VBoxContainer/TopBar/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/TopBar/CloseButton" to="." method="OnCloseButtonPressed"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnSliderDragStarted"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnSliderDragStarted"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
-[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
-[connection signal="pressed" from="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
-[connection signal="drag_ended" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerDragEnded"]
-[connection signal="drag_started" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerDragStarted"]
-[connection signal="value_changed" from="VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker" to="." method="OnPositionSeekerValueChanged"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer/PreviousTrackButton" to="." method="OnPreviousTrackButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer/PlayTrackButton" to="." method="OnPlayTrackButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer/PauseTrackButton" to="." method="OnPauseTrackButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer/StopTrackButton" to="." method="OnStopTrackButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer/NextTrackButton" to="." method="OnNextTrackButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer2/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]
+[connection signal="pressed" from="Controls/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="Controls/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="DragEnded" from="Controls/VolumeSlider" to="." method="OnSliderDragEnded"]
+[connection signal="DragStarted" from="Controls/VolumeSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="Controls/VolumeSlider" to="." method="OnVolumeSliderValueChanged"]
+[connection signal="DragEnded" from="Controls/PannerAudioSlider" to="." method="OnSliderDragEnded"]
+[connection signal="DragStarted" from="Controls/PannerAudioSlider" to="." method="OnSliderDragStarted"]
+[connection signal="value_changed" from="Controls/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
+[connection signal="pressed" from="Controls/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
+[connection signal="pressed" from="Controls/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
+[connection signal="DragEnded" from="Controls/PositionSeeker" to="." method="OnPositionSeekerDragEnded"]
+[connection signal="DragStarted" from="Controls/PositionSeeker" to="." method="OnPositionSeekerDragStarted"]
+[connection signal="value_changed" from="Controls/PositionSeeker" to="." method="OnPositionSeekerValueChanged"]
+[connection signal="pressed" from="Controls/PreviousTrackButton" to="." method="OnPreviousTrackButtonPressed"]
+[connection signal="pressed" from="Controls/PlayTrackButton" to="." method="OnPlayTrackButtonPressed"]
+[connection signal="pressed" from="Controls/PauseTrackButton" to="." method="OnPauseTrackButtonPressed"]
+[connection signal="pressed" from="Controls/StopTrackButton" to="." method="OnStopTrackButtonPressed"]
+[connection signal="pressed" from="Controls/NextTrackButton" to="." method="OnNextTrackButtonPressed"]
+[connection signal="pressed" from="Controls/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
+[connection signal="pressed" from="Controls/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
+[connection signal="pressed" from="Controls/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]

@@ -55,6 +55,7 @@ public partial class Playlist : WindowPanelContainer
         SignalBus.Instance.SelectZeroRequested -= OnSelectZeroRequested;
         SignalBus.Instance.SelectAllRequested -= OnSelectAllRequested;
         SignalBus.Instance.SkinChanged -= OnSkinChanged;
+        base._ExitTree();
     }
 
     public void Setup(TrackPlayer trackPlayerRef, List<Track> playlist)

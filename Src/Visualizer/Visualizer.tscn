@@ -30,6 +30,8 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 mouse_filter = 2
 script = ExtResource("1_6dse3")
+TitlebarTextures = Array[AtlasTexture]([ExtResource("2_7wv81"), ExtResource("3_cwlo7"), ExtResource("4_7wv81"), ExtResource("4_gnf20"), ExtResource("6_cwlo7"), ExtResource("7_cwlo7")])
+InactiveTitlebarOffset = 21
 _audioVisualizer = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer")
 _vizOptsButton = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton")
 _contents = NodePath("VBoxContainer")
@@ -91,10 +93,10 @@ texture = ExtResource("7_cwlo7")
 
 [node name="CloseButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
 layout_mode = 0
-offset_left = 15.0
-offset_top = 4.0
-offset_right = 22.0
-offset_bottom = 11.0
+offset_left = 14.0
+offset_top = 3.0
+offset_right = 23.0
+offset_bottom = 12.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture_normal = ExtResource("8_qpg3j")
