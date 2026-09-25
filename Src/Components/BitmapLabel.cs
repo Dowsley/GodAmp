@@ -1,5 +1,4 @@
 using GodAmp.Autoload;
-using GodAmp.Utils;
 using Godot;
 
 namespace GodAmp.Components;
@@ -19,14 +18,10 @@ public partial class BitmapLabel : Label
     /// <inheritdoc />
     public override void _ExitTree() => SignalBus.Instance.SkinChanged -= ApplySkin;
 
-    /// <summary>Applies the selected skin's colored bitmap font without shader or shadow tinting.</summary>
+    /// <summary>Updates skin-dependent glyph artwork; scene themes define font size and colors.</summary>
     private void ApplySkin()
     {
-        Material = null;
         AddThemeFontOverride("font", UseNumberFont ? SkinLoader.Instance.NumberFont : SkinLoader.Instance.TextFont);
-        AddThemeFontSizeOverride("font_size", UseNumberFont ? SkinBitmapFont.NumberHeight : SkinBitmapFont.TextHeight);
-        AddThemeColorOverride("font_color", Colors.White);
-        AddThemeColorOverride("font_shadow_color", Colors.Transparent);
         QueueRedraw();
     }
 }

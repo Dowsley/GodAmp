@@ -1,0 +1,11 @@
+[gd_resource type="Theme" load_steps=2 format=3]
+
+[ext_resource type="FontFile" path="res://Assets/Winamp/Raw/TEXT.png" id="font"]
+
+[resource]
+default_font = ExtResource("font")
+default_font_size = 6
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/font_sizes/font_size = 6
+Label/fonts/font = ExtResource("font")

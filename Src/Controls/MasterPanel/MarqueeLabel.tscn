@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://chry3b6bcrbpm"]
+[gd_scene load_steps=3 format=3 uid="uid://chry3b6bcrbpm"]
 
 [ext_resource type="Script" uid="uid://conirsy88ed0m" path="res://Src/Controls/MasterPanel/MarqueeLabel.cs" id="1_i64vm"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
 
 [node name="MarqueeLabel" type="Label"]
+theme = ExtResource("text_theme")
+clip_text = true
 text = "1. LINKIN PARK - IN MY REMAINS"
 script = ExtResource("1_i64vm")
 

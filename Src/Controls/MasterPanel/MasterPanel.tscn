@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapNumberTheme.tres" id="number_theme"]
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/PlaybackIndicators.cs" id="indicators"]
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/ClassicVisualization.cs" id="visualization"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinSlider.tscn" id="slider"]
@@ -259,6 +261,7 @@ HeldOffset = Vector2(0, 15)
 [node name="TextDisplay" type="Control" parent="."]
 layout_mode = 2
 mouse_filter = 2
+theme = ExtResource("text_theme")
 
 [node name="MasterLabel" parent="TextDisplay" instance=ExtResource("marquee")]
 offset_left = 111.0
@@ -285,6 +288,7 @@ horizontal_alignment = 2
 script = ExtResource("label")
 
 [node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay"]
+theme = ExtResource("number_theme")
 offset_left = 48.0
 offset_top = 26.0
 offset_right = 57.0
@@ -294,6 +298,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay"]
+theme = ExtResource("number_theme")
 offset_left = 60.0
 offset_top = 26.0
 offset_right = 69.0
@@ -303,6 +308,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay"]
+theme = ExtResource("number_theme")
 offset_left = 78.0
 offset_top = 26.0
 offset_right = 87.0
@@ -312,6 +318,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay"]
+theme = ExtResource("number_theme")
 offset_left = 90.0
 offset_top = 26.0
 offset_right = 99.0
