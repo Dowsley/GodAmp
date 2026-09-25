@@ -16,6 +16,8 @@ public partial class WindowManager : Node
     private const string EqualizerWindowName = "equalizer";
     private const string PlaylistWindowName = "playlist";
     private const string VisualizerWindowName = "visualizer";
+    private const int DockingDistance = 10;
+    private const int GlueDistance = 5;
 
     [ExportGroup("References")]
     [Export] private MasterPanel _masterPanel = null!;
@@ -37,7 +39,11 @@ public partial class WindowManager : Node
     private List<Window> _allWindowsRefs = [];
 
     private readonly Dictionary<Window, HashSet<Window>> _gluedWindows = [];
-    private Vector2I _lastDraggedWindowPosition;
+    private readonly Dictionary<Window, Vector2I> _dragOrigins = [];
+    private readonly Dictionary<Window, bool> _dragTransientStates = [];
+    private Vector2I _dragStartPosition;
+    private Vector2I _lastDragPosition;
+    private bool _movingDragGroup;
 
     public override void _Ready()
     {
@@ -60,11 +66,6 @@ public partial class WindowManager : Node
         }
 
         RestoreWindowStates();
-    }
-
-    public override void _Process(double delta)
-    {
-        ProcessDragging();
     }
 
     public void SetZoomMode(int multiplier)
@@ -102,24 +103,19 @@ public partial class WindowManager : Node
         _visualizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_visualizerWindow.Position - groupOrigin) * ratio);
     }
 
-    private void ProcessDragging()
+    /// <summary>Moves the docked group directly from native movement or fallback input notifications.</summary>
+    /// <param name="panel">Panel emitting the movement notification.</param>
+    /// <param name="position">Native window origin or fallback pointer-relative origin in desktop pixels.</param>
+    private void OnWindowDragMoved(WindowPanelContainer panel, Vector2I position)
     {
-        if (_windowContainerBeingDragged is not { IsDragging: true })
+        if (_windowContainerBeingDragged != panel || _movingDragGroup)
             return;
-
-        var draggedWindow = _windowContainerBeingDragged.WindowRef;
-        var desiredPos = _windowContainerBeingDragged.GetDesiredPosition();
-        var snappedPos = GetSnappedDragPosition(draggedWindow, desiredPos);
-
-        var offset = snappedPos - draggedWindow.Position;
-        draggedWindow.Position = snappedPos;
-
-        MoveGluedWindows(draggedWindow, offset);
+        MoveDragGroup(position);
     }
 
     private Vector2I GetSnappedDragPosition(Window draggedWindow, Vector2I desiredPos)
     {
-        const int snapThreshold = 60;
+        int snapThreshold = DockingDistance * SettingsManager.Instance.GetZoomMode();
         var draggedSize = draggedWindow.Size;
 
         int? bestSnapX = null;
@@ -133,7 +129,7 @@ public partial class WindowManager : Node
             if (otherWindow == draggedWindow)
                 continue;
 
-            if (_gluedWindows[draggedWindow].Contains(otherWindow))
+            if (!otherWindow.Visible || _dragOrigins.ContainsKey(otherWindow))
                 continue;
 
             var otherPos = otherWindow.Position;
@@ -180,15 +176,14 @@ public partial class WindowManager : Node
         var finalX = bestSnapX ?? desiredPos.X;
         var finalY = bestSnapY ?? desiredPos.Y;
 
-        const int subSnapThreshold = 20;
         if (bestSnapX.HasValue)
         {
-            finalY = GetVerticalSubSnap(draggedWindow, new Vector2I(finalX, desiredPos.Y), subSnapThreshold) ?? finalY;
+            finalY = GetVerticalSubSnap(draggedWindow, new Vector2I(finalX, desiredPos.Y), snapThreshold) ?? finalY;
         }
 
         if (bestSnapY.HasValue)
         {
-            finalX = GetHorizontalSubSnap(draggedWindow, new Vector2I(desiredPos.X, finalY), subSnapThreshold) ?? finalX;
+            finalX = GetHorizontalSubSnap(draggedWindow, new Vector2I(desiredPos.X, finalY), snapThreshold) ?? finalX;
         }
 
         return new Vector2I(finalX, finalY);
@@ -203,7 +198,7 @@ public partial class WindowManager : Node
         foreach (WindowPanelContainer container in _allContainerRefs)
         {
             var otherWindow = container.WindowRef;
-            if (otherWindow == draggedWindow || _gluedWindows[draggedWindow].Contains(otherWindow))
+            if (!otherWindow.Visible || _dragOrigins.ContainsKey(otherWindow))
                 continue;
 
             var otherPos = otherWindow.Position;
@@ -236,7 +231,7 @@ public partial class WindowManager : Node
         foreach (WindowPanelContainer container in _allContainerRefs)
         {
             var otherWindow = container.WindowRef;
-            if (otherWindow == draggedWindow || _gluedWindows[draggedWindow].Contains(otherWindow))
+            if (!otherWindow.Visible || _dragOrigins.ContainsKey(otherWindow))
                 continue;
 
             var otherPos = otherWindow.Position;
@@ -260,49 +255,92 @@ public partial class WindowManager : Node
         return bestX;
     }
 
-    private void MoveGluedWindows(Window movedWindow, Vector2I offset)
+    /// <summary>Applies one absolute displacement to the cached group without accumulating rounding drift.</summary>
+    /// <param name="position">Desktop origin of the dragged window.</param>
+    private void MoveDragGroup(Vector2I position)
     {
-        if (offset == Vector2I.Zero)
+        if (_movingDragGroup || position == _lastDragPosition)
             return;
-
-        var visited = new HashSet<Window> { movedWindow };
-        var toMove = new Queue<Window>();
-
-        foreach (var glued in _gluedWindows[movedWindow])
-            toMove.Enqueue(glued);
-
-        while (toMove.Count > 0)
+        _movingDragGroup = true;
+        try
         {
-            var window = toMove.Dequeue();
-            if (!visited.Add(window))
-                continue;
-
-            window.Position += offset;
-
-            foreach (Window glued in _gluedWindows[window].Where(glued => !visited.Contains(glued)))
+            Vector2I displacement = position - _dragStartPosition;
+            Window lead = _windowContainerBeingDragged!.WindowRef;
+            if (lead.Position != position)
+                lead.Position = position;
+            foreach (var (window, origin) in _dragOrigins)
             {
-                toMove.Enqueue(glued);
+                /* AppKit detaches native child windows when they occupy different screens. */
+                if (window == lead || (_dragTransientStates.ContainsKey(window) && window.CurrentScreen == lead.CurrentScreen))
+                    continue;
+                Vector2I target = origin + displacement;
+                if (window.Position != target)
+                    window.Position = target;
             }
+            _lastDragPosition = position;
+        }
+        finally
+        {
+            _movingDragGroup = false;
         }
     }
 
-
+    /// <summary>Captures the connected group once, detaching a directly dragged secondary window.</summary>
+    /// <param name="draggedContainerRef">Panel whose titlebar initiated the drag.</param>
     private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
     {
+        RestoreDragTransients();
         _windowContainerBeingDragged = draggedContainerRef;
 
         if (draggedContainerRef.WindowRef != _masterPanelWindow)
         {
             DetachFromAllWindows(draggedContainerRef.WindowRef);
         }
+        _dragOrigins.Clear();
+        foreach (Window window in GetConnectedGroup(draggedContainerRef.WindowRef))
+        {
+            if (window.Visible)
+                _dragOrigins[window] = window.Position;
+        }
+        _dragStartPosition = draggedContainerRef.WindowRef.Position;
+        _lastDragPosition = _dragStartPosition;
+        if (OperatingSystem.IsMacOS() && draggedContainerRef.WindowRef == _masterPanelWindow)
+        {
+            foreach (Window window in _dragOrigins.Keys)
+            {
+                if (window == _masterPanelWindow || window.IsEmbedded() || window.AlwaysOnTop)
+                    continue;
+                _dragTransientStates[window] = window.Transient;
+                window.Transient = true;
+            }
+        }
     }
 
+    /// <summary>Restores window ownership after the native compositor finishes moving the docked group.</summary>
+    private void RestoreDragTransients()
+    {
+        foreach (var (window, transient) in _dragTransientStates)
+        {
+            if (IsInstanceValid(window))
+                window.Transient = transient;
+        }
+        _dragTransientStates.Clear();
+    }
+
+    /// <inheritdoc />
+    public override void _ExitTree() => RestoreDragTransients();
+
+    /// <summary>Snaps the released group and records its docking relationships.</summary>
+    /// <param name="draggedContainerRef">Panel whose drag has ended.</param>
     private void OnWindowDragEnd(WindowPanelContainer draggedContainerRef)
     {
+        if (_windowContainerBeingDragged != draggedContainerRef)
+            return;
         var draggedWindow = draggedContainerRef.WindowRef;
-
+        MoveDragGroup(GetSnappedDragPosition(draggedWindow, draggedWindow.Position));
+        RestoreDragTransients();
         _windowContainerBeingDragged = null;
-
+        _dragOrigins.Clear();
         GlueToAllTouchingWindows(draggedWindow);
     }
 
@@ -317,12 +355,12 @@ public partial class WindowManager : Node
 
     private void GlueToAllTouchingWindows(Window window)
     {
-        const int snapThreshold = 5;
+        int snapThreshold = GlueDistance * SettingsManager.Instance.GetZoomMode();
         var touchingWindows = new List<Window>();
         foreach (var container in _allContainerRefs)
         {
             var otherWindow = container.WindowRef;
-            if (otherWindow == window || _gluedWindows[window].Contains(otherWindow))
+            if (!otherWindow.Visible || otherWindow == window || _gluedWindows[window].Contains(otherWindow))
                 continue;
 
             bool touching = AreWindowsTouching(window, otherWindow, snapThreshold);
@@ -367,6 +405,7 @@ public partial class WindowManager : Node
         {
             var current = toVisit.Dequeue();
             foreach (Window connected in _gluedWindows[current]
+                         .Where(window => window.Visible)
                          .Where(visited.Add))
             {
                 group.Add(connected);
@@ -476,12 +515,12 @@ public partial class WindowManager : Node
 
     private void DetectAndRestoreGlueRelationships()
     {
-        const int glueThreshold = 5;
+        int glueThreshold = GlueDistance * SettingsManager.Instance.GetZoomMode();
         foreach (var container1 in _allContainerRefs)
         {
             foreach (var container2 in _allContainerRefs)
             {
-                if (container1 == container2)
+                if (container1 == container2 || !container1.WindowRef.Visible || !container2.WindowRef.Visible)
                     continue;
 
                 var window1 = container1.WindowRef;

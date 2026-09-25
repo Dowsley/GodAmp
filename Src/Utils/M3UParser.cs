@@ -22,7 +22,7 @@ public static class M3UParser
                 path = Path.GetFullPath(Path.Combine(baseDir, path));
             result.Add(path);
         }
-        return result.ToArray();
+        return [.. result];
     }
 
     public static void Write(string filePath, IEnumerable<string> absolutePaths, bool relativePaths = true)

@@ -7,3 +7,10 @@
 TODO.md
 export_presets.cfg
 *.DotSettings.user
+
+# Local verification scenes and diagnostics
+/Tests/
+/Docs/DESKTOP_TESTING.md
+/Docs/THEME_TESTING.md
+/Docs/THEME_CODE_REVIEW.md
+/Docs/THEME_MILESTONES.md

@@ -131,7 +131,7 @@ public partial class Main : HBoxContainer
         {
             _randomizedTrackIndex = 0;
             var random = new Random();
-            _randomizedTrackIndices = Enumerable.Range(0, _trackPlaylist.Count).OrderBy(_ => random.Next()).ToList();
+            _randomizedTrackIndices = [.. Enumerable.Range(0, _trackPlaylist.Count).OrderBy(_ => random.Next())];
         }
         else
         {
@@ -266,14 +266,31 @@ public partial class Main : HBoxContainer
         _playlist.Refresh();
     }
 
+    /// <summary>Creates a filesystem picker starting in the platform's configured music directory.</summary>
+    /// <param name="mode">Selection operation performed by the picker.</param>
+    /// <returns>A native picker ready for filters, runtime callbacks, and scene attachment.</returns>
+    private static FileDialog CreateMusicDialog(FileDialog.FileModeEnum mode)
+    {
+        string directory = OS.GetSystemDir(OS.SystemDir.Music);
+        if (!Directory.Exists(directory))
+            directory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
+        var dialog = new FileDialog
+        {
+            FileMode = mode,
+            Access = FileDialog.AccessEnum.Filesystem,
+            UseNativeDialog = true
+        };
+        if (Directory.Exists(directory))
+            dialog.CurrentDir = directory;
+        return dialog;
+    }
+
+    /// <summary>Opens a folder picker and binds its selection to the requested playlist operation.</summary>
+    /// <param name="overridePlaylist">Whether selected tracks replace the playlist.</param>
     private void OnLoadTracksFromDirRequested(bool overridePlaylist = false)
     {
-        FileDialog dialog = new();
-        dialog.SetFileMode(FileDialog.FileModeEnum.OpenDir);
-        dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
-        dialog.SetUseNativeDialog(true);
+        FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenDir);
 
-        // Connect to DirSelected instead of FilesSelected
         var dirSelectedCallback = Callable.From((string dirPath) => LoadTracksFromDirectory(dirPath, overridePlaylist));
         dialog.Connect(FileDialog.SignalName.DirSelected, dirSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -284,14 +301,13 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = dialog;
     }
 
+    /// <summary>Opens an audio picker and binds its selection to the requested playlist operation.</summary>
+    /// <param name="overridePlaylist">Whether selected tracks replace the playlist.</param>
     private void OnLoadTracksRequested(bool overridePlaylist = false)
     {
-        FileDialog dialog = new();
-        dialog.SetFileMode(FileDialog.FileModeEnum.OpenFiles);
-        dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+        FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenFiles);
         dialog.SetFilters(CollectionsMarshal.AsSpan(
             AudioUtils.GetAllowedFileFilters()));
-        dialog.SetUseNativeDialog(true);
         var filesSelectedCallback = Callable.From((string[] paths) => LoadTracks(paths, overridePlaylist));
         dialog.Connect(FileDialog.SignalName.FilesSelected, filesSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -302,13 +318,11 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = dialog;
     }
 
+    /// <summary>Opens a playlist picker in the platform's music directory.</summary>
     private void OnLoadPlaylistRequested()
     {
-        FileDialog dialog = new();
-        dialog.SetFileMode(FileDialog.FileModeEnum.OpenFile);
-        dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+        FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenFile);
         dialog.SetFilters(["*.m3u; M3U Playlist", "*.m3u8; M3U8 Playlist"]);
-        dialog.SetUseNativeDialog(true);
         var fileSelectedCallback = Callable.From((string path) => LoadPlaylist(path));
         dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -319,13 +333,11 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = dialog;
     }
 
+    /// <summary>Opens a playlist save picker in the platform's music directory.</summary>
     private void OnSavePlaylistRequested()
     {
-        FileDialog dialog = new();
-        dialog.SetFileMode(FileDialog.FileModeEnum.SaveFile);
-        dialog.SetAccess(FileDialog.AccessEnum.Filesystem);
+        FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.SaveFile);
         dialog.SetFilters(["*.m3u; M3U Playlist", "*.m3u8; M3U8 Playlist"]);
-        dialog.SetUseNativeDialog(true);
         var fileSelectedCallback = Callable.From((string path) => SavePlaylist(path));
         dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -443,7 +455,7 @@ public partial class Main : HBoxContainer
             fileName = dir.GetNext();
         }
 
-        return audioFiles.ToArray();
+        return [.. audioFiles];
     }
 
     private void LoadTracks(string[] paths, bool overridePlaylist = false)
