@@ -21,6 +21,8 @@ public sealed class SkinArchive
     public PlaylistSkinStyle PlaylistStyle { get; private set; } = PlaylistSkinStyle.Default;
     /// <summary>Gets classic analyzer colors, with defaults for absent or invalid slots.</summary>
     public VisualizationPalette Palette { get; private set; } = VisualizationPalette.Default;
+    /// <summary>Gets classic window contours, with rectangular defaults for invalid or absent sections.</summary>
+    public SkinRegions Regions { get; private set; } = SkinRegions.Default;
 
     /* Minimum dimensions are defined by the classic skin sprite layout. */
     private static readonly Dictionary<string, Vector2I> MinimumSizes = new(StringComparer.OrdinalIgnoreCase)
@@ -49,6 +51,7 @@ public sealed class SkinArchive
             .ThenBy(e => e.FullName, StringComparer.Ordinal).ToArray();
         bool hasStyle = false;
         bool hasPalette = false;
+        bool hasRegions = false;
         foreach (var entry in entries)
         {
             string name = entry.FullName.Replace('\\', '/').Split('/')[^1];
@@ -56,8 +59,9 @@ public sealed class SkinArchive
             string extension = Path.GetExtension(name).ToLowerInvariant();
             bool playlistMetadata = name.Equals("pledit.txt", StringComparison.OrdinalIgnoreCase);
             bool paletteMetadata = name.Equals("viscolor.txt", StringComparison.OrdinalIgnoreCase);
-            bool metadata = playlistMetadata || paletteMetadata;
-            if ((playlistMetadata && hasStyle) || (paletteMetadata && hasPalette))
+            bool regionMetadata = name.Equals("region.txt", StringComparison.OrdinalIgnoreCase);
+            bool metadata = playlistMetadata || paletteMetadata || regionMetadata;
+            if ((playlistMetadata && hasStyle) || (paletteMetadata && hasPalette) || (regionMetadata && hasRegions))
                 continue;
             if (!metadata && (!MinimumSizes.ContainsKey(stem) || skin.Images.ContainsKey(stem) ||
                               extension is not (".bmp" or ".png" or ".jpg" or ".jpeg")))
@@ -78,10 +82,15 @@ public sealed class SkinArchive
                     skin.PlaylistStyle = PlaylistSkinStyle.Parse(text);
                     hasStyle = true;
                 }
-                else
+                else if (paletteMetadata)
                 {
                     skin.Palette = VisualizationPalette.Parse(text);
                     hasPalette = true;
+                }
+                else
+                {
+                    skin.Regions = SkinRegions.Parse(text);
+                    hasRegions = true;
                 }
                 continue;
             }

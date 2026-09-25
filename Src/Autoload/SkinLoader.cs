@@ -29,7 +29,7 @@ public partial class SkinLoader : Node
 
     private sealed record SkinState(Dictionary<string, Texture2D> Textures, FontFile TextFont,
         FontFile NumberFont, PlaylistSkinStyle PlaylistStyle, Font PlaylistFont,
-        VisualizationPalette Palette, GenericTitleFont TitleFont);
+        VisualizationPalette Palette, GenericTitleFont TitleFont, SkinRegions Regions);
 
     /// <summary>Gets the active main-display bitmap font.</summary>
     public FontFile TextFont => _activeState.TextFont;
@@ -43,6 +43,8 @@ public partial class SkinLoader : Node
     public VisualizationPalette Palette => _activeState.Palette;
     /// <summary>Gets the active variable-width generic title glyphs.</summary>
     public GenericTitleFont TitleFont => _activeState.TitleFont;
+    /// <summary>Gets the active classic window contours in unscaled skin coordinates.</summary>
+    public SkinRegions Regions => _activeState.Regions;
 
     /// <summary>Gets a resolved sheet from the complete active skin state.</summary>
     /// <param name="name">Classic sheet basename without its extension.</param>
@@ -120,7 +122,7 @@ public partial class SkinLoader : Node
         var style = PlaylistSkinStyle.Default;
         _defaultState = new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style),
-            VisualizationPalette.Default, new GenericTitleFont(_defaultImages["GEN"]));
+            VisualizationPalette.Default, new GenericTitleFont(_defaultImages["GEN"]), SkinRegions.Default);
         _activeState = _defaultState;
     }
 
@@ -164,10 +166,10 @@ public partial class SkinLoader : Node
         Image text = archive.Images.GetValueOrDefault("TEXT", _defaultImages["TEXT"]);
         bool extended = archive.Images.TryGetValue("NUMS_EX", out Image? numbers);
         numbers ??= archive.Images.GetValueOrDefault("NUMBERS", _defaultImages["NUMBERS"]);
-        using Image genericArtwork = textures["GEN"].GetImage();
+        Image genericArtwork = textures["GEN"].GetImage();
         return new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle),
-            archive.Palette, new GenericTitleFont(genericArtwork));
+            archive.Palette, new GenericTitleFont(genericArtwork), archive.Regions);
     }
 
     /// <summary>Resolves an installed playlist font at the current UI rasterization scale.</summary>
