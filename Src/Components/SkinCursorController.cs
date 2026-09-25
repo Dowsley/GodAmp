@@ -20,6 +20,7 @@ public partial class SkinCursorController : Node
     private sealed record ScaledCursor(Texture2D Texture, Vector2 Hotspot);
     private readonly List<Target> _targets = [];
     private readonly Dictionary<(SkinCursor Cursor, int Zoom), ScaledCursor> _cache = [];
+    private static readonly HashSet<FileDialog> _dialogs = [];
     private static SkinCursorController? _owner;
     private Window _window = null!;
     private SkinCursor? _selectedCursor;
@@ -27,6 +28,17 @@ public partial class SkinCursorController : Node
     private int _selectedZoom;
     private bool _inside;
     private bool _refreshPending;
+
+    /// <summary>Keeps system cursors active for the lifetime of a dynamically created file dialog.</summary>
+    /// <param name="dialog">A picker that is attached to the scene tree and freed when closed.</param>
+    public static void UseSystemCursorFor(FileDialog dialog)
+    {
+        if (!_dialogs.Add(dialog))
+            return;
+        _owner?.Clear();
+        /* Native pickers do not consistently emit focus-exit events for their parent window. */
+        dialog.TreeExiting += () => _dialogs.Remove(dialog);
+    }
 
     /// <inheritdoc />
     public override void _Ready()
@@ -123,7 +135,7 @@ public partial class SkinCursorController : Node
     private void Refresh()
     {
         _refreshPending = false;
-        if (!IsInsideTree() || !_inside)
+        if (!IsInsideTree() || !_inside || _dialogs.Count > 0)
             return;
         SkinCursor? cursor = SkinLoader.Instance.GetCursor(ResolveRole(GetViewport().GetMousePosition()));
         int zoom = Mathf.Clamp(SettingsManager.Instance.GetZoomMode(), 1, MaximumZoom);

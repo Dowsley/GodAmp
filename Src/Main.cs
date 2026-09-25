@@ -282,6 +282,7 @@ public partial class Main : HBoxContainer
         };
         if (Directory.Exists(directory))
             dialog.CurrentDir = directory;
+        SkinCursorController.UseSystemCursorFor(dialog);
         return dialog;
     }
 
