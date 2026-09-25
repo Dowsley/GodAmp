@@ -1,7 +1,8 @@
-[gd_scene load_steps=21 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=22 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="Script" path="res://Src/Components/GenericWindowTitle.cs" id="title_font"]
+[ext_resource type="Texture2D" path="res://Assets/Winamp/Raw/GEN.png" id="title_sheet"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
 [ext_resource type="Texture2D" uid="uid://6qyxmjpsp5gu" path="res://Data/SkinResources/VisualizerTopLeftCorner.tres" id="2_7wv81"]
 [ext_resource type="Texture2D" uid="uid://bkibrg5xs5inl" path="res://Data/SkinResources/VisualizerTopTilableBar.tres" id="3_cwlo7"]
@@ -71,6 +72,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 mouse_filter = 2
 script = ExtResource("title_font")
+Title = "VISUALIZER"
+DefaultSheet = ExtResource("title_sheet")
 
 [node name="TopRightCornerStartTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
