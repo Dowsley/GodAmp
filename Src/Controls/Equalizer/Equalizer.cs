@@ -9,6 +9,7 @@ public partial class Equalizer : WindowPanelContainer
 {
     [ExportGroup("References")]
     [Export] private TextureButton _equalizerToggleButton = null!;
+    [Export] private EqualizerGraph _graph = null!;
     private int _masterBusIndex;
     private AudioEffectAmplify _preamp = null!;
     private AudioEffectEQ10 _equalizer = null!;
@@ -33,6 +34,7 @@ public partial class Equalizer : WindowPanelContainer
         AudioServer.SetBusEffectEnabled(_masterBusIndex, AudioUtils.AmplifyAudioEffectIndex,
             enabled && !Mathf.IsZeroApprox(_preamp.VolumeDb));
         AudioServer.SetBusEffectEnabled(_masterBusIndex, AudioUtils.Eq10AudioEffectIndex, enabled && adjusted);
+        _graph.QueueRedraw();
     }
 
     /// <summary>Applies the on button's latched state to the equalizer effects.</summary>

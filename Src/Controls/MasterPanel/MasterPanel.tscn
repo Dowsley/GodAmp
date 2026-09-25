@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="Script" path="res://Src/Controls/MasterPanel/PlaybackIndicators.cs" id="indicators"]
+[ext_resource type="Script" path="res://Src/Controls/MasterPanel/ClassicVisualization.cs" id="visualization"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinSlider.tscn" id="slider"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="Script" path="res://Src/Components/BitmapLabel.cs" id="label"]
@@ -46,7 +48,7 @@ texture = ExtResource("menu_pressed")
 
 [sub_resource type="StyleBoxEmpty" id="empty_style"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_playbackIndicators", "_visualization", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -61,6 +63,8 @@ _volumeSlider = NodePath("Controls/VolumeSlider")
 _pannerAudioSlider = NodePath("Controls/PannerAudioSlider")
 _bitrateLabel = NodePath("TextDisplay/BitrateLabel")
 _sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
+_playbackIndicators = NodePath("Controls/PlaybackIndicators")
+_visualization = NodePath("Controls/Visualization")
 _timeMinutesTensLabel = NodePath("TextDisplay/TimeMinutesTensLabel")
 _timeMinutesOnesLabel = NodePath("TextDisplay/TimeMinutesOnesLabel")
 _timeSecondsTensLabel = NodePath("TextDisplay/TimeSecondsTensLabel")
@@ -75,6 +79,21 @@ texture = ExtResource("background")
 [node name="Controls" type="Control" parent="."]
 layout_mode = 2
 mouse_filter = 2
+
+[node name="PlaybackIndicators" type="Control" parent="Controls"]
+offset_right = 275.0
+offset_bottom = 116.0
+mouse_filter = 2
+script = ExtResource("indicators")
+
+[node name="Visualization" type="Control" parent="Controls"]
+offset_left = 24.0
+offset_top = 43.0
+offset_right = 100.0
+offset_bottom = 59.0
+mouse_filter = 0
+tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
+script = ExtResource("visualization")
 
 [node name="TopBar" type="TextureRect" parent="Controls"]
 offset_right = 275.0
@@ -328,3 +347,4 @@ mouse_filter = 2
 [connection signal="pressed" from="Controls/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
 [connection signal="pressed" from="Controls/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
 [connection signal="pressed" from="Controls/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]
+[connection signal="gui_input" from="Controls/Visualization" to="Controls/Visualization" method="OnGuiInput"]

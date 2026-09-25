@@ -19,6 +19,8 @@ public sealed class SkinArchive
     public IReadOnlyDictionary<string, Image> Images => _images;
     /// <summary>Gets playlist settings, with defaults for absent or malformed fields.</summary>
     public PlaylistSkinStyle PlaylistStyle { get; private set; } = PlaylistSkinStyle.Default;
+    /// <summary>Gets classic analyzer colors, with defaults for absent or invalid slots.</summary>
+    public VisualizationPalette Palette { get; private set; } = VisualizationPalette.Default;
 
     /* Minimum dimensions are defined by the classic skin sprite layout. */
     private static readonly Dictionary<string, Vector2I> MinimumSizes = new(StringComparer.OrdinalIgnoreCase)
@@ -28,7 +30,8 @@ public sealed class SkinArchive
         ["VOLUME"] = new(68, 418), ["BALANCE"] = new(47, 418),
         ["POSBAR"] = new(307, 5), ["EQMAIN"] = new(275, 315),
         ["PLEDIT"] = new(280, 186), ["GEN"] = new(194, 109),
-        ["TEXT"] = new(155, 18), ["NUMBERS"] = new(99, 13), ["NUMS_EX"] = new(108, 13)
+        ["TEXT"] = new(155, 18), ["NUMBERS"] = new(99, 13), ["NUMS_EX"] = new(108, 13),
+        ["PLAYPAUS"] = new(42, 9), ["MONOSTER"] = new(57, 24)
     };
 
     /// <summary>Decodes recognized assets, preferring shallow paths and BMP files for duplicate names.</summary>
@@ -45,13 +48,16 @@ public sealed class SkinArchive
             .ThenBy(e => Path.GetExtension(e.FullName).Equals(".bmp", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
             .ThenBy(e => e.FullName, StringComparer.Ordinal).ToArray();
         bool hasStyle = false;
+        bool hasPalette = false;
         foreach (var entry in entries)
         {
             string name = entry.FullName.Replace('\\', '/').Split('/')[^1];
             string stem = Path.GetFileNameWithoutExtension(name);
             string extension = Path.GetExtension(name).ToLowerInvariant();
-            bool metadata = name.Equals("pledit.txt", StringComparison.OrdinalIgnoreCase);
-            if (metadata && hasStyle)
+            bool playlistMetadata = name.Equals("pledit.txt", StringComparison.OrdinalIgnoreCase);
+            bool paletteMetadata = name.Equals("viscolor.txt", StringComparison.OrdinalIgnoreCase);
+            bool metadata = playlistMetadata || paletteMetadata;
+            if ((playlistMetadata && hasStyle) || (paletteMetadata && hasPalette))
                 continue;
             if (!metadata && (!MinimumSizes.ContainsKey(stem) || skin.Images.ContainsKey(stem) ||
                               extension is not (".bmp" or ".png" or ".jpg" or ".jpeg")))
@@ -67,8 +73,16 @@ public sealed class SkinArchive
                 string text;
                 try { text = new UTF8Encoding(false, true).GetString(bytes); }
                 catch (DecoderFallbackException) { text = Encoding.Latin1.GetString(bytes); }
-                skin.PlaylistStyle = PlaylistSkinStyle.Parse(text);
-                hasStyle = true;
+                if (playlistMetadata)
+                {
+                    skin.PlaylistStyle = PlaylistSkinStyle.Parse(text);
+                    hasStyle = true;
+                }
+                else
+                {
+                    skin.Palette = VisualizationPalette.Parse(text);
+                    hasPalette = true;
+                }
                 continue;
             }
 

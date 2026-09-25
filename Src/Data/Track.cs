@@ -13,6 +13,8 @@ public partial class Track : Resource
     public int TrackNumber;
     public int BitrateKbps;
     public int SampleRateHz;
+    /// <summary>Source audio channel count; zero when metadata does not report it.</summary>
+    public int Channels;
     public AudioStream Stream = null!;
     public bool UseFileName; // We don't have relevant artist information
 }

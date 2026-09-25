@@ -28,7 +28,8 @@ public partial class SkinLoader : Node
     private SkinState _activeState = null!;
 
     private sealed record SkinState(Dictionary<string, Texture2D> Textures, FontFile TextFont,
-        FontFile NumberFont, PlaylistSkinStyle PlaylistStyle, Font PlaylistFont);
+        FontFile NumberFont, PlaylistSkinStyle PlaylistStyle, Font PlaylistFont,
+        VisualizationPalette Palette, GenericTitleFont TitleFont);
 
     /// <summary>Gets the active main-display bitmap font.</summary>
     public FontFile TextFont => _activeState.TextFont;
@@ -38,6 +39,15 @@ public partial class SkinLoader : Node
     public PlaylistSkinStyle PlaylistStyle => _activeState.PlaylistStyle;
     /// <summary>Gets the resolved playlist font with system fallback enabled.</summary>
     public Font PlaylistFont => _activeState.PlaylistFont;
+    /// <summary>Gets the active classic analyzer palette.</summary>
+    public VisualizationPalette Palette => _activeState.Palette;
+    /// <summary>Gets the active variable-width generic title glyphs.</summary>
+    public GenericTitleFont TitleFont => _activeState.TitleFont;
+
+    /// <summary>Gets a resolved sheet from the complete active skin state.</summary>
+    /// <param name="name">Classic sheet basename without its extension.</param>
+    /// <returns>The selected artwork or its built-in fallback.</returns>
+    public Texture2D GetSheet(string name) => _activeState.Textures[name];
     /// <summary>Gets the most recent skin-load failure, or null after successful loading or restoration.</summary>
     public string? LastError { get; private set; }
 
@@ -97,13 +107,20 @@ public partial class SkinLoader : Node
                 _defaultImages[name] = atlas.Atlas.GetImage();
         }
 
+        foreach (string name in new[] { "PLAYPAUS", "MONOSTER" })
+        {
+            Texture2D texture = GD.Load<Texture2D>(DefaultArtworkPath + name + ".png");
+            textures[name] = texture;
+            _defaultImages[name] = texture.GetImage();
+        }
         Image text = GD.Load<FontFile>(BitmapFontPath).GetTextureImage(0, Vector2I.Zero, 0);
         Image numbers = GD.Load<FontFile>(BitmapNumbersFontPath).GetTextureImage(0, Vector2I.Zero, 0);
         _defaultImages["TEXT"] = text;
         _defaultImages["NUMBERS"] = numbers;
         var style = PlaylistSkinStyle.Default;
         _defaultState = new SkinState(textures, SkinBitmapFont.CreateText(text),
-            SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style));
+            SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style),
+            VisualizationPalette.Default, new GenericTitleFont(_defaultImages["GEN"]));
         _activeState = _defaultState;
     }
 
@@ -147,8 +164,10 @@ public partial class SkinLoader : Node
         Image text = archive.Images.GetValueOrDefault("TEXT", _defaultImages["TEXT"]);
         bool extended = archive.Images.TryGetValue("NUMS_EX", out Image? numbers);
         numbers ??= archive.Images.GetValueOrDefault("NUMBERS", _defaultImages["NUMBERS"]);
+        using Image genericArtwork = textures["GEN"].GetImage();
         return new SkinState(textures, SkinBitmapFont.CreateText(text),
-            SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle));
+            SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle),
+            archive.Palette, new GenericTitleFont(genericArtwork));
     }
 
     /// <summary>Resolves an installed playlist font at the current UI rasterization scale.</summary>

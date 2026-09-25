@@ -12,6 +12,10 @@ resource_name = "EQ10"
 [sub_resource type="AudioEffectPanner" id="AudioEffectPanner_j3pel"]
 resource_name = "Panner"
 
+[sub_resource type="AudioEffectCapture" id="AudioEffectCapture_scope"]
+resource_name = "Oscilloscope"
+buffer_length = 0.1
+
 [resource]
 bus/0/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_j3pel")
 bus/0/effect/0/enabled = true
@@ -21,3 +25,5 @@ bus/0/effect/2/effect = SubResource("AudioEffectEQ10_j3pel")
 bus/0/effect/2/enabled = false
 bus/0/effect/3/effect = SubResource("AudioEffectPanner_j3pel")
 bus/0/effect/3/enabled = true
+bus/0/effect/4/effect = SubResource("AudioEffectCapture_scope")
+bus/0/effect/4/enabled = true

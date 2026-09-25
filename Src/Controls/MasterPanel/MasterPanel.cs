@@ -24,6 +24,8 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private SkinSlider _pannerAudioSlider = null!;
     [Export] private Label _bitrateLabel = null!;
     [Export] private Label _sampleRateLabel = null!;
+    [Export] private PlaybackIndicators _playbackIndicators = null!;
+    [Export] private ClassicVisualization _visualization = null!;
     [ExportSubgroup("Time display")]
     [Export] private Label _timeMinutesTensLabel = null!;
     [Export] private Label _timeMinutesOnesLabel = null!;
@@ -118,9 +120,13 @@ public partial class MasterPanel : WindowPanelContainer
         }
     }
 
+    /// <summary>Connects the panel's runtime playback source to its controls and displays.</summary>
+    /// <param name="trackPlayer">Application-owned audio player.</param>
     public void Setup(TrackPlayer trackPlayer)
     {
         _trackPlayerRef = trackPlayer;
+        _playbackIndicators.Player = trackPlayer;
+        _visualization.Player = trackPlayer;
     }
 
     public void Refresh()

@@ -1,6 +1,7 @@
-[gd_scene load_steps=20 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=21 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
+[ext_resource type="Script" path="res://Src/Components/GenericWindowTitle.cs" id="title_font"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
 [ext_resource type="Texture2D" uid="uid://6qyxmjpsp5gu" path="res://Data/SkinResources/VisualizerTopLeftCorner.tres" id="2_7wv81"]
 [ext_resource type="Texture2D" uid="uid://bkibrg5xs5inl" path="res://Data/SkinResources/VisualizerTopTilableBar.tres" id="3_cwlo7"]
@@ -20,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://bl2vrtdloq57o" path="res://Data/SkinResources/VisualizerBottomLeftCorner.tres" id="15_c0tab"]
 [ext_resource type="Texture2D" uid="uid://1o265qd5jybc" path="res://Data/SkinResources/VisualizerBottomRightCorner.tres" id="16_700eo"]
 
-[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "_contents", "_draggableHitbox")]
+[node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "_draggableHitbox")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -34,7 +35,6 @@ TitlebarTextures = Array[AtlasTexture]([ExtResource("2_7wv81"), ExtResource("3_c
 InactiveTitlebarOffset = 21
 _audioVisualizer = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer")
 _vizOptsButton = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton")
-_contents = NodePath("VBoxContainer")
 _draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -60,21 +60,19 @@ size_flags_horizontal = 3
 texture = ExtResource("3_cwlo7")
 
 [node name="TopLeftCornerEndTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture = ExtResource("4_gnf20")
 
-[node name="TitleTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
-visible = false
+[node name="TitleTextureRect" type="Control" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
-texture = ExtResource("4_7wv81")
+mouse_filter = 2
+script = ExtResource("title_font")
 
 [node name="TopRightCornerStartTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -191,6 +189,5 @@ layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
-[connection signal="gui_input" from="VBoxContainer/AllContent/Middle/MiddleTexture" to="." method="OnVisualizerGuiInput"]
 [connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]

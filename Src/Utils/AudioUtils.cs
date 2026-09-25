@@ -23,6 +23,8 @@ public static class AudioUtils
     public const int AmplifyAudioEffectIndex = 1;
     public const int Eq10AudioEffectIndex = 2;
     public const int PannerAudioEffectIndex = 3;
+    /// <summary>Master-bus capture used by the classic oscilloscope.</summary>
+    public const int OscilloscopeAudioEffectIndex = 4;
 
     public static List<Track> LoadAllTracksFromDir(string directoryPath)
     {
@@ -57,6 +59,9 @@ public static class AudioUtils
         return result;
     }
 
+    /// <summary>Loads a supported audio stream and its source metadata, including the channel count.</summary>
+    /// <param name="fullPath">Filesystem or Godot resource path to an audio file.</param>
+    /// <returns>A playable track, or null with a diagnostic if decoding or metadata loading fails.</returns>
     public static Track? LoadTrack(string fullPath)
     {
         try
@@ -102,6 +107,7 @@ public static class AudioUtils
                 Duration = (float)props.Duration.TotalSeconds,
                 BitrateKbps = props.AudioBitrate,
                 SampleRateHz = props.AudioSampleRate,
+                Channels = props.AudioChannels,
                 Stream = stream,
                 UseFileName = useFileName,
             };
@@ -120,10 +126,9 @@ public static class AudioUtils
 
     public static List<Track> LoadTracksFromPathList(IEnumerable<string> pathList)
     {
-        return pathList.Where(p => !string.IsNullOrWhiteSpace(p))
+        return [.. pathList.Where(p => !string.IsNullOrWhiteSpace(p))
                        .Select(LoadTrack)
-                       .OfType<Track>()
-                       .ToList();
+                       .OfType<Track>()];
     }
 
     public static string GetFullTrackTitle(Track track, int trackNumber)
@@ -135,11 +140,11 @@ public static class AudioUtils
 
     public static List<string> GetAllowedFileFilters()
     {
-        return StreamFactories.Keys.Select(k => $"*{k.ToLowerInvariant()}").ToList();
+        return [.. StreamFactories.Keys.Select(k => $"*{k.ToLowerInvariant()}")];
     }
 
     public static List<string> GetAllowedFileExtensions()
     {
-        return StreamFactories.Keys.ToList();
+        return [.. StreamFactories.Keys];
     }
 }

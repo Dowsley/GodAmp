@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene load_steps=13 format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/Equalizer.cs" id="script"]
+[ext_resource type="Script" path="res://Src/Controls/Equalizer/EqualizerGraph.cs" id="graph"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerBackground.tres" id="background"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerTitleBar.tres" id="titlebar"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerCloseButtonNormal.tres" id="close"]
@@ -12,7 +13,7 @@
 [ext_resource type="PackedScene" path="res://Src/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="PackedScene" path="res://Src/Controls/Equalizer/EqualizerBand.tscn" id="band"]
 
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_draggableHitbox")]
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,6 +22,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("script")
 _equalizerToggleButton = NodePath("Controls/EqualizerToggleButton")
+_graph = NodePath("Controls/Graph")
 _draggableHitbox = NodePath("DraggableHitbox")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
 
@@ -38,6 +40,14 @@ offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = ExtResource("titlebar")
+
+[node name="Graph" type="Control" parent="Controls"]
+offset_left = 86.0
+offset_top = 17.0
+offset_right = 199.0
+offset_bottom = 36.0
+mouse_filter = 2
+script = ExtResource("graph")
 
 [node name="CloseButton" type="TextureButton" parent="Controls"]
 offset_left = 264.0
