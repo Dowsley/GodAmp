@@ -28,6 +28,18 @@ public partial class SettingsManager : Node
 
     public static SettingsManager Instance { get; private set; } = null!;
 
+    /// <summary>Gets the absolute settings and skin directory, optionally overridden by GODAMP_DATA_DIR.</summary>
+    public static string DataDirectory
+    {
+        get
+        {
+            string overrideDirectory = OS.GetEnvironment("GODAMP_DATA_DIR");
+            return string.IsNullOrWhiteSpace(overrideDirectory)
+                ? System.IO.Path.Combine(OS.GetDataDir(), SettingsDir)
+                : System.IO.Path.GetFullPath(overrideDirectory);
+        }
+    }
+
     public override void _EnterTree()
     {
         Instance = this;
@@ -36,8 +48,7 @@ public partial class SettingsManager : Node
 
     private void InitializeSettings()
     {
-        string dataDir = OS.GetDataDir();
-        string godampDir = System.IO.Path.Combine(dataDir, SettingsDir);
+        string godampDir = DataDirectory;
         _settingsFilePath = System.IO.Path.Combine(godampDir, SettingsFileName);
         if (!System.IO.Directory.Exists(godampDir))
         {

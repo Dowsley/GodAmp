@@ -1,4 +1,4 @@
-[gd_resource type="AtlasTexture" load_steps=3 format=3 uid="uid://ugo2xivqi0pw"]
+[gd_resource type="AtlasTexture" format=3 uid="uid://ugo2xivqi0pw"]
 
 [sub_resource type="Gradient" id="Gradient_u3e15"]
 offsets = PackedFloat32Array(0)

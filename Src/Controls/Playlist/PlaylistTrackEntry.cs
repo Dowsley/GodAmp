@@ -6,6 +6,7 @@ namespace GodAmp.Controls.Playlist;
 
 public partial class PlaylistTrackEntry : PanelContainer
 {
+    private const int PlaylistFontSize = 10;
     [Signal] public delegate void SelectedEventHandler(int index);
 
     [Export] private Label _trackTitleLabel = null!;
@@ -17,6 +18,7 @@ public partial class PlaylistTrackEntry : PanelContainer
     private bool _isSelected = false;
     private bool _isPointerDown = false;
     private bool _dragStarted = false;
+    private bool _isCurrentTrack;
     public bool IsSelected
     {
         get => _isSelected;
@@ -27,25 +29,48 @@ public partial class PlaylistTrackEntry : PanelContainer
         }
     }
 
+    /// <inheritdoc />
     public override void _Ready()
     {
         MouseFilter = MouseFilterEnum.Stop;
-        SignalBus.Instance.SkinChanged += _trackTitleLabel.QueueRedraw;
-        SignalBus.Instance.SkinChanged += _durationLabel.QueueRedraw;
+        SignalBus.Instance.SkinChanged += ApplySkin;
+        ApplySkin();
     }
 
+    /// <inheritdoc />
+    public override void _ExitTree() => SignalBus.Instance.SkinChanged -= ApplySkin;
+
+    /// <summary>Populates the row and applies its selection and playback styling.</summary>
+    /// <param name="title">Track title as displayed, preserving its letter case.</param>
+    /// <param name="duration">Track length in seconds.</param>
+    /// <param name="index">Zero-based position in the playlist.</param>
+    /// <param name="selected">Whether the row is selected.</param>
+    /// <param name="current">Whether the row represents the playing track.</param>
     public void Setup(string title, float duration, int index, bool selected, bool current = false)
     {
         IsSelected = selected;
 
         Index = index;
-        _trackTitleLabel.Text = title.ToUpper();
+        _trackTitleLabel.Text = title;
         _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
-        if (!current)
-            return;
+        _isCurrentTrack = current;
+        ApplySkin();
+    }
 
-        _trackTitleLabel.AddThemeColorOverride("font_color", Colors.White);
-        _durationLabel.AddThemeColorOverride("font_color", Colors.White);
+    /// <summary>Updates both labels and the selection background from the active playlist style.</summary>
+    private void ApplySkin()
+    {
+        var skin = SkinLoader.Instance;
+        _selectedBg.Color = skin.PlaylistStyle.SelectedBackground;
+        foreach (var label in new[] { _trackTitleLabel, _durationLabel })
+        {
+            label.Material = null;
+            label.TextureFilter = TextureFilterEnum.Linear;
+            label.AddThemeFontOverride("font", skin.PlaylistFont);
+            label.AddThemeFontSizeOverride("font_size", PlaylistFontSize);
+            label.AddThemeColorOverride("font_color", _isCurrentTrack ? skin.PlaylistStyle.Current : skin.PlaylistStyle.Normal);
+            label.AddThemeColorOverride("font_shadow_color", Colors.Transparent);
+        }
     }
 
     public override void _GuiInput(InputEvent @event)

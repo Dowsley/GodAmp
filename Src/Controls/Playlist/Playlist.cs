@@ -45,6 +45,16 @@ public partial class Playlist : WindowPanelContainer
         SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
         SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;
         SignalBus.Instance.SkinChanged += OnSkinChanged;
+        OnSkinChanged();
+    }
+
+    /// <inheritdoc />
+    public override void _ExitTree()
+    {
+        SignalBus.Instance.InverseSelectionRequested -= OnInverseSelectionRequested;
+        SignalBus.Instance.SelectZeroRequested -= OnSelectZeroRequested;
+        SignalBus.Instance.SelectAllRequested -= OnSelectAllRequested;
+        SignalBus.Instance.SkinChanged -= OnSkinChanged;
     }
 
     public void Setup(TrackPlayer trackPlayerRef, List<Track> playlist)
@@ -202,7 +212,7 @@ public partial class Playlist : WindowPanelContainer
 
     private void OnSelectAllRequested()
     {
-        _selectedTracks = new HashSet<Track>(_playlistRef);
+        _selectedTracks = [.. _playlistRef];
         foreach (var child in _trackEntryContainer.GetChildren())
         {
             var label = (PlaylistTrackEntry)child;
@@ -211,8 +221,13 @@ public partial class Playlist : WindowPanelContainer
         _selectionAnchorIndex = 0;
     }
 
+    /// <summary>Applies the playlist background and refreshes the shared scrollbar artwork.</summary>
     private void OnSkinChanged()
     {
+        _scrollContainer.AddThemeStyleboxOverride("panel", new StyleBoxFlat
+        {
+            BgColor = SkinLoader.Instance.PlaylistStyle.Background
+        });
         var vScrollBar = _scrollContainer.GetVScrollBar();
         vScrollBar?.QueueRedraw();
     }
@@ -254,7 +269,7 @@ public partial class Playlist : WindowPanelContainer
             _playlistRef.RemoveAt(normalized[k]);
 
         _playlistRef.InsertRange(insertIndex, movedTracks);
-        _selectedTracks = new HashSet<Track>(movedTracks); // preserve selection of moved tracks
+        _selectedTracks = [.. movedTracks];
         _selectionAnchorIndex = insertIndex;
 
         Refresh();

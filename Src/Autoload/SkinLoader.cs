@@ -1,401 +1,214 @@
 using Godot;
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Collections.Generic;
 using System.Linq;
+using GodAmp.Data;
+using GodAmp.Utils;
 
 namespace GodAmp.Autoload;
 
+/// <summary>Prepares complete skin states and applies them to shared atlases and live controls.</summary>
 public partial class SkinLoader : Node
 {
+    /// <summary>Gets the skin autoload initialized before application controls enter the tree.</summary>
     public static SkinLoader Instance { get; private set; } = null!;
 
     private const string SkinResourcesPath = "res://Data/SkinResources/";
-    private const string TempExtractionFolder = "user://temp_skin/";
-    private const string SkinsDirectoryName = "Skins";
-    private const string BitmapFontPath = "res://Assets/Winamp/Raw/TEXT.png";
-    private const string BitmapNumbersFontPath = "res://Assets/Winamp/Raw/NUMBERS.png";
+    private const string DefaultArtworkPath = "res://Assets/Winamp/Raw/";
+    private const string BitmapFontPath = DefaultArtworkPath + "TEXT.png";
+    private const string BitmapNumbersFontPath = DefaultArtworkPath + "NUMBERS.png";
 
-    private static readonly Dictionary<string, ImageTexture> LoadedTextures = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly Dictionary<string, Image> LoadedImages = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly Dictionary<string, Texture2D> OriginalTextures = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly Dictionary<string, string> AtlasToTextureName = new();
+    private sealed record AtlasBinding(AtlasTexture Atlas, string Name);
+    private readonly List<AtlasBinding> _atlases = [];
+    private readonly Dictionary<string, Image> _defaultImages = new(StringComparer.OrdinalIgnoreCase);
+    private string _skinsDirectory = "";
+    private string? _currentSkinName;
+    private SkinState _defaultState = null!;
+    private SkinState _activeState = null!;
 
-    private static string _skinsDirectory = null!;
-    private static string? _currentSkinName;
+    private sealed record SkinState(Dictionary<string, Texture2D> Textures, FontFile TextFont,
+        FontFile NumberFont, PlaylistSkinStyle PlaylistStyle, Font PlaylistFont);
 
-    private static FontFile _bitmapFont = null!;
-    private static FontFile _bitmapNumbersFont = null!;
-    private static Image _originalBitmapFontImage = null!;
-    private static Image _originalBitmapNumbersFontImage = null!;
+    /// <summary>Gets the active main-display bitmap font.</summary>
+    public FontFile TextFont => _activeState.TextFont;
+    /// <summary>Gets the active clock bitmap font.</summary>
+    public FontFile NumberFont => _activeState.NumberFont;
+    /// <summary>Gets the active playlist colors and requested font family.</summary>
+    public PlaylistSkinStyle PlaylistStyle => _activeState.PlaylistStyle;
+    /// <summary>Gets the resolved playlist font with system fallback enabled.</summary>
+    public Font PlaylistFont => _activeState.PlaylistFont;
+    /// <summary>Gets the most recent skin-load failure, or null after successful loading or restoration.</summary>
+    public string? LastError { get; private set; }
 
+    /// <inheritdoc />
     public override void _EnterTree()
     {
         Instance = this;
-
-        InitializeSkinsDirectory();
-        InitializeBitmapFont();
+        _skinsDirectory = Path.Combine(SettingsManager.DataDirectory, "Skins");
+        Directory.CreateDirectory(_skinsDirectory);
+        InitializeDefaults();
     }
 
+    /// <inheritdoc />
     public override void _Ready()
     {
-        LoadActiveSkin();
-    }
-
-    private static void InitializeSkinsDirectory()
-    {
-        string dataDir = OS.GetDataDir();
-        string godampDir = Path.Combine(dataDir, "GodAmp");
-        _skinsDirectory = Path.Combine(godampDir, SkinsDirectoryName);
-
-        if (!Directory.Exists(_skinsDirectory))
-        {
-            Directory.CreateDirectory(_skinsDirectory);
-            GD.Print($"Created skins directory: {_skinsDirectory}");
-        }
-    }
-
-    private static void InitializeBitmapFont()
-    {
-        _bitmapFont = GD.Load<FontFile>(BitmapFontPath);
-        _bitmapNumbersFont = GD.Load<FontFile>(BitmapNumbersFontPath);
-        _originalBitmapFontImage = _bitmapFont.GetTextureImage(0, Vector2I.Zero, 0);
-        _originalBitmapNumbersFontImage = _bitmapNumbersFont.GetTextureImage(0, Vector2I.Zero, 0);
-    }
-
-    private static void LoadActiveSkin()
-    {
+        SettingsManager.Instance.ZoomModeChanged += OnZoomModeChanged;
         string activeSkin = SettingsManager.Instance.GetActiveSkin();
         if (!string.IsNullOrEmpty(activeSkin))
         {
-            string skinPath = Path.Combine(_skinsDirectory, activeSkin);
-            if (File.Exists(skinPath))
-            {
-                GD.Print($"Loading active skin: {activeSkin}");
-                Load(skinPath);
-            }
-            else
-            {
-                GD.Print($"Active skin not found: {activeSkin}, using default");
-            }
+            string skinPath = Path.Combine(_skinsDirectory, Path.GetFileName(activeSkin));
+            if (!Load(skinPath))
+                GD.PushWarning($"Using the default skin: {LastError}");
         }
     }
 
-    public static void Load(string filePath)
+    /// <inheritdoc />
+    public override void _ExitTree() => SettingsManager.Instance.ZoomModeChanged -= OnZoomModeChanged;
+
+    /// <summary>Matches system-font rasterization density to the UI zoom.</summary>
+    /// <param name="multiplier">Requested integer zoom, clamped to at least one for rasterization.</param>
+    private void OnZoomModeChanged(int multiplier)
     {
+        if (_defaultState.PlaylistFont is SystemFont defaultFont)
+            defaultFont.Oversampling = Math.Max(1, multiplier);
+        if (_activeState.PlaylistFont is SystemFont activeFont)
+            activeFont.Oversampling = Math.Max(1, multiplier);
+    }
+
+    /// <summary>Retains the built-in atlas sources and constructs the initial fallback skin state.</summary>
+    private void InitializeDefaults()
+    {
+        var textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        foreach (string fileName in ResourceLoader.ListDirectory(SkinResourcesPath).Order(StringComparer.Ordinal))
+        {
+            if (!fileName.EndsWith(".tres", StringComparison.OrdinalIgnoreCase))
+                continue;
+            if (GD.Load<Resource>(SkinResourcesPath + fileName) is not AtlasTexture atlas || atlas.Atlas == null)
+                continue;
+            if (!atlas.Atlas.ResourcePath.StartsWith(DefaultArtworkPath, StringComparison.Ordinal))
+                continue;
+            string name = Path.GetFileNameWithoutExtension(atlas.Atlas.ResourcePath);
+            if (string.IsNullOrEmpty(name))
+                continue;
+            _atlases.Add(new AtlasBinding(atlas, name));
+            textures.TryAdd(name, atlas.Atlas);
+            if (!_defaultImages.ContainsKey(name))
+                _defaultImages[name] = atlas.Atlas.GetImage();
+        }
+
+        Image text = GD.Load<FontFile>(BitmapFontPath).GetTextureImage(0, Vector2I.Zero, 0);
+        Image numbers = GD.Load<FontFile>(BitmapNumbersFontPath).GetTextureImage(0, Vector2I.Zero, 0);
+        _defaultImages["TEXT"] = text;
+        _defaultImages["NUMBERS"] = numbers;
+        var style = PlaylistSkinStyle.Default;
+        _defaultState = new SkinState(textures, SkinBitmapFont.CreateText(text),
+            SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style));
+        _activeState = _defaultState;
+    }
+
+    /// <summary>Validates and prepares a skin before applying it and saving its selection.</summary>
+    /// <param name="filePath">Filesystem or Godot resource path to a classic skin archive.</param>
+    /// <returns>True on success; false with <see cref="LastError"/> set if loading fails.</returns>
+    public static bool Load(string filePath)
+    {
+        var loader = Instance;
         try
         {
-            GD.Print($"Loading skin from: {filePath}");
-            if (!File.Exists(filePath))
-            {
-                GD.PrintErr($"Skin file not found: {filePath}");
-                return;
-            }
-
-            if (ExtractWszFile(filePath) is not { } tempPath)
-            {
-                GD.PrintErr("Failed to extract .wsz file");
-                return;
-            }
-
-            LoadTexturesFromPath(tempPath);
-            ApplyTextureToAllAtlases();
-            UpdateBitmapFont();
-            CleanupTempFiles(tempPath);
-
-            string fileName = Path.GetFileName(filePath);
-            _currentSkinName = fileName;
-            SettingsManager.Instance.SetActiveSkin(fileName);
-            SettingsManager.Instance.SaveAllSettings();
-            SignalBus.Instance.EmitSignal(SignalBus.SignalName.SkinChanged);
-            GD.Print($"Skin '{fileName}' loaded successfully!");
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error loading skin: {ex.Message}");
-            GD.PrintErr($"Stack trace: {ex.StackTrace}");
-        }
-    }
-
-    public static void RestoreOriginalSkin()
-    {
-        try
-        {
-            GD.Print("Restoring original skin...");
-
-            int restoredCount = GetAllAtlasResourcePaths().Count(TryRestoreAtlasTexture);
-            RestoreBitmapFont();
-
-            GD.Print($"Restored {restoredCount} atlas textures to original skin");
-            LoadedTextures.Clear();
-            _currentSkinName = null;
-
-            SettingsManager.Instance.SetActiveSkin("");
-            SettingsManager.Instance.SaveAllSettings();
-            SignalBus.Instance.EmitSignal(SignalBus.SignalName.SkinChanged);
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error restoring original skin: {ex.Message}");
-        }
-    }
-
-    private static void RestoreBitmapFont()
-    {
-        _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, _originalBitmapFontImage);
-        _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, _originalBitmapNumbersFontImage);
-        GD.Print("Restored original bitmap font texture");
-    }
-
-    private static bool TryRestoreAtlasTexture(string resourcePath)
-    {
-        var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
-        if (atlasTexture?.Atlas == null)
-            return false;
-
-        if (!AtlasToTextureName.TryGetValue(resourcePath, out var textureName))
-            return false;
-
-        if (!OriginalTextures.TryGetValue(textureName, out var texture))
-            return false;
-
-        atlasTexture.Atlas = texture;
-        return true;
-    }
-
-    public static string? GetCurrentSkinName()
-    {
-        return _currentSkinName;
-    }
-
-    public static string GetSkinsDirectory()
-    {
-        return _skinsDirectory;
-    }
-
-    public static string[] GetAvailableSkins()
-    {
-        if (string.IsNullOrEmpty(_skinsDirectory) || !Directory.Exists(_skinsDirectory))
-            return [];
-
-        return Directory.GetFiles(_skinsDirectory, "*.wsz")
-            .Select(Path.GetFileName)
-            .OfType<string>()
-            .ToArray();
-    }
-
-    private static string? ExtractWszFile(string filePath)
-    {
-        try
-        {
-            string systemPath = ProjectSettings.GlobalizePath(filePath);
-
-            if (!File.Exists(systemPath))
-            {
-                GD.PrintErr($"File not found: {systemPath}");
-                return null;
-            }
-
-            string tempPath = ProjectSettings.GlobalizePath(TempExtractionFolder);
-            if (Directory.Exists(tempPath))
-            {
-                Directory.Delete(tempPath, true);
-            }
-            Directory.CreateDirectory(tempPath);
-
-            ZipFile.ExtractToDirectory(systemPath, tempPath);
-            GD.Print($"Extracted skin to: {tempPath}");
-
-            return tempPath;
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error extracting .wsz file: {ex.Message}");
-            return null;
-        }
-    }
-
-    private static void LoadTexturesFromPath(string tempPath)
-    {
-        LoadedTextures.Clear();
-        LoadedImages.Clear();
-
-        try
-        {
-            var imageFiles = Directory.GetFiles(tempPath, "*.*", SearchOption.AllDirectories)
-                .Where(f => f.ToLower().EndsWith(".png") ||
-                           f.ToLower().EndsWith(".bmp") ||
-                           f.ToLower().EndsWith(".jpg") ||
-                           f.ToLower().EndsWith(".jpeg"))
-                .ToArray();
-
-            GD.Print($"Found {imageFiles.Length} image files in skin");
-
-            foreach (var imagePath in imageFiles)
-            {
-                try
-                {
-                    var image = Image.LoadFromFile(imagePath);
-                    if (image != null)
-                    {
-                        var texture = ImageTexture.CreateFromImage(image);
-                        string fileName = Path.GetFileName(imagePath).ToUpper();
-                        LoadedTextures[fileName] = texture;
-                        LoadedImages[fileName] = image;
-                        GD.Print($"Loaded texture: {fileName}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    GD.PrintErr($"Failed to load image {imagePath}: {ex.Message}");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error loading textures from path: {ex.Message}");
-        }
-    }
-
-    private static List<string> GetAllAtlasResourcePaths()
-    {
-        var resources = new List<string>();
-
-        try
-        {
-            var dir = DirAccess.Open(SkinResourcesPath);
-            if (dir == null)
-            {
-                GD.PrintErr($"Failed to open directory: {SkinResourcesPath}");
-                return resources;
-            }
-
-            dir.ListDirBegin();
-            string fileName = dir.GetNext();
-
-            while (fileName != "")
-            {
-                if (!dir.CurrentIsDir() && fileName.EndsWith(".tres"))
-                    resources.Add(SkinResourcesPath + fileName);
-
-                fileName = dir.GetNext();
-            }
-            dir.ListDirEnd();
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Error getting atlas resources: {ex.Message}");
-        }
-
-        return resources;
-    }
-
-    private static void ApplyTextureToAllAtlases()
-    {
-        var atlasResourcePaths = GetAllAtlasResourcePaths();
-        GD.Print($"Found {atlasResourcePaths.Count} atlas texture resources");
-
-        int replacedCount = atlasResourcePaths.Count(UpdateAtlasTexture);
-
-        GD.Print($"Successfully updated {replacedCount} atlas textures");
-    }
-
-    private static void UpdateBitmapFont()
-    {
-        if (FindMatchingImageKey("TEXT.PNG") is { } textKey)
-            _bitmapFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[textKey]);
-
-        if (FindMatchingImageKey("NUMBERS.PNG") is { } numbersKey)
-            _bitmapNumbersFont.SetTextureImage(0, Vector2I.Zero, 0, LoadedImages[numbersKey]);
-
-        GD.Print("Updated bitmap font texture");
-    }
-
-    private static string? FindMatchingImageKey(string imageName)
-    {
-        string baseNameWithoutExt = Path.GetFileNameWithoutExtension(imageName);
-        return LoadedImages.Keys.FirstOrDefault(k =>
-            Path.GetFileNameWithoutExtension(k).Equals(baseNameWithoutExt, StringComparison.OrdinalIgnoreCase));
-    }
-
-    private static bool UpdateAtlasTexture(string resourcePath)
-    {
-        try
-        {
-            var atlasTexture = GD.Load<AtlasTexture>(resourcePath);
-            if (atlasTexture?.Atlas == null)
-            {
-                GD.PrintErr($"Failed to load atlas or missing base texture: {resourcePath}");
-                return false;
-            }
-
-            if (GetOrStoreTextureName(resourcePath, atlasTexture) is not { } textureName)
-            {
-                GD.PrintErr($"Could not determine texture name for: {resourcePath}");
-                return false;
-            }
-
-            if (FindMatchingTextureKey(textureName) is not { } matchingKey)
-            {
-                GD.Print($"No matching texture found for: {textureName}");
-                return false;
-            }
-
-            atlasTexture.Atlas = LoadedTextures[matchingKey];
+            var archive = SkinArchive.Read(ProjectSettings.GlobalizePath(filePath));
+            var state = loader.PrepareState(archive);
+            loader.Apply(state, Path.GetFileName(filePath));
+            loader.LastError = null;
             return true;
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"Error updating atlas texture {resourcePath}: {ex.Message}");
+            loader.LastError = $"Could not load skin '{Path.GetFileName(filePath)}': {ex.Message}";
+            GD.PushWarning(loader.LastError);
             return false;
         }
     }
 
-    private static string? GetOrStoreTextureName(string resourcePath, AtlasTexture atlasTexture)
+    /// <summary>Resolves missing artwork and fonts against the built-in skin without changing active controls.</summary>
+    /// <param name="archive">Decoded, validated skin assets.</param>
+    /// <returns>A complete skin state ready to apply.</returns>
+    private SkinState PrepareState(SkinArchive archive)
     {
-        if (AtlasToTextureName.TryGetValue(resourcePath, out var textureName))
-            return textureName;
-
-        textureName = GetTextureNameFromPath(atlasTexture.Atlas.ResourcePath);
-        if (string.IsNullOrEmpty(textureName))
-            return null;
-
-        AtlasToTextureName[resourcePath] = textureName;
-        if (!OriginalTextures.ContainsKey(textureName))
+        var textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (name, original) in _defaultState.Textures)
         {
-            OriginalTextures[textureName] = atlasTexture.Atlas;
-            GD.Print($"Stored original texture: {textureName}");
+            Image fallback = _defaultImages[name];
+            if (name.Equals("BALANCE", StringComparison.OrdinalIgnoreCase) && !archive.Images.ContainsKey(name))
+                fallback = _defaultImages["VOLUME"];
+            Image resolved = archive.ResolveImage(name, fallback);
+            textures[name] = ReferenceEquals(resolved, _defaultImages[name])
+                ? original : ImageTexture.CreateFromImage(resolved);
         }
-
-        return textureName;
+        Image text = archive.Images.GetValueOrDefault("TEXT", _defaultImages["TEXT"]);
+        bool extended = archive.Images.TryGetValue("NUMS_EX", out Image? numbers);
+        numbers ??= archive.Images.GetValueOrDefault("NUMBERS", _defaultImages["NUMBERS"]);
+        return new SkinState(textures, SkinBitmapFont.CreateText(text),
+            SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle));
     }
 
-    private static string? FindMatchingTextureKey(string textureName)
+    /// <summary>Resolves an installed playlist font at the current UI rasterization scale.</summary>
+    /// <param name="style">Skin settings containing the requested font family.</param>
+    /// <returns>A system font, or Godot's fallback when no preferred family is installed.</returns>
+    private static Font CreatePlaylistFont(PlaylistSkinStyle style)
     {
-        string baseNameWithoutExt = Path.GetFileNameWithoutExtension(textureName);
-        return LoadedTextures.Keys.FirstOrDefault(k =>
-            Path.GetFileNameWithoutExtension(k).Equals(baseNameWithoutExt, StringComparison.OrdinalIgnoreCase));
+        string name = style.ResolveFontName(OS.GetSystemFonts());
+        return name.Length == 0 ? ThemeDB.FallbackFont : new SystemFont
+        {
+            FontNames = [name],
+            Antialiasing = TextServer.FontAntialiasing.Gray,
+            Oversampling = Math.Max(1, SettingsManager.Instance.GetZoomMode()),
+            AllowSystemFallback = true
+        };
     }
 
-    private static string GetTextureNameFromPath(string texturePath)
+    /// <summary>Replaces shared artwork, records the selection, and notifies existing controls.</summary>
+    /// <param name="state">Complete prepared textures, fonts, and playlist settings.</param>
+    /// <param name="name">Archive filename, or null for the built-in skin.</param>
+    private void Apply(SkinState state, string? name)
     {
-        return Path.GetFileName(texturePath).ToUpper(); // extract just the filename from paths like "res://Assets/Winamp/Raw/CBUTTONS.png"
-    }
-
-    private static void CleanupTempFiles(string tempPath)
-    {
+        SkinState previous = _activeState;
         try
         {
-            if (Directory.Exists(tempPath))
-            {
-                Directory.Delete(tempPath, true);
-                GD.Print("Cleaned up temporary files");
-            }
+            foreach (var binding in _atlases)
+                binding.Atlas.Atlas = state.Textures[binding.Name];
+            _activeState = state;
         }
-        catch (Exception ex)
+        catch
         {
-            GD.PrintErr($"Error cleaning up temp files: {ex.Message}");
+            foreach (var binding in _atlases)
+                binding.Atlas.Atlas = previous.Textures[binding.Name];
+            _activeState = previous;
+            throw;
         }
+        _currentSkinName = name;
+        SettingsManager.Instance.SetActiveSkin(name ?? "");
+        SettingsManager.Instance.SaveAllSettings();
+        SignalBus.Instance.EmitSignal(SignalBus.SignalName.SkinChanged);
     }
+
+    /// <summary>Restores built-in artwork, fonts, and playlist styling and clears the saved skin selection.</summary>
+    public static void RestoreOriginalSkin()
+    {
+        Instance.Apply(Instance._defaultState, null);
+        Instance.LastError = null;
+    }
+
+    /// <summary>Gets the selected archive filename.</summary>
+    /// <returns>The filename, or null while the built-in skin is active.</returns>
+    public static string? GetCurrentSkinName() => Instance._currentSkinName;
+    /// <summary>Gets the skin installation directory beneath the configured data root.</summary>
+    /// <returns>An absolute filesystem directory path.</returns>
+    public static string GetSkinsDirectory() => Instance._skinsDirectory;
+
+    /// <summary>Lists installed classic skins in case-insensitive filename order.</summary>
+    /// <returns>Archive filenames without directory paths, or an empty array if none are installed.</returns>
+    public static string[] GetAvailableSkins() => Directory.Exists(GetSkinsDirectory())
+        ? [.. Directory.GetFiles(GetSkinsDirectory()).Where(path => Path.GetExtension(path).Equals(".wsz", StringComparison.OrdinalIgnoreCase))
+            .Select(Path.GetFileName).OfType<string>().Order(StringComparer.OrdinalIgnoreCase)]
+        : [];
 }

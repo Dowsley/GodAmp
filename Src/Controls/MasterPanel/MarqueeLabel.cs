@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using Godot;
-using GodAmp.Autoload;
 using GodAmp.Components;
 
 namespace GodAmp.Controls.MasterPanel;
@@ -15,10 +14,11 @@ public partial class MarqueeLabel : BitmapLabel
     private int _offset = 0;
     private bool _rotate = false;
 
+    /// <inheritdoc />
     public override void _Ready()
     {
+        base._Ready();
         _timer = GetNode<Timer>("Timer");
-        SignalBus.Instance.SkinChanged += QueueRedraw;
     }
 
     public void SetValue(string value)
@@ -47,8 +47,14 @@ public partial class MarqueeLabel : BitmapLabel
         _timer.Start();
     }
 
+    /// <summary>Displays a fixed-width slice of the scrolling value, or clears an uninitialized value.</summary>
     private void RenderText()
     {
+        if (_value.Length == 0)
+        {
+            Text = "";
+            return;
+        }
         var sb = new StringBuilder();
         for (var i = 0; i < MaxLength; i++)
         {

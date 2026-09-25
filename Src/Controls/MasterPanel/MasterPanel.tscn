@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://cpme6jm30nl1o"]
+[gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Controls/MasterPanel/MasterPanel.cs" id="1_wgfc2"]
 [ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="2_j1eng"]
@@ -72,7 +72,7 @@ texture = ExtResource("14_8kieg")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ueg7m"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_contents", "_draggableHitbox")]
+[node name="MasterPanel" type="PanelContainer" unique_id=290625967 node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -80,35 +80,34 @@ script = ExtResource("1_wgfc2")
 WinampMenuButton = NodePath("VBoxContainer/TopBar/WinampMenuButton")
 ToggleEqualizerButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/ToggleEqualizerButton")
 TogglePlaylistButton = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2/TogglePlaylistButton")
-_masterLabel = NodePath("VBoxContainer/AllContent/Control/MasterLabel")
+_masterLabel = NodePath("TextDisplay/MasterLabel")
 _positionSeekerSlider = NodePath("VBoxContainer/AllContent/PositionSeekerContainer/PositionSeeker")
 _volumeSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/VolumeSlider")
 _pannerAudioSlider = NodePath("VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer/PannerAudioSlider")
-_bitrateLabel = NodePath("VBoxContainer/AllContent/Control/BitrateLabel")
-_sampleRateLabel = NodePath("VBoxContainer/AllContent/Control/SampleRateLabel")
-_timeMinutesTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesTensLabel")
-_timeMinutesOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeMinutesOnesLabel")
-_timeSecondsTensLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsTensLabel")
-_timeSecondsOnesLabel = NodePath("VBoxContainer/AllContent/Control/TimeSecondsOnesLabel")
-_contents = NodePath("VBoxContainer")
+_bitrateLabel = NodePath("TextDisplay/BitrateLabel")
+_sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
+_timeMinutesTensLabel = NodePath("TextDisplay/TimeMinutesTensLabel")
+_timeMinutesOnesLabel = NodePath("TextDisplay/TimeMinutesOnesLabel")
+_timeSecondsTensLabel = NodePath("TextDisplay/TimeSecondsTensLabel")
+_timeSecondsOnesLabel = NodePath("TextDisplay/TimeSecondsOnesLabel")
 _draggableHitbox = NodePath("DraggableHitbox")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1283875978]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("2_j1eng")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=329593217]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="TopBar" type="TextureRect" parent="VBoxContainer"]
+[node name="TopBar" type="TextureRect" parent="VBoxContainer" unique_id=1197652391]
 custom_minimum_size = Vector2(275, 14)
 layout_mode = 2
 size_flags_vertical = 2
 texture = ExtResource("3_oo7n4")
 
-[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/TopBar"]
+[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/TopBar" unique_id=1489902899]
 layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
@@ -120,7 +119,7 @@ toggle_mode = true
 texture_normal = ExtResource("4_b8aew")
 texture_pressed = ExtResource("5_jkbgf")
 
-[node name="CloseButton" type="TextureButton" parent="VBoxContainer/TopBar"]
+[node name="CloseButton" type="TextureButton" parent="VBoxContainer/TopBar" unique_id=784414225]
 layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
@@ -131,118 +130,126 @@ size_flags_vertical = 4
 texture_normal = ExtResource("6_bgj4f")
 texture_pressed = ExtResource("7_oo7n4")
 
-[node name="WinampMenuButton" parent="VBoxContainer/TopBar" instance=ExtResource("8_2vlkh")]
+[node name="WinampMenuButton" parent="VBoxContainer/TopBar" unique_id=343481143 instance=ExtResource("8_2vlkh")]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 2.0
 offset_right = 17.0
 offset_bottom = 13.0
 
-[node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
+[node name="AllContent" type="VBoxContainer" parent="VBoxContainer" unique_id=1252614327]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="Control" type="Control" parent="VBoxContainer/AllContent"]
+[node name="Control" type="Control" parent="VBoxContainer/AllContent" unique_id=1955292069]
 layout_mode = 2
 
-[node name="MasterLabel" parent="VBoxContainer/AllContent/Control" instance=ExtResource("2_y6dre")]
+[node name="TextDisplay" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MasterLabel" parent="TextDisplay" unique_id=752144238 instance=ExtResource("2_y6dre")]
 layout_mode = 0
 offset_left = 111.0
-offset_top = -33.0
+offset_top = 27.0
 offset_right = 265.0
-offset_bottom = -21.0
+offset_bottom = 33.0
 theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 6
 text = "LINKIN PARK - NUMB"
 
-[node name="BitrateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="BitrateLabel" type="Label" parent="TextDisplay" unique_id=1646795332]
 layout_mode = 0
-offset_left = 110.0
-offset_top = -17.0
+offset_left = 111.0
+offset_top = 43.0
 offset_right = 126.0
-offset_bottom = -7.0
+offset_bottom = 49.0
 theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 6
 text = "000"
 horizontal_alignment = 2
 script = ExtResource("12_ixbbo")
 
-[node name="SampleRateLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="SampleRateLabel" type="Label" parent="TextDisplay" unique_id=1040356936]
 layout_mode = 0
-offset_left = 155.0
-offset_top = -17.0
+offset_left = 156.0
+offset_top = 43.0
 offset_right = 166.0
-offset_bottom = -7.0
+offset_bottom = 49.0
 theme_override_fonts/font = ExtResource("10_8kieg")
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 6
 text = "00"
 horizontal_alignment = 2
 script = ExtResource("12_ixbbo")
 
-[node name="TimeMinutesTensLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay" unique_id=1873440832]
 layout_mode = 0
 offset_left = 48.0
-offset_top = -38.0
-offset_right = 58.0
-offset_bottom = -17.0
+offset_top = 26.0
+offset_right = 57.0
+offset_bottom = 39.0
 theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 13
 text = "0"
 script = ExtResource("12_ixbbo")
+UseNumberFont = true
 
-[node name="TimeMinutesOnesLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay" unique_id=1198995906]
 layout_mode = 0
 offset_left = 60.0
-offset_top = -38.0
-offset_right = 70.0
-offset_bottom = -17.0
+offset_top = 26.0
+offset_right = 69.0
+offset_bottom = 39.0
 theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 13
 text = "0"
 script = ExtResource("12_ixbbo")
+UseNumberFont = true
 
-[node name="TimeSecondsTensLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay" unique_id=1726317979]
 layout_mode = 0
 offset_left = 78.0
-offset_top = -38.0
-offset_right = 88.0
-offset_bottom = -17.0
+offset_top = 26.0
+offset_right = 87.0
+offset_bottom = 39.0
 theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 13
 text = "0"
 script = ExtResource("12_ixbbo")
+UseNumberFont = true
 
-[node name="TimeSecondsOnesLabel" type="Label" parent="VBoxContainer/AllContent/Control"]
+[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay" unique_id=42337253]
 layout_mode = 0
 offset_left = 90.0
-offset_top = -38.0
-offset_right = 100.0
-offset_bottom = -17.0
+offset_top = 26.0
+offset_right = 99.0
+offset_bottom = 39.0
 theme_override_fonts/font = ExtResource("13_13jth")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 13
 text = "0"
 script = ExtResource("12_ixbbo")
+UseNumberFont = true
 
-[node name="SlidersContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
+[node name="SlidersContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=1888382185]
 layout_mode = 2
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer" unique_id=817023366]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 alignment = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer" unique_id=1807338805]
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/separation = 0
 
-[node name="VolumeSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer"]
+[node name="VolumeSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer" unique_id=934880875]
 custom_minimum_size = Vector2(68, 14)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -258,7 +265,7 @@ max_value = 1.0
 step = 0.01
 script = ExtResource("16_13jth")
 
-[node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer"]
+[node name="PannerAudioSlider" type="HSlider" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer" unique_id=506802277]
 custom_minimum_size = Vector2(38, 14)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -277,13 +284,13 @@ script = ExtResource("16_13jth")
 TextureX = 9
 TextureWidth = 38
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer" unique_id=543052345]
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
 theme_override_constants/separation = 0
 
-[node name="ToggleEqualizerButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2"]
+[node name="ToggleEqualizerButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2" unique_id=2084905920]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -291,7 +298,7 @@ texture_normal = ExtResource("9_m25c3")
 texture_pressed = ExtResource("10_2gtsh")
 stretch_mode = 5
 
-[node name="TogglePlaylistButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2"]
+[node name="TogglePlaylistButton" type="TextureButton" parent="VBoxContainer/AllContent/SlidersContainer/HBoxContainer/HBoxContainer2" unique_id=216664685]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -299,14 +306,14 @@ texture_normal = ExtResource("11_j1eng")
 texture_pressed = ExtResource("12_6x7f4")
 stretch_mode = 5
 
-[node name="PositionSeekerContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
+[node name="PositionSeekerContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=1441942957]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 6
 
-[node name="PositionSeeker" type="HSlider" parent="VBoxContainer/AllContent/PositionSeekerContainer"]
+[node name="PositionSeeker" type="HSlider" parent="VBoxContainer/AllContent/PositionSeekerContainer" unique_id=852173347]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
@@ -320,62 +327,62 @@ theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_ueg7m"
 value = 16.0
 scrollable = false
 
-[node name="ButtonsContainer" type="MarginContainer" parent="VBoxContainer/AllContent"]
+[node name="ButtonsContainer" type="MarginContainer" parent="VBoxContainer/AllContent" unique_id=769880372]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 36
 theme_override_constants/margin_bottom = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer" unique_id=1292560506]
 layout_mode = 2
 size_flags_vertical = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=515094942]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="PreviousTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer"]
+[node name="PreviousTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1615889670]
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("11_pboy1")
 texture_pressed = ExtResource("12_umuss")
 stretch_mode = 5
 
-[node name="PlayTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer"]
+[node name="PlayTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=782247494]
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("13_umuss")
 texture_pressed = ExtResource("14_4muab")
 stretch_mode = 5
 
-[node name="PauseTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer"]
+[node name="PauseTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1540787399]
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("15_81lhg")
 texture_pressed = ExtResource("16_b6q8b")
 stretch_mode = 5
 
-[node name="StopTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer"]
+[node name="StopTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=2018708649]
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("17_6nk5l")
 texture_pressed = ExtResource("18_b7f5n")
 stretch_mode = 5
 
-[node name="NextTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer"]
+[node name="NextTrackButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer" unique_id=1437145953]
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("19_0xpbf")
 texture_pressed = ExtResource("20_wsc06")
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer"]
+[node name="HBoxContainer2" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=837307696]
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_right = 2
 
-[node name="LoadTracksButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer2"]
+[node name="LoadTracksButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/HBoxContainer2" unique_id=312073732]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
@@ -383,24 +390,24 @@ texture_normal = ExtResource("21_b7f5n")
 texture_pressed = ExtResource("22_0xpbf")
 stretch_mode = 5
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer" unique_id=1689469951]
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/margin_top = 1
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer" unique_id=1719983216]
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/separation = 0
 
-[node name="ShuffleModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3"]
+[node name="ShuffleModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3" unique_id=909445564]
 layout_mode = 2
 size_flags_vertical = 0
 toggle_mode = true
 texture_normal = ExtResource("26_b8aew")
 texture_pressed = ExtResource("27_jkbgf")
 
-[node name="RepeatModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3"]
+[node name="RepeatModeButton" type="TextureButton" parent="VBoxContainer/AllContent/ButtonsContainer/HBoxContainer/MarginContainer/HBoxContainer3" unique_id=1278274446]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -408,7 +415,7 @@ toggle_mode = true
 texture_normal = ExtResource("28_bgj4f")
 texture_pressed = ExtResource("29_oo7n4")
 
-[node name="DraggableHitbox" type="Control" parent="."]
+[node name="DraggableHitbox" type="Control" parent="." unique_id=637042024]
 custom_minimum_size = Vector2(0, 14.17)
 layout_mode = 2
 size_flags_vertical = 0

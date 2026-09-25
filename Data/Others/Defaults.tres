@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://bsacd6apsccmu"]
+[gd_resource type="Theme" format=3 uid="uid://bsacd6apsccmu"]
 
 [ext_resource type="Texture2D" uid="uid://brggxbdwytbbw" path="res://Data/SkinResources/VScrollbarGrabber.tres" id="1_yykv4"]
 [ext_resource type="Texture2D" uid="uid://ea7rnr0h0hi1" path="res://Data/SkinResources/VScrollbarGrabberHighlight.tres" id="2_ihcc3"]

@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.5.1">
+<Project Sdk="Godot.NET.Sdk/4.7.2">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -7,4 +7,19 @@
   <ItemGroup>
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
   </ItemGroup>
+  <!-- IDE0130 measures namespaces from Src; MSBuild keeps the actual project directory. -->
+  <Target Name="GenerateNamespaceRootConfig" BeforeTargets="GenerateMSBuildEditorConfigFile" DependsOnTargets="PrepareForBuild">
+    <PropertyGroup>
+      <NamespaceRootConfig>$(IntermediateOutputPath)$(MSBuildProjectName).NamespaceRoot.globalconfig</NamespaceRootConfig>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(NamespaceRootConfig)"
+                      Lines="is_global = true;global_level = 200;build_property.ProjectDir = $(MSBuildProjectDirectory)/Src/;build_property.RootNamespace = $(RootNamespace)"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true"
+                      Encoding="UTF-8" />
+    <ItemGroup>
+      <EditorConfigFiles Include="$(NamespaceRootConfig)" />
+      <FileWrites Include="$(NamespaceRootConfig)" />
+    </ItemGroup>
+  </Target>
 </Project>
