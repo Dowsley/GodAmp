@@ -16,7 +16,7 @@ public sealed class SkinArchive
     private readonly Dictionary<string, Image> _images = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<SkinCursorRole, SkinCursor> _cursors = [];
 
-    /// <summary>Gets supported decoded cursors; omitted or invalid assets use system defaults.</summary>
+    /// <summary>Gets supported decoded cursors; omitted or invalid assets use built-in defaults.</summary>
     public IReadOnlyDictionary<SkinCursorRole, SkinCursor> Cursors => _cursors;
 
     /// <summary>Gets decoded sheets keyed by case-insensitive filenames without extensions.</summary>
@@ -87,7 +87,7 @@ public sealed class SkinArchive
                 if (decoded != null)
                     skin._cursors.Add(role, decoded);
                 else
-                    GD.PushWarning($"Using the system cursor for unsupported or invalid skin asset: {name}");
+                    GD.PushWarning($"Using the built-in cursor for unsupported or invalid skin asset: {name}");
                 continue;
             }
             if (metadata)

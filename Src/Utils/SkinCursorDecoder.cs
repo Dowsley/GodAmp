@@ -12,14 +12,17 @@ public static class SkinCursorDecoder
     private const int DirectoryEntrySize = 16;
     private const int BitmapHeaderSize = 40;
     private const int MaximumDimension = 256;
+    private const int IconDirectoryType = 1;
+    private const int CursorDirectoryType = 2;
 
-    /// <summary>Reads the first supported CUR directory image, including its transparency mask.</summary>
-    /// <param name="bytes">Complete CUR file contents.</param>
+    /// <summary>Reads the first supported cursor image, accepting CUR and icon-typed directories.</summary>
+    /// <param name="bytes">Complete skin cursor file contents, interpreted with cursor hotspot semantics.</param>
     /// <returns>A decoded cursor, or null for corrupt, animated, or unsupported data.</returns>
     public static SkinCursor? Decode(byte[] bytes)
     {
         ReadOnlySpan<byte> data = bytes;
-        if (data.Length < DirectoryHeaderSize || U16(data, 0) != 0 || U16(data, 2) != 2)
+        if (data.Length < DirectoryHeaderSize || U16(data, 0) != 0 ||
+            U16(data, 2) is not (IconDirectoryType or CursorDirectoryType))
             return null;
         int count = U16(data, 4);
         int directoryEnd = DirectoryHeaderSize + count * DirectoryEntrySize;
@@ -30,6 +33,7 @@ public static class SkinCursorDecoder
             int entry = DirectoryHeaderSize + i * DirectoryEntrySize;
             int width = data[entry] == 0 ? MaximumDimension : data[entry];
             int height = data[entry + 1] == 0 ? MaximumDimension : data[entry + 1];
+            /* Cursor loading interprets these fields as hotspots even with an ICO directory type. */
             var hotspot = new Vector2I(U16(data, entry + 4), U16(data, entry + 6));
             uint length = U32(data, entry + 8), offset = U32(data, entry + 12);
             if (hotspot.X >= width || hotspot.Y >= height || offset < directoryEnd ||

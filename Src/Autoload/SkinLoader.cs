@@ -15,6 +15,7 @@ public partial class SkinLoader : Node
     public static SkinLoader Instance { get; private set; } = null!;
 
     private const string SkinResourcesPath = "res://Data/SkinResources/";
+    private const string DefaultCursorsPath = "res://Data/Cursors/";
     private const string DefaultArtworkPath = "res://Assets/Winamp/Raw/";
     private const string BitmapFontPath = DefaultArtworkPath + "TEXT.png";
     private const string BitmapNumbersFontPath = DefaultArtworkPath + "NUMBERS.png";
@@ -46,7 +47,7 @@ public partial class SkinLoader : Node
     public GenericTitleFont TitleFont => _activeState.TitleFont;
     /// <summary>Gets the active classic window contours in unscaled skin coordinates.</summary>
     public SkinRegions Regions => _activeState.Regions;
-    /// <summary>Gets a decoded static cursor for the selected skin, or null for system fallback.</summary>
+    /// <summary>Gets the selected skin cursor or its built-in fallback.</summary>
     /// <param name="role">Classic control or window cursor role.</param>
     /// <returns>The selected cursor asset without inheriting assets from another skin.</returns>
     public SkinCursor? GetCursor(SkinCursorRole role) => _activeState.Cursors.GetValueOrDefault(role);
@@ -128,8 +129,25 @@ public partial class SkinLoader : Node
         _defaultState = new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style),
             VisualizationPalette.Default, new GenericTitleFont(_defaultImages["GEN"]), SkinRegions.Default,
-            new Dictionary<SkinCursorRole, SkinCursor>());
+            LoadDefaultCursors());
         _activeState = _defaultState;
+    }
+
+    /// <summary>Loads Inspector-defined built-in cursor assets and their role mappings.</summary>
+    /// <returns>Original-size cursors indexed by their classic skin roles.</returns>
+    private static Dictionary<SkinCursorRole, SkinCursor> LoadDefaultCursors()
+    {
+        var cursors = new Dictionary<SkinCursorRole, SkinCursor>();
+        foreach (string fileName in ResourceLoader.ListDirectory(DefaultCursorsPath).Order(StringComparer.Ordinal))
+        {
+            if (!fileName.EndsWith(".tres", StringComparison.OrdinalIgnoreCase))
+                continue;
+            var asset = GD.Load<SkinCursorAsset>(DefaultCursorsPath + fileName);
+            SkinCursor cursor = asset.CreateCursor();
+            foreach (SkinCursorRole role in asset.Roles)
+                cursors.Add(role, cursor);
+        }
+        return cursors;
     }
 
     /// <summary>Validates and prepares a skin before applying it and saving its selection.</summary>
@@ -173,9 +191,12 @@ public partial class SkinLoader : Node
         bool extended = archive.Images.TryGetValue("NUMS_EX", out Image? numbers);
         numbers ??= archive.Images.GetValueOrDefault("NUMBERS", _defaultImages["NUMBERS"]);
         Image genericArtwork = textures["GEN"].GetImage();
+        var cursors = new Dictionary<SkinCursorRole, SkinCursor>(_defaultState.Cursors);
+        foreach (var (role, cursor) in archive.Cursors)
+            cursors[role] = cursor;
         return new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle),
-            archive.Palette, new GenericTitleFont(genericArtwork), archive.Regions, archive.Cursors);
+            archive.Palette, new GenericTitleFont(genericArtwork), archive.Regions, cursors);
     }
 
     /// <summary>Resolves an installed playlist font at the current UI rasterization scale.</summary>

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkinCursorAsset" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Src/Data/SkinCursorAsset.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Assets/Winamp/Cursors/DANGER1.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+Texture = ExtResource("2")
+Hotspot = Vector2i(0, 0)
+Roles = Array[int]([0, 3, 4, 6, 10, 11, 12, 17, 19, 23])

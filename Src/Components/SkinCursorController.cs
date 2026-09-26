@@ -8,24 +8,21 @@ namespace GodAmp.Components;
 /// <summary>Selects cached native skin cursors from scene-defined control regions.</summary>
 public partial class SkinCursorController : Node
 {
-    /* Godot's native cursor image limit and the application's supported UI zoom range. */
+    /* Godot's native cursor image limit. */
     private const int MaximumCursorDimension = 256;
-    private const int MaximumZoom = 4;
     /// <summary>Cursor used outside explicitly mapped controls in this window.</summary>
     [Export] public SkinCursorRole DefaultRole { get; set; }
     /// <summary>Control mappings in ascending priority; the last matching visible rectangle wins.</summary>
     [Export] public Godot.Collections.Array<SkinCursorBinding> Bindings { get; set; } = [];
 
     private sealed record Target(Control Control, SkinCursorRole Role);
-    private sealed record ScaledCursor(Texture2D Texture, Vector2 Hotspot);
     private readonly List<Target> _targets = [];
-    private readonly Dictionary<(SkinCursor Cursor, int Zoom), ScaledCursor> _cache = [];
+    private readonly Dictionary<SkinCursor, Texture2D> _cache = [];
     private static readonly HashSet<Window> _systemCursorWindows = [];
     private static SkinCursorController? _owner;
     private Window _window = null!;
     private SkinCursor? _selectedCursor;
     private Input.CursorShape _selectedShape;
-    private int _selectedZoom;
     private bool _inside;
     private bool _refreshPending;
 
@@ -132,8 +129,8 @@ public partial class SkinCursorController : Node
         RequestRefresh();
     }
 
-    /// <summary>Refreshes the selected image and hotspot after a UI zoom change.</summary>
-    /// <param name="multiplier">Requested zoom; the settings manager holds the applied value.</param>
+    /// <summary>Reevaluates the hovered control after UI zoom changes its hit rectangle.</summary>
+    /// <param name="multiplier">UI zoom multiplier; cursor artwork retains its original dimensions.</param>
     private void OnZoomChanged(int multiplier) => RequestRefresh();
 
     /// <summary>Resolves the cursor after Godot has processed GUI hover and cursor-shape changes.</summary>
@@ -145,32 +142,28 @@ public partial class SkinCursorController : Node
         Callable.From(Refresh).CallDeferred();
     }
 
-    /// <summary>Uploads cursor artwork only when its owner, image, scale, or native shape slot changes.</summary>
+    /// <summary>Applies original-size cursor artwork and hotspots when ownership, image, or shape changes.</summary>
     private void Refresh()
     {
         _refreshPending = false;
         if (!IsInsideTree() || !_inside || _systemCursorWindows.Count > 0)
             return;
         SkinCursor? cursor = SkinLoader.Instance.GetCursor(ResolveRole(GetViewport().GetMousePosition()));
-        int zoom = Mathf.Clamp(SettingsManager.Instance.GetZoomMode(), 1, MaximumZoom);
         Input.CursorShape shape = Input.GetCurrentCursorShape();
-        if (_owner == this && _selectedCursor == cursor && _selectedZoom == zoom && _selectedShape == shape)
+        if (_owner == this && _selectedCursor == cursor && _selectedShape == shape)
             return;
         _owner?.Clear();
-        if (cursor == null || cursor.Image.GetWidth() * zoom > MaximumCursorDimension ||
-            cursor.Image.GetHeight() * zoom > MaximumCursorDimension)
+        if (cursor == null || cursor.Image.GetWidth() > MaximumCursorDimension ||
+            cursor.Image.GetHeight() > MaximumCursorDimension)
             return;
-        if (!_cache.TryGetValue((cursor, zoom), out ScaledCursor? scaled))
+        if (!_cache.TryGetValue(cursor, out Texture2D? texture))
         {
-            using var image = (Image)cursor.Image.Duplicate();
-            image.Resize(image.GetWidth() * zoom, image.GetHeight() * zoom, Image.Interpolation.Nearest);
-            scaled = new ScaledCursor(ImageTexture.CreateFromImage(image), (Vector2)(cursor.Hotspot * zoom));
-            _cache.Add((cursor, zoom), scaled);
+            texture = ImageTexture.CreateFromImage(cursor.Image);
+            _cache.Add(cursor, texture);
         }
-        Input.SetCustomMouseCursor(scaled.Texture, shape, scaled.Hotspot);
+        Input.SetCustomMouseCursor(texture, shape, cursor.Hotspot);
         _owner = this;
         _selectedCursor = cursor;
-        _selectedZoom = zoom;
         _selectedShape = shape;
     }
 
