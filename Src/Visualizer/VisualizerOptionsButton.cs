@@ -61,7 +61,8 @@ public partial class VisualizerOptionsButton : MenuButton
             subId++;
         }
 
-        _vizSubmenu.SetItemChecked(0, true);
+        if (_vizSubmenu.ItemCount > 0)
+            _vizSubmenu.SetItemChecked(0, true);
         _vizSubmenu.IndexPressed += OnVizMenuItemPressed;
         _popup.AddSubmenuNodeItem("Visualizations", _vizSubmenu);
     }

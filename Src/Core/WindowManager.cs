@@ -4,6 +4,7 @@ using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Data;
+using GodAmp.Utils;
 using GodAmp.Controls.Equalizer;
 using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
@@ -41,6 +42,9 @@ public partial class WindowManager : Node
     private Vector2I _dragStartPosition;
     private Vector2I _lastDragPosition;
     private bool _movingDragGroup;
+    private sealed record ResizeLayout(Window[] Windows, Rect2I[] Bounds, int Anchor);
+    private ResizeLayout? _resizeLayout;
+    private WindowPanelContainer? _resizingPanel;
 
     /// <inheritdoc />
     public override void _Ready()
@@ -75,6 +79,7 @@ public partial class WindowManager : Node
         ApplyWindowGeometry(multiplier);
         ScaleWindowPositions(origin, multiplier);
         SettingsManager.Instance.SetZoomMode(multiplier);
+        DetectAndRestoreGlueRelationships();
     }
 
     /// <summary>Gets a panel's expanded layout size independently of display zoom.</summary>
@@ -89,12 +94,14 @@ public partial class WindowManager : Node
     {
         if (!_logicalSizes.TryGetValue(panel, out Vector2I expandedSize) || (shaded && !panel.SupportsWindowshade))
             return;
-        Vector2I position = panel.WindowRef.Position;
-        DetachFromAllWindows(panel.WindowRef);
+        if (panel.IsWindowShaded == shaded)
+            return;
+        ResizeLayout layout = CaptureResizeLayout(panel);
         panel.SetWindowshadePresentation(shaded);
         ApplyPanelGeometry(panel, expandedSize, SettingsManager.Instance.GetZoomMode());
-        panel.WindowRef.Position = position;
-        GlueToAllTouchingWindows(panel.WindowRef);
+        ApplyResizeLayout(layout, panel.WindowRef.Size);
+        SaveWindowStates();
+        SettingsManager.Instance.SaveAllSettings();
     }
 
     /// <summary>Updates a resizable panel's logical size without changing the global zoom.</summary>
@@ -112,10 +119,10 @@ public partial class WindowManager : Node
         Vector2I normalized = NormalizeLogicalSize(panel, size);
         if (_logicalSizes[panel] == normalized)
             return;
+        ResizeLayout layout = _resizingPanel == panel && _resizeLayout != null ? _resizeLayout : CaptureResizeLayout(panel);
         _logicalSizes[panel] = normalized;
-        Vector2I position = panel.WindowRef.Position;
         ApplyPanelGeometry(panel, _logicalSizes[panel], SettingsManager.Instance.GetZoomMode());
-        panel.WindowRef.Position = position;
+        ApplyResizeLayout(layout, panel.WindowRef.Size);
     }
 
     /// <summary>Clamps a requested layout to the scene minimum and snaps to its resize increments.</summary>
@@ -130,16 +137,49 @@ public partial class WindowManager : Node
         return minimum + new Vector2I(extra.X / step.X * step.X, extra.Y / step.Y * step.Y);
     }
 
-    /// <summary>Releases stale docking contacts before the panel changes its outer bounds.</summary>
+    /// <summary>Captures edge contacts once so a gesture cannot pick up new neighbors while resizing.</summary>
     /// <param name="panel">Panel whose scene-owned handle begins resizing.</param>
-    private void OnWindowResizeStarted(WindowPanelContainer panel) => DetachFromAllWindows(panel.WindowRef);
+    private void OnWindowResizeStarted(WindowPanelContainer panel)
+    {
+        _resizingPanel = panel;
+        _resizeLayout = CaptureResizeLayout(panel);
+    }
+
+    /// <summary>Captures visible window rectangles in deterministic application order.</summary>
+    /// <param name="panel">Anchored window whose dimensions will change.</param>
+    /// <returns>Native bounds and the anchored window's index; hidden windows resize independently.</returns>
+    private ResizeLayout CaptureResizeLayout(WindowPanelContainer panel)
+    {
+        Window[] windows = panel.WindowRef.Visible
+            ? [.. _allWindowsRefs.Where(window => window.Visible)] : [panel.WindowRef];
+        return new ResizeLayout(windows, [.. windows.Select(window => new Rect2I(window.Position, window.Size))],
+            Array.IndexOf(windows, panel.WindowRef));
+    }
+
+    /// <summary>Moves each affected neighbor once and rebuilds contacts from the resulting geometry.</summary>
+    /// <param name="layout">Snapshot preceding the mode change or resize gesture.</param>
+    /// <param name="size">Actual native dimensions of the resized window.</param>
+    private void ApplyResizeLayout(ResizeLayout layout, Vector2I size)
+    {
+        Vector2I[] positions = WindowDockLayout.Resize(layout.Bounds, layout.Anchor, size,
+            GlueDistance * SettingsManager.Instance.GetZoomMode());
+        for (int i = 0; i < layout.Windows.Length; i++)
+            if (layout.Windows[i].Position != positions[i])
+                layout.Windows[i].Position = positions[i];
+        DetectAndRestoreGlueRelationships();
+    }
 
     /// <summary>Rebuilds contacts and records logical sizes when the gesture ends.</summary>
     /// <param name="panel">Panel whose resize interaction has completed.</param>
     private void OnWindowResizeFinished(WindowPanelContainer panel)
     {
-        GlueToAllTouchingWindows(panel.WindowRef);
+        if (_resizingPanel != panel)
+            return;
+        _resizeLayout = null;
+        _resizingPanel = null;
+        DetectAndRestoreGlueRelationships();
         SaveWindowStates();
+        SettingsManager.Instance.SaveAllSettings();
     }
 
     /// <summary>Captures offsets before native resizing can reposition windows to fit the display.</summary>
@@ -362,6 +402,7 @@ public partial class WindowManager : Node
     private void OnWindowDragStart(WindowPanelContainer draggedContainerRef)
     {
         RestoreDragTransients();
+        DetectAndRestoreGlueRelationships();
         _windowContainerBeingDragged = draggedContainerRef;
 
         if (draggedContainerRef.WindowRef != _masterPanelWindow)
@@ -427,8 +468,9 @@ public partial class WindowManager : Node
 
     private void GlueToAllTouchingWindows(Window window)
     {
+        if (!window.Visible)
+            return;
         int snapThreshold = GlueDistance * SettingsManager.Instance.GetZoomMode();
-        var touchingWindows = new List<Window>();
         foreach (var container in _allContainerRefs)
         {
             var otherWindow = container.WindowRef;
@@ -437,33 +479,11 @@ public partial class WindowManager : Node
 
             bool touching = AreWindowsTouching(window, otherWindow, snapThreshold);
             if (touching)
-                touchingWindows.Add(otherWindow);
-        }
-
-        if (touchingWindows.Count > 0)
-        {
-            var allWindowsToGlueTo = GetAllWindowsInGroups(touchingWindows);
-
-            foreach (var w in allWindowsToGlueTo)
             {
-                _gluedWindows[window].Add(w);
-                _gluedWindows[w].Add(window);
+                _gluedWindows[window].Add(otherWindow);
+                _gluedWindows[otherWindow].Add(window);
             }
         }
-    }
-
-    private HashSet<Window> GetAllWindowsInGroups(List<Window> touchingWindows)
-    {
-        var result = new HashSet<Window>();
-
-        foreach (var w in touchingWindows
-                     .Select(GetConnectedGroup)
-                     .SelectMany(group => group))
-        {
-            result.Add(w);
-        }
-
-        return result;
     }
 
     private HashSet<Window> GetConnectedGroup(Window startWindow)
@@ -488,38 +508,20 @@ public partial class WindowManager : Node
         return group;
     }
 
-    private static bool AreWindowsTouching(Window w1, Window w2, int threshold)
-    {
-        var pos1 = w1.Position;
-        var size1 = w1.Size;
-        var pos2 = w2.Position;
-        var size2 = w2.Size;
+    /// <summary>Checks direct edge contacts using the same geometry as resize propagation.</summary>
+    /// <param name="w1">First native window.</param>
+    /// <param name="w2">Potential docking neighbor.</param>
+    /// <param name="threshold">Allowed edge gap in native pixels.</param>
+    /// <returns>Whether the windows share an edge contact with positive overlap.</returns>
+    private static bool AreWindowsTouching(Window w1, Window w2, int threshold) =>
+        WindowDockLayout.TryGetContact(new Rect2I(w1.Position, w1.Size), new Rect2I(w2.Position, w2.Size), threshold, out _);
 
-        bool yOverlap = !(pos1.Y + size1.Y < pos2.Y || pos1.Y > pos2.Y + size2.Y);
-        bool xOverlap = !(pos1.X + size1.X < pos2.X || pos1.X > pos2.X + size2.X);
-
-        if (yOverlap)
-        {
-            int distRightToLeft = Math.Abs(pos2.X - (pos1.X + size1.X));
-            int distLeftToRight = Math.Abs((pos2.X + size2.X) - pos1.X);
-            if (distRightToLeft <= threshold || distLeftToRight <= threshold)
-                return true;
-        }
-
-        if (xOverlap)
-        {
-            int distBottomToTop = Math.Abs(pos2.Y - (pos1.Y + size1.Y));
-            int distTopToBottom = Math.Abs((pos2.Y + size2.Y) - pos1.Y);
-            if (distBottomToTop <= threshold || distTopToBottom <= threshold)
-                return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>Records logical sizes, desktop positions, and visibility in the current settings.</summary>
+    /// <summary>Records expanded logical sizes, compact modes, desktop positions, and visibility.</summary>
     public void SaveWindowStates()
     {
+        SettingsManager.Instance.SetWindowShaded(PlayerWindow.MasterPanel, _masterPanel.IsWindowShaded);
+        SettingsManager.Instance.SetWindowShaded(PlayerWindow.Equalizer, _equalizer.IsWindowShaded);
+        SettingsManager.Instance.SetWindowShaded(PlayerWindow.Playlist, _playlist.IsWindowShaded);
         SettingsManager.Instance.SetWindowSize(PlayerWindow.Playlist, _logicalSizes[_playlist]);
         SettingsManager.Instance.SetWindowSize(PlayerWindow.Visualizer, _logicalSizes[_visualizer]);
         SettingsManager.Instance.SetWindowPosition(PlayerWindow.MasterPanel, _masterPanelWindow.Position);
@@ -544,29 +546,34 @@ public partial class WindowManager : Node
         _logicalSizes[_visualizer] = NormalizeLogicalSize(_visualizer,
             SettingsManager.Instance.GetWindowSize(PlayerWindow.Visualizer, _logicalSizes[_visualizer]));
 
+        _masterPanel.SetWindowshadePresentation(SettingsManager.Instance.GetWindowShaded(PlayerWindow.MasterPanel));
+        _equalizer.SetWindowshadePresentation(SettingsManager.Instance.GetWindowShaded(PlayerWindow.Equalizer));
+        _playlist.SetWindowshadePresentation(SettingsManager.Instance.GetWindowShaded(PlayerWindow.Playlist));
+
         ApplyWindowGeometry(zoomMultiplier);
 
         var screenSize = DisplayServer.ScreenGetSize();
         var windowSize = _masterPanelWindow.Size;
-        var totalGroupSize = new Vector2I(windowSize.X + _visualizerWindow.Size.X, windowSize.Y * 3);
+        var totalGroupSize = new Vector2I(Math.Max(windowSize.X, _playlistWindow.Size.X) + _visualizerWindow.Size.X,
+            Math.Max(windowSize.Y + _equalizerWindow.Size.Y + _playlistWindow.Size.Y, _visualizerWindow.Size.Y));
         var groupCenteredPos = (screenSize - totalGroupSize) / 2;
 
         var masterPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.MasterPanel, groupCenteredPos);
         _masterPanelWindow.Position = masterPos;
 
-        var eqPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Equalizer, groupCenteredPos + new Vector2I(0, windowSize.Y));
+        var eqPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Equalizer, masterPos + new Vector2I(0, windowSize.Y));
         _equalizerWindow.Position = eqPos;
         _equalizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Equalizer, true);
         _masterPanel.ToggleEqualizerButton.ButtonPressed = _equalizerWindow.Visible;
         _masterPanel.WinampMenuButton.SetEqualizerChecked(_equalizerWindow.Visible);
 
-        var plPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Playlist, groupCenteredPos + new Vector2I(0, windowSize.Y * 2));
+        var plPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Playlist, eqPos + new Vector2I(0, _equalizerWindow.Size.Y));
         _playlistWindow.Position = plPos;
         _playlistWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Playlist, true);
         _masterPanel.TogglePlaylistButton.ButtonPressed = _playlistWindow.Visible;
         _masterPanel.WinampMenuButton.SetPlaylistChecked(_playlistWindow.Visible);
 
-        var vizPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Visualizer, groupCenteredPos + new Vector2I(windowSize.X, 0));
+        var vizPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Visualizer, masterPos + new Vector2I(windowSize.X, 0));
         _visualizerWindow.Position = vizPos;
         _visualizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Visualizer, true);
         _masterPanel.WinampMenuButton.SetVisualizerChecked(_visualizerWindow.Visible);
@@ -598,6 +605,8 @@ public partial class WindowManager : Node
 
     private void DetectAndRestoreGlueRelationships()
     {
+        foreach (HashSet<Window> contacts in _gluedWindows.Values)
+            contacts.Clear();
         int glueThreshold = GlueDistance * SettingsManager.Instance.GetZoomMode();
         foreach (var container1 in _allContainerRefs)
         {

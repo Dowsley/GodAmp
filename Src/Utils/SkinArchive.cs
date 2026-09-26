@@ -78,9 +78,10 @@ public sealed class SkinArchive
             if (entry.Length > MaximumAssetBytes)
                 throw new InvalidDataException($"Skin asset is too large: {name}");
             using var input = entry.Open();
-            using var buffer = new MemoryStream();
-            input.CopyTo(buffer);
-            byte[] bytes = buffer.ToArray();
+            byte[] bytes = new byte[(int)entry.Length];
+            input.ReadExactly(bytes);
+            if (input.ReadByte() != -1)
+                throw new InvalidDataException($"Skin asset exceeds its declared size: {name}");
             if (cursor)
             {
                 SkinCursor? decoded = SkinCursorDecoder.Decode(bytes);
@@ -113,6 +114,10 @@ public sealed class SkinArchive
                 continue;
             }
 
+            var minimum = MinimumSizes[stem];
+            SkinImageHeader.Validate(bytes, extension, minimum, entry.FullName);
+            if (extension == ".bmp")
+                bytes = SkinImageHeader.PrepareBitmap(bytes, entry.FullName);
             var image = new Image();
             Error error = extension switch
             {
@@ -120,7 +125,6 @@ public sealed class SkinArchive
                 ".png" => image.LoadPngFromBuffer(bytes),
                 _ => image.LoadJpgFromBuffer(bytes)
             };
-            var minimum = MinimumSizes[stem];
             if (error != Error.Ok || image.IsEmpty() || image.GetWidth() < minimum.X || image.GetHeight() < minimum.Y)
                 throw new InvalidDataException($"Invalid skin image {name}; expected at least {minimum.X}x{minimum.Y} pixels.");
             image.Convert(Image.Format.Rgba8);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using GodAmp.Data;
 using Godot;
@@ -9,7 +10,7 @@ namespace GodAmp.Visualizer
     {
         [Export(PropertyHint.Dir)] private string _strategyTypeDirectory = null!;
 
-        public Dictionary<StringName, VisualizerStrategyType> StrategyTypeMap = new();
+        public Dictionary<StringName, VisualizerStrategyType> StrategyTypeMap = [];
 
         private SubViewportContainer? _containerA;
         private SubViewportContainer? _containerB;
@@ -40,7 +41,7 @@ namespace GodAmp.Visualizer
 
         public override void _Ready()
         {
-            LoadStrategiesFromDisk();
+            LoadStrategies();
             InitializeViewports();
 
             if (StrategyTypeMap.Count > 0 && _viewportA is { } vp)
@@ -194,10 +195,12 @@ namespace GodAmp.Visualizer
             RefreshStrategy(newSize);
         }
 
-        private void LoadStrategiesFromDisk()
+        /// <summary>Discovers strategy resources using paths that resolve in both the editor and exported packs.</summary>
+        private void LoadStrategies()
         {
-            StrategyTypeMap = DirAccess.GetFilesAt(_strategyTypeDirectory)
-                .Where(f => f.EndsWith(".tres") || f.EndsWith(".res"))
+            StrategyTypeMap = ResourceLoader.ListDirectory(_strategyTypeDirectory)
+                .Where(f => f.EndsWith(".tres", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
+                .Order(StringComparer.Ordinal)
                 .Select(f => GD.Load<VisualizerStrategyType>(_strategyTypeDirectory.PathJoin(f)))
                 .Where(r => r != null)
                 .ToDictionary(s => s.Id);

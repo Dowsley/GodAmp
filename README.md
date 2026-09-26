@@ -1,6 +1,7 @@
 # GodAmp
 
-A reimplementation of Winamp 2.9 in Godot, with full cross-platform support.
+A reimplementation of Winamp 2.9 in Godot with C#. Cross-platform behavior uses
+Godot's engine APIs; development verification runs locally on macOS.
 
 I made this as a [submission](https://neptune-skies.itch.io/godamp) for the [Tool Jam 5](https://itch.io/jam/the-tool-jam-5), since I've always wanted to make a music player with visualizers.
 
@@ -30,7 +31,44 @@ As far as I know, they are royalty/copyright-free, but please do let me know if 
    - Adjust volume or ear balancing on top sliders 
    - Click the "Load" (up arrow) button to load your own tracks (supports mp3, wav, ogg). It will load into a new playlist.
 3. Double click any track on the playlist to start playing it.
-4. **Click "2x" to scale the UI**
+4. Choose 1x through 4x scaling from the main menu.
+5. Collapse the main player, equalizer, or playlist with its titlebar button.
+   Resize the playlist and visualizer from their lower-right corners. Window
+   modes, positions, and expanded sizes are saved between sessions.
+
+### Classic skins
+
+Choose a classic `.wsz` skin from the main menu. Installed skins live in the
+`Skins` directory beneath GodAmp's application-data directory. `GODAMP_DATA_DIR`
+can override that directory for isolated settings and skin collections.
+
+Classic artwork, playlist colors/fonts, main-panel displays, compact-window
+artwork, and supported static cursors update together. Missing assets use built-in
+defaults; rejected archives preserve the selected skin. Modern `.wal` skins are
+not supported.
+
+Archive asset names are case-insensitive and accept nested paths with either
+separator. Shallower entries take priority, followed by BMP artwork, then ordinal
+archive-path order. Identical duplicate paths use the first ZIP entry. A selected
+invalid image rejects the archive instead of trying lower-priority duplicates.
+
+Artwork accepts PNG, JPEG, and bottom-up uncompressed BMP at 1, 4, 8, 24, or 32
+bits per pixel. Assets are limited to 16 MiB of encoded data and images to
+4,194,304 pixels before decoding. Invalid metadata fields use their documented
+defaults. Playlist fonts prefer the skin's installed family, then Arial or
+Helvetica, then Godot's fallback font.
+
+Window cutouts use Godot's native input support. Regions that cannot be represented
+as one exact outline, including remaining holes and disconnected islands, use a
+rectangular fallback. Wayland also uses rectangular fallback. Static cursors keep
+their original size independently of UI zoom; animated, PNG-encoded, and
+destination-inverting cursors use built-in defaults.
+
+Local physical dragging and mixed-density monitor behavior are not fully verified.
+On the tested Retina macOS display, odd native dimensions at
+1x/3x can round down by one pixel. A locally signed macOS release build passes
+startup and shutdown with both Compatibility and Metal/Forward+ rendering.
+Packaged interaction checks remain open.
 
 ### Equalizer
 1. Amplifier (PreAmp)
@@ -48,6 +86,6 @@ As far as I know, they are royalty/copyright-free, but please do let me know if 
 - [X] Functional playlists
 - [X] Multiple windows
 - [ ] Full theme support
-- [ ] Working frequency spline panels
+- [X] EQ response graph and main-panel spectrum/oscilloscope displays
 - [ ] More visualizers (and flexibility for them)
 - [ ] Integration with special keys

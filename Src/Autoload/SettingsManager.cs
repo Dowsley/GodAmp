@@ -1,5 +1,6 @@
 using Godot;
 using GodAmp.Data;
+using System.Globalization;
 
 namespace GodAmp.Autoload;
 
@@ -23,6 +24,7 @@ public partial class SettingsManager : Node
     private const string WindowPositionKeyFormat = "window_{0}_position";
     private const string WindowVisibleKeyFormat = "window_{0}_visible";
     private const string WindowSizeKeyFormat = "window_{0}_size";
+    private const string WindowShadedKeyFormat = "window_{0}_shaded";
 
     [Signal] public delegate void SettingChangedEventHandler(string key, Variant value);
     [Signal] public delegate void LastPlaylistPathChangedEventHandler(string path);
@@ -189,17 +191,19 @@ public partial class SettingsManager : Node
 
     /// <summary>Reads a window's saved desktop position.</summary>
     /// <param name="window">Player window whose position is requested.</param>
-    /// <param name="defaultPos">Desktop position used when no setting exists.</param>
+    /// <param name="defaultPos">Desktop position used when the setting is missing or malformed.</param>
     /// <returns>Saved desktop coordinates or the supplied default.</returns>
     public Vector2I GetWindowPosition(PlayerWindow window, Vector2I defaultPos)
     {
         string key = GetWindowKey(window, WindowPositionKeyFormat);
-        string value = (string)GetSetting(key, "");
-        if (string.IsNullOrEmpty(value))
+        Variant value = GetSetting(key);
+        if (value.VariantType != Variant.Type.String)
             return defaultPos;
-
-        var parts = value.Split(',');
-        return new Vector2I(int.Parse(parts[0]), int.Parse(parts[1]));
+        string[] parts = value.AsString().Split(',');
+        return parts.Length == 2 &&
+            int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int x) &&
+            int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int y)
+            ? new Vector2I(x, y) : defaultPos;
     }
 
     /// <summary>Stores a window's desktop position.</summary>
@@ -208,7 +212,7 @@ public partial class SettingsManager : Node
     public void SetWindowPosition(PlayerWindow window, Vector2I position)
     {
         string key = GetWindowKey(window, WindowPositionKeyFormat);
-        SetSetting(key, $"{position.X},{position.Y}");
+        SetSetting(key, string.Create(CultureInfo.InvariantCulture, $"{position.X},{position.Y}"));
     }
 
     /// <summary>Reads positive logical window dimensions, falling back for missing or malformed settings.</summary>
@@ -238,7 +242,8 @@ public partial class SettingsManager : Node
     public bool GetWindowVisible(PlayerWindow window, bool defaultVisible)
     {
         string key = GetWindowKey(window, WindowVisibleKeyFormat);
-        return (bool)GetSetting(key, defaultVisible);
+        Variant value = GetSetting(key);
+        return value.VariantType == Variant.Type.Bool ? value.AsBool() : defaultVisible;
     }
 
     /// <summary>Stores whether a player window is visible.</summary>
@@ -249,6 +254,21 @@ public partial class SettingsManager : Node
         string key = GetWindowKey(window, WindowVisibleKeyFormat);
         SetSetting(key, visible);
     }
+
+    /// <summary>Reads a saved compact presentation, using expanded mode for missing or malformed values.</summary>
+    /// <param name="window">Player window whose presentation is requested.</param>
+    /// <returns>True only when a valid saved boolean selects compact mode.</returns>
+    public bool GetWindowShaded(PlayerWindow window)
+    {
+        Variant value = GetSetting(GetWindowKey(window, WindowShadedKeyFormat));
+        return value.VariantType == Variant.Type.Bool && value.AsBool();
+    }
+
+    /// <summary>Stores a window's compact presentation independently of its expanded dimensions.</summary>
+    /// <param name="window">Player window to update.</param>
+    /// <param name="shaded">Whether the compact presentation is active.</param>
+    public void SetWindowShaded(PlayerWindow window, bool shaded) =>
+        SetSetting(GetWindowKey(window, WindowShadedKeyFormat), shaded);
 
     /// <summary>Maps typed window identities to stable names in the settings file.</summary>
     /// <param name="window">Player window represented by the key.</param>

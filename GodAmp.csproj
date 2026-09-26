@@ -7,6 +7,9 @@
   <ItemGroup>
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
   </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'ExportDebug' or '$(Configuration)' == 'ExportRelease'">
+    <Compile Remove="Tests/**/*.cs" />
+  </ItemGroup>
   <!-- IDE0130 measures namespaces from Src; MSBuild keeps the actual project directory. -->
   <Target Name="GenerateNamespaceRootConfig" BeforeTargets="GenerateMSBuildEditorConfigFile" DependsOnTargets="PrepareForBuild">
     <PropertyGroup>
