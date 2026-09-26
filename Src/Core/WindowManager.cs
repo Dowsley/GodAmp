@@ -95,11 +95,37 @@ public partial class WindowManager : Node
             throw new ArgumentException("Only playlist and visualizer panels support resizing.", nameof(panel));
         if (size.X <= 0 || size.Y <= 0)
             throw new ArgumentException("A positive size is required for a resizable panel.", nameof(size));
-        Vector2 minimum = panel.GetCombinedMinimumSize().Ceil();
-        _logicalSizes[panel] = new Vector2I(Math.Max(size.X, (int)minimum.X), Math.Max(size.Y, (int)minimum.Y));
+        Vector2I normalized = NormalizeLogicalSize(panel, size);
+        if (_logicalSizes[panel] == normalized)
+            return;
+        _logicalSizes[panel] = normalized;
         Vector2I position = panel.WindowRef.Position;
         ApplyPanelGeometry(panel, _logicalSizes[panel], SettingsManager.Instance.GetZoomMode());
         panel.WindowRef.Position = position;
+    }
+
+    /// <summary>Clamps a requested layout to the scene minimum and snaps to its resize increments.</summary>
+    /// <param name="panel">Panel defining minimum dimensions and increments.</param>
+    /// <param name="size">Requested dimensions in logical pixels.</param>
+    /// <returns>Dimensions on the scene's resize grid.</returns>
+    private static Vector2I NormalizeLogicalSize(WindowPanelContainer panel, Vector2I size)
+    {
+        Vector2I minimum = (Vector2I)panel.GetCombinedMinimumSize().Ceil();
+        Vector2I step = new(Math.Max(1, panel.ResizeStep.X), Math.Max(1, panel.ResizeStep.Y));
+        Vector2I extra = new(Math.Max(0, size.X - minimum.X), Math.Max(0, size.Y - minimum.Y));
+        return minimum + new Vector2I(extra.X / step.X * step.X, extra.Y / step.Y * step.Y);
+    }
+
+    /// <summary>Releases stale docking contacts before the panel changes its outer bounds.</summary>
+    /// <param name="panel">Panel whose scene-owned handle begins resizing.</param>
+    private void OnWindowResizeStarted(WindowPanelContainer panel) => DetachFromAllWindows(panel.WindowRef);
+
+    /// <summary>Rebuilds contacts and records logical sizes when the gesture ends.</summary>
+    /// <param name="panel">Panel whose resize interaction has completed.</param>
+    private void OnWindowResizeFinished(WindowPanelContainer panel)
+    {
+        GlueToAllTouchingWindows(panel.WindowRef);
+        SaveWindowStates();
     }
 
     /// <summary>Captures offsets before native resizing can reposition windows to fit the display.</summary>
@@ -477,8 +503,11 @@ public partial class WindowManager : Node
         return false;
     }
 
+    /// <summary>Records logical sizes, desktop positions, and visibility in the current settings.</summary>
     public void SaveWindowStates()
     {
+        SettingsManager.Instance.SetWindowSize(PlaylistWindowName, _logicalSizes[_playlist]);
+        SettingsManager.Instance.SetWindowSize(VisualizerWindowName, _logicalSizes[_visualizer]);
         SettingsManager.Instance.SetWindowPosition(MasterPanelWindowName, _masterPanelWindow.Position);
 
         SettingsManager.Instance.SetWindowPosition(EqualizerWindowName, _equalizerWindow.Position);
@@ -495,6 +524,11 @@ public partial class WindowManager : Node
     private void RestoreWindowStates()
     {
         int zoomMultiplier = SettingsManager.Instance.GetZoomMode();
+
+        _logicalSizes[_playlist] = NormalizeLogicalSize(_playlist,
+            SettingsManager.Instance.GetWindowSize(PlaylistWindowName, _logicalSizes[_playlist]));
+        _logicalSizes[_visualizer] = NormalizeLogicalSize(_visualizer,
+            SettingsManager.Instance.GetWindowSize(VisualizerWindowName, _logicalSizes[_visualizer]));
 
         ApplyWindowGeometry(zoomMultiplier);
 

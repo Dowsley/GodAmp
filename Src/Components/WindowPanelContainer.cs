@@ -21,6 +21,8 @@ public partial class WindowPanelContainer : PanelContainer
     [Export] public Godot.Collections.Array<AtlasTexture> TitlebarTextures { get; set; } = [];
     /// <summary>Vertical sheet offset from active to inactive titlebar artwork.</summary>
     [Export] public int InactiveTitlebarOffset { get; set; } = 15;
+    /// <summary>Resize increments in logical skin pixels, applied from the scene's minimum size.</summary>
+    [Export] public Vector2I ResizeStep { get; set; } = Vector2I.One;
 
     private Rect2[] _activeTitlebarRegions = [];
 

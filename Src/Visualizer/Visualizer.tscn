@@ -1,7 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://6yi01spga8fj"]
+[gd_scene load_steps=23 format=3 uid="uid://6yi01spga8fj"]
 
 [ext_resource type="Script" uid="uid://0ol6j2gpxf0x" path="res://Src/Visualizer/Visualizer.cs" id="1_6dse3"]
 [ext_resource type="Script" path="res://Src/Components/GenericWindowTitle.cs" id="title_font"]
+[ext_resource type="PackedScene" path="res://Src/Components/WindowResizeHandle.tscn" id="resize_handle"]
 [ext_resource type="Texture2D" path="res://Assets/Winamp/Raw/GEN.png" id="title_sheet"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
 [ext_resource type="Texture2D" uid="uid://6qyxmjpsp5gu" path="res://Data/SkinResources/VisualizerTopLeftCorner.tres" id="2_7wv81"]
@@ -23,6 +24,7 @@
 [ext_resource type="Texture2D" uid="uid://1o265qd5jybc" path="res://Data/SkinResources/VisualizerBottomRightCorner.tres" id="16_700eo"]
 
 [node name="Visualizer" type="PanelContainer" node_paths=PackedStringArray("_audioVisualizer", "_vizOptsButton", "_draggableHitbox")]
+custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -34,6 +36,7 @@ mouse_filter = 2
 script = ExtResource("1_6dse3")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("2_7wv81"), ExtResource("3_cwlo7"), ExtResource("4_7wv81"), ExtResource("4_gnf20"), ExtResource("6_cwlo7"), ExtResource("7_cwlo7")])
 InactiveTitlebarOffset = 21
+ResizeStep = Vector2i(25, 29)
 _audioVisualizer = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer")
 _vizOptsButton = NodePath("VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton")
 _draggableHitbox = NodePath("DraggableHitbox")
@@ -56,6 +59,7 @@ size_flags_vertical = 0
 texture = ExtResource("2_7wv81")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+axis_stretch_horizontal = 1
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("3_cwlo7")
@@ -82,6 +86,7 @@ size_flags_vertical = 0
 texture = ExtResource("6_cwlo7")
 
 [node name="NinePatchRect2" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+axis_stretch_horizontal = 1
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("3_cwlo7")
@@ -122,6 +127,7 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="TilableLeftEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer"]
+axis_stretch_vertical = 1
 custom_minimum_size = Vector2(11, 29)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -138,7 +144,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 0
 texture = ExtResource("11_c0tab")
-expand_mode = 2
+expand_mode = 1
 stretch_mode = 1
 
 [node name="AudioVisualizer" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("2_2g1mo")]
@@ -155,6 +161,7 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/Middle/VBoxContainer2"]
+axis_stretch_vertical = 1
 custom_minimum_size = Vector2(8, 29)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -177,7 +184,9 @@ layout_mode = 2
 size_flags_horizontal = 0
 texture = ExtResource("15_c0tab")
 
-[node name="BottomTilableTexture" type="TextureRect" parent="VBoxContainer/AllContent/Bottom"]
+[node name="BottomTilableTexture" type="NinePatchRect" parent="VBoxContainer/AllContent/Bottom"]
+custom_minimum_size = Vector2(0, 14)
+axis_stretch_horizontal = 1
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("14_5e0r8")
@@ -191,6 +200,13 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
+
+[node name="ResizeLayer" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ResizeHandle" parent="ResizeLayer" node_paths=PackedStringArray("Panel") instance=ExtResource("resize_handle")]
+Panel = NodePath("../..")
 
 [connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]

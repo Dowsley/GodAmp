@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Src/Components/WindowResizeHandle.cs" id="1"]
+
+[node name="ResizeHandle" type="Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -14.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_default_cursor_shape = 12
+script = ExtResource("1")
+
+[connection signal="gui_input" from="." to="." method="OnGuiInput"]

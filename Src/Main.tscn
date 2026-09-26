@@ -73,8 +73,8 @@ auto_translate_mode = 1
 canvas_item_default_texture_filter = 0
 oversampling_override = 1.0
 position = Vector2i(275, 0)
-size = Vector2i(348, 348)
-content_scale_size = Vector2i(348, 348)
+size = Vector2i(350, 348)
+content_scale_size = Vector2i(350, 348)
 content_scale_mode = 1
 borderless = true
 
@@ -95,6 +95,12 @@ _playlist = NodePath("../PlaylistWindow/Playlist")
 _visualizer = NodePath("../VisualizerWindow/Visualizer")
 
 [connection signal="DragEnded" from="MasterPanel" to="WindowManager" method="OnWindowDragEnd"]
+[connection signal="ResizeStarted" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeStarted"]
+[connection signal="SizeRequested" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="SetLogicalSize"]
+[connection signal="ResizeFinished" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeFinished"]
+[connection signal="ResizeStarted" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeStarted"]
+[connection signal="SizeRequested" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="SetLogicalSize"]
+[connection signal="ResizeFinished" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeFinished"]
 [connection signal="DragMoved" from="MasterPanel" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="MasterPanel" to="WindowManager" method="OnWindowDragStart"]
 [connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]

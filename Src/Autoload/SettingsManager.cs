@@ -21,6 +21,7 @@ public partial class SettingsManager : Node
     private const string ActiveSkinKey = "active_skin";
     private const string WindowPositionKeyFormat = "window_{0}_position";
     private const string WindowVisibleKeyFormat = "window_{0}_visible";
+    private const string WindowSizeKeyFormat = "window_{0}_size";
 
     [Signal] public delegate void SettingChangedEventHandler(string key, Variant value);
     [Signal] public delegate void LastPlaylistPathChangedEventHandler(string path);
@@ -201,6 +202,26 @@ public partial class SettingsManager : Node
         string key = string.Format(WindowPositionKeyFormat, windowName);
         SetSetting(key, $"{position.X},{position.Y}");
     }
+
+    /// <summary>Reads positive logical window dimensions, falling back for missing or malformed settings.</summary>
+    /// <param name="windowName">Stable window settings identifier.</param>
+    /// <param name="defaultSize">Scene-defined logical dimensions.</param>
+    /// <returns>Saved dimensions in skin pixels or the supplied default.</returns>
+    public Vector2I GetWindowSize(string windowName, Vector2I defaultSize)
+    {
+        Variant value = GetSetting(string.Format(WindowSizeKeyFormat, windowName));
+        if (value.VariantType != Variant.Type.Vector2I)
+            return defaultSize;
+        Vector2I size = value.AsVector2I();
+        return size.X > 0 && size.Y > 0 && size.X <= int.MaxValue / MaximumZoom && size.Y <= int.MaxValue / MaximumZoom
+            ? size : defaultSize;
+    }
+
+    /// <summary>Stores a window's unscaled size for restoration independent of zoom.</summary>
+    /// <param name="windowName">Stable window settings identifier.</param>
+    /// <param name="size">Validated logical dimensions.</param>
+    public void SetWindowSize(string windowName, Vector2I size) =>
+        SetSetting(string.Format(WindowSizeKeyFormat, windowName), size);
 
     public bool GetWindowVisible(string windowName, bool defaultVisible)
     {
