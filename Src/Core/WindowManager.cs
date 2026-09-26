@@ -32,8 +32,8 @@ public partial class WindowManager : Node
     private Window _visualizerWindow = null!;
     private Window _masterPanelWindow = null!;
 
-    private Vector2I _originalWindowSize;
-    private Vector2I _originalVisualizerWindowSize;
+    private readonly Dictionary<WindowPanelContainer, Vector2I> _logicalSizes = [];
+    private readonly Dictionary<Window, (Vector2 Logical, Vector2I Applied)> _zoomOffsets = [];
 
     private List<WindowPanelContainer> _allContainerRefs = [];
     private List<Window> _allWindowsRefs = [];
@@ -45,6 +45,7 @@ public partial class WindowManager : Node
     private Vector2I _lastDragPosition;
     private bool _movingDragGroup;
 
+    /// <inheritdoc />
     public override void _Ready()
     {
         _equalizerWindow = _equalizer.GetParent<Window>();
@@ -55,10 +56,8 @@ public partial class WindowManager : Node
         _allContainerRefs = [_masterPanel, _equalizer, _playlist, _visualizer];
         _allWindowsRefs = [_masterPanelWindow, _equalizerWindow, _playlistWindow, _visualizerWindow];
 
-        int width = (int)ProjectSettings.GetSetting("display/window/size/viewport_width");
-        int height = (int)ProjectSettings.GetSetting("display/window/size/viewport_height");
-        _originalWindowSize = new Vector2I(width, height);
-        _originalVisualizerWindowSize = _visualizerWindow.Size;
+        foreach (WindowPanelContainer panel in _allContainerRefs)
+            _logicalSizes.Add(panel, panel.WindowRef.ContentScaleSize);
 
         foreach (var window in _allWindowsRefs)
         {
@@ -68,39 +67,72 @@ public partial class WindowManager : Node
         RestoreWindowStates();
     }
 
+    /// <summary>Applies integer canvas zoom while retaining logical sizes and precise relative positions.</summary>
+    /// <param name="multiplier">Requested zoom, clamped to the supported settings range.</param>
     public void SetZoomMode(int multiplier)
     {
         int oldMultiplier = SettingsManager.Instance.GetZoomMode();
-        float zoomRatio = (float)multiplier / oldMultiplier;
-
-        var masterPos = _masterPanelWindow.Position;
-        var scale = new Vector2(multiplier, multiplier);
-
-        var newSize = _originalWindowSize * multiplier;
-        GetWindow().Size = newSize;
-
-        _equalizerWindow.Size = newSize;
-        _equalizer.Size = _originalWindowSize;
-        _equalizer.Scale = scale;
-
-        _playlistWindow.Size = newSize;
-        _playlist.Size = _originalWindowSize;
-        _playlist.Scale = scale;
-
-        _visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
-        _visualizer.Size = _originalVisualizerWindowSize;
-        _visualizer.Scale = scale;
-
+        multiplier = Mathf.Clamp(multiplier, SettingsManager.MinimumZoom, SettingsManager.MaximumZoom);
+        Vector2I origin = _masterPanelWindow.Position;
+        CaptureWindowOffsets(origin, oldMultiplier);
+        ApplyWindowGeometry(multiplier);
+        ScaleWindowPositions(origin, multiplier);
         SettingsManager.Instance.SetZoomMode(multiplier);
-
-        ScaleWindowPositions(masterPos, zoomRatio);
     }
 
-    private void ScaleWindowPositions(Vector2I groupOrigin, float ratio)
+    /// <summary>Gets a panel's expanded layout size independently of display zoom.</summary>
+    /// <param name="panel">A panel registered with this manager.</param>
+    /// <returns>Logical dimensions in skin pixels.</returns>
+    public Vector2I GetLogicalSize(WindowPanelContainer panel) => _logicalSizes[panel];
+
+    /// <summary>Updates a resizable panel's logical size without changing the global zoom.</summary>
+    /// <param name="panel">The playlist or visualizer panel.</param>
+    /// <param name="size">Positive dimensions in skin pixels, clamped to the scene's minimum size.</param>
+    /// <exception cref="ArgumentException">The panel is fixed-size or the dimensions are not positive.</exception>
+    public void SetLogicalSize(WindowPanelContainer panel, Vector2I size)
     {
-        _equalizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_equalizerWindow.Position - groupOrigin) * ratio);
-        _playlistWindow.Position = groupOrigin + (Vector2I)((Vector2)(_playlistWindow.Position - groupOrigin) * ratio);
-        _visualizerWindow.Position = groupOrigin + (Vector2I)((Vector2)(_visualizerWindow.Position - groupOrigin) * ratio);
+        if (panel != _playlist && panel != _visualizer)
+            throw new ArgumentException("Only playlist and visualizer panels support resizing.", nameof(panel));
+        if (size.X <= 0 || size.Y <= 0)
+            throw new ArgumentException("A positive size is required for a resizable panel.", nameof(size));
+        Vector2 minimum = panel.GetCombinedMinimumSize().Ceil();
+        _logicalSizes[panel] = new Vector2I(Math.Max(size.X, (int)minimum.X), Math.Max(size.Y, (int)minimum.Y));
+        Vector2I position = panel.WindowRef.Position;
+        ApplyPanelGeometry(panel, _logicalSizes[panel], SettingsManager.Instance.GetZoomMode());
+        panel.WindowRef.Position = position;
+    }
+
+    /// <summary>Captures offsets before native resizing can reposition windows to fit the display.</summary>
+    /// <param name="origin">Main window's desktop origin before resizing.</param>
+    /// <param name="previousZoom">Zoom at which current native positions were established.</param>
+    private void CaptureWindowOffsets(Vector2I origin, int previousZoom)
+    {
+        foreach (Window window in _allWindowsRefs)
+        {
+            if (window == _masterPanelWindow)
+                continue;
+            Vector2I relative = window.Position - origin;
+            if (!_zoomOffsets.TryGetValue(window, out var offset) || offset.Applied != relative)
+                offset = ((Vector2)relative / previousZoom, relative);
+            _zoomOffsets[window] = offset;
+        }
+    }
+
+    /// <summary>Restores the group origin and scales retained offsets without accumulating rounding drift.</summary>
+    /// <param name="origin">Main window's desktop origin before resizing.</param>
+    /// <param name="zoom">Requested zoom for the group.</param>
+    private void ScaleWindowPositions(Vector2I origin, int zoom)
+    {
+        _masterPanelWindow.Position = origin;
+        foreach (Window window in _allWindowsRefs)
+        {
+            if (window == _masterPanelWindow)
+                continue;
+            var (logical, _) = _zoomOffsets[window];
+            Vector2I scaled = (Vector2I)(logical * zoom).Round();
+            window.Position = origin + scaled;
+            _zoomOffsets[window] = (logical, scaled);
+        }
     }
 
     /// <summary>Moves the docked group directly from native movement or fallback input notifications.</summary>
@@ -459,11 +491,12 @@ public partial class WindowManager : Node
         SettingsManager.Instance.SetWindowVisible(VisualizerWindowName, _visualizerWindow.Visible);
     }
 
+    /// <summary>Restores geometry before native positions, visibility, and docking relationships.</summary>
     private void RestoreWindowStates()
     {
         int zoomMultiplier = SettingsManager.Instance.GetZoomMode();
 
-        SetZoomModeWithoutScalingPositions(zoomMultiplier);
+        ApplyWindowGeometry(zoomMultiplier);
 
         var screenSize = DisplayServer.ScreenGetSize();
         var windowSize = _masterPanelWindow.Size;
@@ -493,24 +526,24 @@ public partial class WindowManager : Node
         DetectAndRestoreGlueRelationships();
     }
 
-    private void SetZoomModeWithoutScalingPositions(int multiplier)
+    /// <summary>Applies per-window logical dimensions through Godot's scene-configured canvas scaling.</summary>
+    /// <param name="multiplier">Validated integer zoom shared by all player windows.</param>
+    private void ApplyWindowGeometry(int multiplier)
     {
-        var scale = new Vector2(multiplier, multiplier);
+        foreach (var (panel, logicalSize) in _logicalSizes)
+            ApplyPanelGeometry(panel, logicalSize, multiplier);
+    }
 
-        var newSize = _originalWindowSize * multiplier;
-        GetWindow().Size = newSize;
-
-        _equalizerWindow.Size = newSize;
-        _equalizer.Size = _originalWindowSize;
-        _equalizer.Scale = scale;
-
-        _playlistWindow.Size = newSize;
-        _playlist.Size = _originalWindowSize;
-        _playlist.Scale = scale;
-
-        _visualizerWindow.Size = _originalVisualizerWindowSize * multiplier;
-        _visualizer.Size = _originalVisualizerWindowSize;
-        _visualizer.Scale = scale;
+    /// <summary>Sets one window's virtual canvas and native dimensions without scaling its panel node.</summary>
+    /// <param name="panel">Scene-authored panel in the target native window.</param>
+    /// <param name="logicalSize">Layout dimensions in skin pixels.</param>
+    /// <param name="multiplier">Validated integer UI zoom.</param>
+    private static void ApplyPanelGeometry(WindowPanelContainer panel, Vector2I logicalSize, int multiplier)
+    {
+        Window window = panel.WindowRef;
+        window.ContentScaleSize = logicalSize;
+        window.Size = logicalSize * multiplier;
+        panel.Size = logicalSize;
     }
 
     private void DetectAndRestoreGlueRelationships()

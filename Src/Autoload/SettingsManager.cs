@@ -4,6 +4,10 @@ namespace GodAmp.Autoload;
 
 public partial class SettingsManager : Node
 {
+    /// <summary>Smallest supported integer UI zoom.</summary>
+    public const int MinimumZoom = 1;
+    /// <summary>Largest supported integer UI zoom.</summary>
+    public const int MaximumZoom = 4;
     private const int CurrentVersion = 1;
     private const string SettingsFileName = "godamp.ini";
     private const string SettingsDir = "GodAmp";
@@ -135,20 +139,18 @@ public partial class SettingsManager : Node
         SetSetting(LastPlaylistPathKey, path);
     }
 
-    /// <summary>
-    /// Gets the zoom mode multiplier
-    /// </summary>
+    /// <summary>Gets the saved integer UI zoom within the supported range.</summary>
+    /// <returns>The clamped zoom, defaulting to 2x when absent.</returns>
     public int GetZoomMode()
     {
-        return (int)GetSetting(ZoomModeKey, 2);
+        return Mathf.Clamp((int)GetSetting(ZoomModeKey, 2), MinimumZoom, MaximumZoom);
     }
 
-    /// <summary>
-    /// Sets the zoom mode multiplier
-    /// </summary>
+    /// <summary>Stores and broadcasts an integer UI zoom within the supported range.</summary>
+    /// <param name="mode">Requested multiplier, clamped before storage and notification.</param>
     public void SetZoomMode(int mode)
     {
-        SetSetting(ZoomModeKey, mode);
+        SetSetting(ZoomModeKey, Mathf.Clamp(mode, MinimumZoom, MaximumZoom));
     }
 
     /// <summary>
