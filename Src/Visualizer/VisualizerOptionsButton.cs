@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GodAmp.Components;
 using GodAmp.Data;
 using Godot;
 
@@ -13,9 +14,12 @@ public partial class VisualizerOptionsButton : MenuButton
     private PopupMenu _vizSubmenu = null!;
     private int _currentVizIndex = 0;
 
+    /// <summary>Builds the runtime visualization menus and connects their selection handlers.</summary>
+    /// <param name="strategyTypeMapRef">Available strategies in display order.</param>
     public void Initialize(List<VisualizerStrategyType> strategyTypeMapRef)
     {
         _popup = GetPopup();
+        SkinCursorController.UseSystemCursorFor(_popup);
         _popup.AboutToPopup += OnAboutToPopup;
         _popup.HideOnCheckableItemSelection = false;
 
@@ -39,9 +43,12 @@ public partial class VisualizerOptionsButton : MenuButton
         }
     }
 
+    /// <summary>Creates a checkable submenu from the available visualization strategies.</summary>
+    /// <param name="strategyTypes">Strategies whose identifiers are emitted on selection.</param>
     private void SetupVizMenu(List<VisualizerStrategyType> strategyTypes)
     {
         _vizSubmenu = new PopupMenu();
+        SkinCursorController.UseSystemCursorFor(_vizSubmenu);
         _vizSubmenu.HideOnCheckableItemSelection = false;
         _vizSubmenu.Name = "VizSubmenu";
 

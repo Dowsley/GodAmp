@@ -16,9 +16,11 @@ public partial class WinampMenuButton : MenuButton
     private PopupMenu _skinSubmenu = null!;
     private readonly List<string> _skinFilenames = [];
 
+    /// <inheritdoc />
     public override void _Ready()
     {
         _popup = GetPopup();
+        SkinCursorController.UseSystemCursorFor(_popup);
         _popup.HideOnCheckableItemSelection = false;
 
         var id = 0;
@@ -61,9 +63,12 @@ public partial class WinampMenuButton : MenuButton
         }
     }
 
+    /// <summary>Creates the UI scale submenu and connects its runtime-owned popup.</summary>
+    /// <param name="id">Parent menu item identifier.</param>
     private void SetupScaleMenu(int id)
     {
         _scaleSubmenu = new PopupMenu();
+        SkinCursorController.UseSystemCursorFor(_scaleSubmenu);
         _scaleSubmenu.HideOnCheckableItemSelection = false;
         _scaleSubmenu.Name = "ScaleSubmenu";
 
@@ -77,9 +82,12 @@ public partial class WinampMenuButton : MenuButton
         _popup.AddSubmenuNodeItem("Scale UI", _scaleSubmenu, id);
     }
 
+    /// <summary>Creates the skin submenu, populated from available skins when opened.</summary>
+    /// <param name="id">Parent menu item identifier.</param>
     private void SetupSkinMenu(int id)
     {
         _skinSubmenu = new PopupMenu();
+        SkinCursorController.UseSystemCursorFor(_skinSubmenu);
         _skinSubmenu.Name = "SkinSubmenu";
         _skinSubmenu.AboutToPopup += RefreshSkinList;
         _skinSubmenu.IndexPressed += OnSkinMenuItemPressed;

@@ -20,7 +20,7 @@ public partial class SkinCursorController : Node
     private sealed record ScaledCursor(Texture2D Texture, Vector2 Hotspot);
     private readonly List<Target> _targets = [];
     private readonly Dictionary<(SkinCursor Cursor, int Zoom), ScaledCursor> _cache = [];
-    private static readonly HashSet<FileDialog> _dialogs = [];
+    private static readonly HashSet<Window> _systemCursorWindows = [];
     private static SkinCursorController? _owner;
     private Window _window = null!;
     private SkinCursor? _selectedCursor;
@@ -33,11 +33,25 @@ public partial class SkinCursorController : Node
     /// <param name="dialog">A picker that is attached to the scene tree and freed when closed.</param>
     public static void UseSystemCursorFor(FileDialog dialog)
     {
-        if (!_dialogs.Add(dialog))
+        if (!_systemCursorWindows.Add(dialog))
             return;
         _owner?.Clear();
         /* Native pickers do not consistently emit focus-exit events for their parent window. */
-        dialog.TreeExiting += () => _dialogs.Remove(dialog);
+        dialog.TreeExiting += () => _systemCursorWindows.Remove(dialog);
+    }
+
+    /// <summary>Keeps system cursors active while a dynamically resolved popup is open.</summary>
+    /// <param name="popup">A popup registered once by its owner during initialization.</param>
+    public static void UseSystemCursorFor(Popup popup)
+    {
+        /* MenuButton popups and their generated submenus are resolved at runtime. */
+        popup.AboutToPopup += () =>
+        {
+            _systemCursorWindows.Add(popup);
+            _owner?.Clear();
+        };
+        popup.PopupHide += () => _systemCursorWindows.Remove(popup);
+        popup.TreeExiting += () => _systemCursorWindows.Remove(popup);
     }
 
     /// <inheritdoc />
@@ -135,7 +149,7 @@ public partial class SkinCursorController : Node
     private void Refresh()
     {
         _refreshPending = false;
-        if (!IsInsideTree() || !_inside || _dialogs.Count > 0)
+        if (!IsInsideTree() || !_inside || _systemCursorWindows.Count > 0)
             return;
         SkinCursor? cursor = SkinLoader.Instance.GetCursor(ResolveRole(GetViewport().GetMousePosition()));
         int zoom = Mathf.Clamp(SettingsManager.Instance.GetZoomMode(), 1, MaximumZoom);
