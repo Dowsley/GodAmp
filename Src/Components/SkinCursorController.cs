@@ -133,6 +133,10 @@ public partial class SkinCursorController : Node
     /// <param name="multiplier">UI zoom multiplier; cursor artwork retains its original dimensions.</param>
     private void OnZoomChanged(int multiplier) => RequestRefresh();
 
+    /// <summary>Reevaluates visible cursor bindings after a scene switches presentation.</summary>
+    /// <param name="_">Mode notification; cursor selection uses the resulting visible controls.</param>
+    private void OnWindowshadeChanged(bool _) => RequestRefresh();
+
     /// <summary>Resolves the cursor after Godot has processed GUI hover and cursor-shape changes.</summary>
     private void RequestRefresh()
     {

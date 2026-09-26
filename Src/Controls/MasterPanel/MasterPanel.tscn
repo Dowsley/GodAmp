@@ -44,6 +44,57 @@
 [ext_resource type="Texture2D" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="repeat_on"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonNormal.tres" id="menu_normal"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonPressed.tres" id="menu_pressed"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadeMainSheet.tres" id="shade_sheet"]
+
+[sub_resource type="AtlasTexture" id="shade_background"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(27, 29, 275, 14)
+
+[sub_resource type="AtlasTexture" id="shade_restore"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(0, 27, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_restore_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 27, 9, 9)
+
+[sub_resource type="AtlasTexture" id="iconify"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="iconify_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 9, 9, 9)
+
+[sub_resource type="Resource" id="cursor_iconify"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/Iconify"), NodePath("../Windowshade/Iconify")])
+Role = 4
+
+[sub_resource type="Resource" id="cursor_shade"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
+Role = 11
+
+[sub_resource type="Resource" id="cursor_shade_seek"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Seek")])
+Role = 9
+
+[sub_resource type="Resource" id="cursor_shade_menu"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Menu")])
+Role = 10
+
+[sub_resource type="Resource" id="cursor_shade_restore"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Restore")])
+Role = 3
+
+[sub_resource type="Resource" id="cursor_shade_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
+Role = 5
 
 [sub_resource type="Resource" id="cursor_title"]
 script = ExtResource("cursor_binding")
@@ -63,7 +114,7 @@ Role = 2
 [sub_resource type="Resource" id="cursor_minimize"]
 script = ExtResource("cursor_binding")
 ControlPaths = Array[NodePath]([NodePath("../Controls/MinimizeButton")])
-Role = 4
+Role = 3
 
 [sub_resource type="Resource" id="cursor_close"]
 script = ExtResource("cursor_binding")
@@ -88,12 +139,26 @@ texture = ExtResource("menu_pressed")
 
 [sub_resource type="StyleBoxEmpty" id="empty_style"]
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_playbackIndicators", "_visualization", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox")]
+[sub_resource type="Theme" id="shade_controls_theme"]
+Button/styles/normal = SubResource("empty_style")
+Button/styles/hover = SubResource("empty_style")
+Button/styles/pressed = SubResource("empty_style")
+Button/styles/focus = SubResource("empty_style")
+
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_playbackIndicators", "_visualization", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek", "_windowshadeTime")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
 script = ExtResource("panel")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
+ExpandedControls = Array[NodePath]([NodePath("Background"), NodePath("Controls"), NodePath("TextDisplay"), NodePath("DraggableHitbox")])
+Windowshade = NodePath("Windowshade")
+WindowshadeDragHitbox = NodePath("Windowshade")
+WindowshadeButtons = Array[NodePath]([NodePath("Controls/MinimizeButton")])
+WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_background")])
+WindowshadeInactiveOffset = 13
+_windowshadeSeek = NodePath("Windowshade/Seek")
+_windowshadeTime = NodePath("Windowshade/Time")
 WinampMenuButton = NodePath("Controls/WinampMenuButton")
 ToggleEqualizerButton = NodePath("Controls/ToggleEqualizerButton")
 TogglePlaylistButton = NodePath("Controls/TogglePlaylistButton")
@@ -113,10 +178,11 @@ _draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
 Panel = NodePath("..")
+WindowshadeMode = 1
 
 [node name="SkinCursors" type="Node" parent="."]
 script = ExtResource("cursors")
-Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_volume"), SubResource("cursor_seek"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_menu"), SubResource("cursor_song")])
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_volume"), SubResource("cursor_seek"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_menu"), SubResource("cursor_song"), SubResource("cursor_shade"), SubResource("cursor_shade_seek"), SubResource("cursor_shade_menu"), SubResource("cursor_shade_restore"), SubResource("cursor_shade_close"), SubResource("cursor_iconify")])
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
@@ -133,7 +199,7 @@ offset_bottom = 116.0
 mouse_filter = 2
 script = ExtResource("indicators")
 
-[node name="Visualization" type="Control" parent="Controls"]
+[node name="Visualization" type="Control" parent="Controls" node_paths=PackedStringArray("WindowshadeDisplay")]
 offset_left = 24.0
 offset_top = 43.0
 offset_right = 100.0
@@ -141,6 +207,7 @@ offset_bottom = 59.0
 mouse_filter = 0
 tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
 script = ExtResource("visualization")
+WindowshadeDisplay = NodePath("../../Windowshade/Visualization")
 
 [node name="TopBar" type="TextureRect" parent="Controls"]
 offset_right = 275.0
@@ -154,7 +221,6 @@ offset_top = 3.0
 offset_right = 263.0
 offset_bottom = 12.0
 focus_mode = 0
-disabled = true
 texture_normal = ExtResource("minimize")
 texture_pressed = ExtResource("minimize_held")
 
@@ -378,6 +444,158 @@ layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
+[node name="Windowshade" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(275, 14)
+layout_mode = 2
+mouse_filter = 2
+theme = SubResource("shade_controls_theme")
+
+[node name="Iconify" type="TextureButton" parent="Controls"]
+offset_left = 244.0
+offset_top = 3.0
+offset_right = 253.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("iconify")
+texture_pressed = SubResource("iconify_held")
+
+[node name="Background" type="TextureRect" parent="Windowshade"]
+offset_right = 275.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_background")
+
+[node name="Menu" type="TextureButton" parent="Windowshade"]
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 15.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = ExtResource("menu_normal")
+texture_pressed = ExtResource("menu_pressed")
+
+[node name="Time" type="Label" parent="Windowshade"]
+offset_left = 129.0
+offset_top = 4.0
+offset_right = 159.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = ExtResource("text_theme")
+text = " 00:00"
+script = ExtResource("label")
+
+[node name="Visualization" type="TextureRect" parent="Windowshade"]
+offset_left = 79.0
+offset_top = 5.0
+offset_right = 117.0
+offset_bottom = 10.0
+mouse_filter = 0
+expand_mode = 1
+stretch_mode = 0
+tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
+
+[node name="Previous" type="Button" parent="Windowshade"]
+offset_left = 167.0
+offset_top = 3.0
+offset_right = 176.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Play" type="Button" parent="Windowshade"]
+offset_left = 176.0
+offset_top = 3.0
+offset_right = 186.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Pause" type="Button" parent="Windowshade"]
+offset_left = 186.0
+offset_top = 3.0
+offset_right = 196.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Stop" type="Button" parent="Windowshade"]
+offset_left = 196.0
+offset_top = 3.0
+offset_right = 206.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Next" type="Button" parent="Windowshade"]
+offset_left = 206.0
+offset_top = 3.0
+offset_right = 216.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Eject" type="Button" parent="Windowshade"]
+offset_left = 216.0
+offset_top = 3.0
+offset_right = 225.0
+offset_bottom = 12.0
+focus_mode = 0
+flat = true
+
+[node name="Seek" parent="Windowshade" instance=ExtResource("slider")]
+offset_left = 226.0
+offset_top = 4.0
+offset_right = 243.0
+offset_bottom = 11.0
+step = 0.01
+Layout = 4
+Sheet = ExtResource("shade_sheet")
+
+[node name="Restore" type="TextureButton" parent="Windowshade"]
+offset_left = 254.0
+offset_top = 3.0
+offset_right = 263.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_restore")
+texture_pressed = SubResource("shade_restore_held")
+
+[node name="Iconify" type="TextureButton" parent="Windowshade"]
+offset_left = 244.0
+offset_top = 3.0
+offset_right = 253.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("iconify")
+texture_pressed = SubResource("iconify_held")
+
+[node name="Close" type="TextureButton" parent="Windowshade"]
+offset_left = 264.0
+offset_top = 3.0
+offset_right = 273.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = ExtResource("close")
+texture_pressed = ExtResource("close_held")
+
+[connection signal="WindowshadeChanged" from="." to="SkinWindowShape" method="OnWindowshadeChanged"]
+[connection signal="pressed" from="Controls/Iconify" to="." method="OnIconifyButtonPressed"]
+[connection signal="pressed" from="Windowshade/Iconify" to="." method="OnIconifyButtonPressed"]
+[connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
+[connection signal="gui_input" from="Windowshade/Visualization" to="Controls/Visualization" method="OnGuiInput"]
+[connection signal="pressed" from="Windowshade/Menu" to="Controls/WinampMenuButton" method="show_popup"]
+[connection signal="pressed" from="Windowshade/Previous" to="." method="OnPreviousTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Play" to="." method="OnPlayTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Pause" to="." method="OnPauseTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Stop" to="." method="OnStopTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Next" to="." method="OnNextTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Eject" to="." method="OnLoadTracksButtonPressed"]
+[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
+[connection signal="value_changed" from="Windowshade/Seek" to="." method="OnWindowshadeSeekValueChanged"]
+[connection signal="DragStarted" from="Windowshade/Seek" to="." method="OnPositionSeekerDragStarted"]
+[connection signal="DragEnded" from="Windowshade/Seek" to="." method="OnPositionSeekerDragEnded"]
 [connection signal="pressed" from="Controls/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="Controls/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="DragEnded" from="Controls/VolumeSlider" to="." method="OnSliderDragEnded"]

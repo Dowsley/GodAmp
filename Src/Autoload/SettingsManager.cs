@@ -1,4 +1,5 @@
 using Godot;
+using GodAmp.Data;
 
 namespace GodAmp.Autoload;
 
@@ -186,9 +187,13 @@ public partial class SettingsManager : Node
         SetSetting(ActiveSkinKey, skinFileName);
     }
 
-    public Vector2I GetWindowPosition(string windowName, Vector2I defaultPos)
+    /// <summary>Reads a window's saved desktop position.</summary>
+    /// <param name="window">Player window whose position is requested.</param>
+    /// <param name="defaultPos">Desktop position used when no setting exists.</param>
+    /// <returns>Saved desktop coordinates or the supplied default.</returns>
+    public Vector2I GetWindowPosition(PlayerWindow window, Vector2I defaultPos)
     {
-        string key = string.Format(WindowPositionKeyFormat, windowName);
+        string key = GetWindowKey(window, WindowPositionKeyFormat);
         string value = (string)GetSetting(key, "");
         if (string.IsNullOrEmpty(value))
             return defaultPos;
@@ -197,19 +202,22 @@ public partial class SettingsManager : Node
         return new Vector2I(int.Parse(parts[0]), int.Parse(parts[1]));
     }
 
-    public void SetWindowPosition(string windowName, Vector2I position)
+    /// <summary>Stores a window's desktop position.</summary>
+    /// <param name="window">Player window to update.</param>
+    /// <param name="position">Desktop coordinates in native window units.</param>
+    public void SetWindowPosition(PlayerWindow window, Vector2I position)
     {
-        string key = string.Format(WindowPositionKeyFormat, windowName);
+        string key = GetWindowKey(window, WindowPositionKeyFormat);
         SetSetting(key, $"{position.X},{position.Y}");
     }
 
     /// <summary>Reads positive logical window dimensions, falling back for missing or malformed settings.</summary>
-    /// <param name="windowName">Stable window settings identifier.</param>
+    /// <param name="window">Player window whose size is requested.</param>
     /// <param name="defaultSize">Scene-defined logical dimensions.</param>
     /// <returns>Saved dimensions in skin pixels or the supplied default.</returns>
-    public Vector2I GetWindowSize(string windowName, Vector2I defaultSize)
+    public Vector2I GetWindowSize(PlayerWindow window, Vector2I defaultSize)
     {
-        Variant value = GetSetting(string.Format(WindowSizeKeyFormat, windowName));
+        Variant value = GetSetting(GetWindowKey(window, WindowSizeKeyFormat));
         if (value.VariantType != Variant.Type.Vector2I)
             return defaultSize;
         Vector2I size = value.AsVector2I();
@@ -218,21 +226,46 @@ public partial class SettingsManager : Node
     }
 
     /// <summary>Stores a window's unscaled size for restoration independent of zoom.</summary>
-    /// <param name="windowName">Stable window settings identifier.</param>
+    /// <param name="window">Player window to update.</param>
     /// <param name="size">Validated logical dimensions.</param>
-    public void SetWindowSize(string windowName, Vector2I size) =>
-        SetSetting(string.Format(WindowSizeKeyFormat, windowName), size);
+    public void SetWindowSize(PlayerWindow window, Vector2I size) =>
+        SetSetting(GetWindowKey(window, WindowSizeKeyFormat), size);
 
-    public bool GetWindowVisible(string windowName, bool defaultVisible)
+    /// <summary>Reads a window's saved visibility.</summary>
+    /// <param name="window">Player window whose visibility is requested.</param>
+    /// <param name="defaultVisible">Visibility used when no setting exists.</param>
+    /// <returns>Saved visibility or the supplied default.</returns>
+    public bool GetWindowVisible(PlayerWindow window, bool defaultVisible)
     {
-        string key = string.Format(WindowVisibleKeyFormat, windowName);
+        string key = GetWindowKey(window, WindowVisibleKeyFormat);
         return (bool)GetSetting(key, defaultVisible);
     }
 
-    public void SetWindowVisible(string windowName, bool visible)
+    /// <summary>Stores whether a player window is visible.</summary>
+    /// <param name="window">Player window to update.</param>
+    /// <param name="visible">True when the window is shown.</param>
+    public void SetWindowVisible(PlayerWindow window, bool visible)
     {
-        string key = string.Format(WindowVisibleKeyFormat, windowName);
+        string key = GetWindowKey(window, WindowVisibleKeyFormat);
         SetSetting(key, visible);
+    }
+
+    /// <summary>Maps typed window identities to stable names in the settings file.</summary>
+    /// <param name="window">Player window represented by the key.</param>
+    /// <param name="format">Settings key format containing the window-name placeholder.</param>
+    /// <returns>A key using the persisted spelling independently of enum member names.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">The window identity is undefined.</exception>
+    private static string GetWindowKey(PlayerWindow window, string format)
+    {
+        string name = window switch
+        {
+            PlayerWindow.MasterPanel => "masterPanel",
+            PlayerWindow.Equalizer => "equalizer",
+            PlayerWindow.Playlist => "playlist",
+            PlayerWindow.Visualizer => "visualizer",
+            _ => throw new System.ArgumentOutOfRangeException(nameof(window), window, "Unknown player window.")
+        };
+        return string.Format(format, name);
     }
 
     /// <summary>

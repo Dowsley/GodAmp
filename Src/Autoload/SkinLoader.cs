@@ -31,7 +31,10 @@ public partial class SkinLoader : Node
     private sealed record SkinState(Dictionary<string, Texture2D> Textures, FontFile TextFont,
         FontFile NumberFont, PlaylistSkinStyle PlaylistStyle, Font PlaylistFont,
         VisualizationPalette Palette, GenericTitleFont TitleFont, SkinRegions Regions,
-        IReadOnlyDictionary<SkinCursorRole, SkinCursor> Cursors);
+        IReadOnlyDictionary<SkinCursorRole, SkinCursor> Cursors, bool EqualizerWindowshadeAvailable);
+
+    /// <summary>Whether compact EQ artwork is supplied or the expanded EQ also uses built-in artwork.</summary>
+    public bool EqualizerWindowshadeAvailable => _activeState.EqualizerWindowshadeAvailable;
 
     /// <summary>Gets the active main-display bitmap font.</summary>
     public FontFile TextFont => _activeState.TextFont;
@@ -129,7 +132,7 @@ public partial class SkinLoader : Node
         _defaultState = new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, false), style, CreatePlaylistFont(style),
             VisualizationPalette.Default, new GenericTitleFont(_defaultImages["GEN"]), SkinRegions.Default,
-            LoadDefaultCursors());
+            LoadDefaultCursors(), true);
         _activeState = _defaultState;
     }
 
@@ -196,7 +199,8 @@ public partial class SkinLoader : Node
             cursors[role] = cursor;
         return new SkinState(textures, SkinBitmapFont.CreateText(text),
             SkinBitmapFont.CreateNumbers(numbers, extended), archive.PlaylistStyle, CreatePlaylistFont(archive.PlaylistStyle),
-            archive.Palette, new GenericTitleFont(genericArtwork), archive.Regions, cursors);
+            archive.Palette, new GenericTitleFont(genericArtwork), archive.Regions, cursors,
+            archive.Images.ContainsKey("EQ_EX") || !archive.Images.ContainsKey("EQMAIN"));
     }
 
     /// <summary>Resolves an installed playlist font at the current UI rasterization scale.</summary>

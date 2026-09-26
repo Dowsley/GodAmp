@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://durg0gl1tadts"]
+[gd_scene format=3 uid="uid://durg0gl1tadts"]
 
 [ext_resource type="Script" path="res://Src/Controls/Equalizer/Equalizer.cs" id="script"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinWindowShape.tscn" id="shape"]
@@ -15,6 +15,51 @@
 [ext_resource type="Texture2D" path="res://Data/SkinResources/PresetsButtonNormal.tres" id="presets"]
 [ext_resource type="PackedScene" path="res://Src/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="PackedScene" path="res://Src/Controls/Equalizer/EqualizerBand.tscn" id="band"]
+[ext_resource type="PackedScene" path="res://Src/Components/SkinSlider.tscn" id="slider"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadeEqualizerSheet.tres" id="shade_sheet"]
+
+[sub_resource type="AtlasTexture" id="shade_background"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(0, 0, 275, 14)
+
+[sub_resource type="AtlasTexture" id="shade_restore"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(254, 3, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_restore_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(1, 47, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_close"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(11, 38, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_close_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(11, 47, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_button"]
+atlas = ExtResource("titlebar")
+region = Rect2(254, 3, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_button_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(1, 38, 9, 9)
+
+[sub_resource type="Resource" id="cursor_shade_sliders"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Volume"), NodePath("../Windowshade/Balance")])
+Role = 20
+
+[sub_resource type="Resource" id="cursor_shade_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
+Role = 21
+
+[sub_resource type="Resource" id="cursor_shade_title"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
+Role = 22
 
 [sub_resource type="Resource" id="cursor_title"]
 script = ExtResource("cursor_binding")
@@ -31,7 +76,7 @@ script = ExtResource("cursor_binding")
 ControlPaths = Array[NodePath]([NodePath("../Controls/PreampSlider"), NodePath("../Controls/60Slider"), NodePath("../Controls/170Slider"), NodePath("../Controls/310Slider"), NodePath("../Controls/600Slider"), NodePath("../Controls/1KSlider"), NodePath("../Controls/3KSlider"), NodePath("../Controls/6KSlider"), NodePath("../Controls/12KSlider"), NodePath("../Controls/14KSlider"), NodePath("../Controls/16KSlider")])
 Role = 20
 
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_draggableHitbox")]
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,15 +88,21 @@ _equalizerToggleButton = NodePath("Controls/EqualizerToggleButton")
 _graph = NodePath("Controls/Graph")
 _draggableHitbox = NodePath("DraggableHitbox")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
+ExpandedControls = Array[NodePath]([NodePath("Background"), NodePath("Controls"), NodePath("DraggableHitbox")])
+Windowshade = NodePath("Windowshade")
+WindowshadeDragHitbox = NodePath("Windowshade")
+WindowshadeButtons = Array[NodePath]([NodePath("Controls/WindowshadeButton")])
+WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_background")])
 
 [node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
 Panel = NodePath("..")
 Mode = 2
+WindowshadeMode = 3
 
 [node name="SkinCursors" type="Node" parent="."]
 script = ExtResource("cursors")
 DefaultRole = 23
-Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_close"), SubResource("cursor_sliders")])
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_close"), SubResource("cursor_sliders"), SubResource("cursor_shade_title"), SubResource("cursor_shade_sliders"), SubResource("cursor_shade_close")])
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
@@ -186,6 +237,71 @@ layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
+[node name="WindowshadeButton" type="TextureButton" parent="Controls"]
+offset_left = 254.0
+offset_top = 3.0
+offset_right = 263.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_button")
+texture_pressed = SubResource("shade_button_held")
+
+[node name="Windowshade" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(275, 14)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="Windowshade"]
+offset_right = 275.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_background")
+
+[node name="Volume" parent="Windowshade" instance=ExtResource("slider")]
+offset_left = 61.0
+offset_top = 4.0
+offset_right = 158.0
+offset_bottom = 11.0
+max_value = 1.0
+step = 0.01
+Layout = 5
+Sheet = ExtResource("shade_sheet")
+
+[node name="Balance" parent="Windowshade" instance=ExtResource("slider")]
+offset_left = 164.0
+offset_top = 4.0
+offset_right = 206.0
+offset_bottom = 11.0
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+Layout = 6
+Sheet = ExtResource("shade_sheet")
+
+[node name="Restore" type="TextureButton" parent="Windowshade"]
+offset_left = 254.0
+offset_top = 3.0
+offset_right = 263.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_restore")
+texture_pressed = SubResource("shade_restore_held")
+
+[node name="Close" type="TextureButton" parent="Windowshade"]
+offset_left = 264.0
+offset_top = 3.0
+offset_right = 273.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_close")
+texture_pressed = SubResource("shade_close_held")
+
+[connection signal="WindowshadeChanged" from="." to="SkinWindowShape" method="OnWindowshadeChanged"]
+[connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
+[connection signal="pressed" from="Controls/WindowshadeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="Controls/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="Controls/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
 [connection signal="value_changed" from="Controls/PreampSlider" to="." method="OnPreampSliderValueChanged"]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
+using GodAmp.Data;
 using GodAmp.Controls.Equalizer;
 using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
@@ -12,10 +13,6 @@ namespace GodAmp.Core;
 
 public partial class WindowManager : Node
 {
-    private const string MasterPanelWindowName = "masterPanel";
-    private const string EqualizerWindowName = "equalizer";
-    private const string PlaylistWindowName = "playlist";
-    private const string VisualizerWindowName = "visualizer";
     private const int DockingDistance = 10;
     private const int GlueDistance = 5;
 
@@ -85,6 +82,21 @@ public partial class WindowManager : Node
     /// <returns>Logical dimensions in skin pixels.</returns>
     public Vector2I GetLogicalSize(WindowPanelContainer panel) => _logicalSizes[panel];
 
+    /// <summary>Changes presentation without discarding expanded dimensions or the desktop origin.</summary>
+    /// <param name="panel">Registered panel requesting a compact or expanded presentation.</param>
+    /// <param name="shaded">Requested compact mode; unsupported skins stay expanded.</param>
+    public void SetWindowShaded(WindowPanelContainer panel, bool shaded)
+    {
+        if (!_logicalSizes.TryGetValue(panel, out Vector2I expandedSize) || (shaded && !panel.SupportsWindowshade))
+            return;
+        Vector2I position = panel.WindowRef.Position;
+        DetachFromAllWindows(panel.WindowRef);
+        panel.SetWindowshadePresentation(shaded);
+        ApplyPanelGeometry(panel, expandedSize, SettingsManager.Instance.GetZoomMode());
+        panel.WindowRef.Position = position;
+        GlueToAllTouchingWindows(panel.WindowRef);
+    }
+
     /// <summary>Updates a resizable panel's logical size without changing the global zoom.</summary>
     /// <param name="panel">The playlist or visualizer panel.</param>
     /// <param name="size">Positive dimensions in skin pixels, clamped to the scene's minimum size.</param>
@@ -95,6 +107,8 @@ public partial class WindowManager : Node
             throw new ArgumentException("Only playlist and visualizer panels support resizing.", nameof(panel));
         if (size.X <= 0 || size.Y <= 0)
             throw new ArgumentException("A positive size is required for a resizable panel.", nameof(size));
+        if (panel.IsWindowShaded)
+            size.Y = _logicalSizes[panel].Y;
         Vector2I normalized = NormalizeLogicalSize(panel, size);
         if (_logicalSizes[panel] == normalized)
             return;
@@ -110,7 +124,7 @@ public partial class WindowManager : Node
     /// <returns>Dimensions on the scene's resize grid.</returns>
     private static Vector2I NormalizeLogicalSize(WindowPanelContainer panel, Vector2I size)
     {
-        Vector2I minimum = (Vector2I)panel.GetCombinedMinimumSize().Ceil();
+        Vector2I minimum = (Vector2I)panel.ExpandedMinimumSize.Ceil();
         Vector2I step = new(Math.Max(1, panel.ResizeStep.X), Math.Max(1, panel.ResizeStep.Y));
         Vector2I extra = new(Math.Max(0, size.X - minimum.X), Math.Max(0, size.Y - minimum.Y));
         return minimum + new Vector2I(extra.X / step.X * step.X, extra.Y / step.Y * step.Y);
@@ -506,18 +520,18 @@ public partial class WindowManager : Node
     /// <summary>Records logical sizes, desktop positions, and visibility in the current settings.</summary>
     public void SaveWindowStates()
     {
-        SettingsManager.Instance.SetWindowSize(PlaylistWindowName, _logicalSizes[_playlist]);
-        SettingsManager.Instance.SetWindowSize(VisualizerWindowName, _logicalSizes[_visualizer]);
-        SettingsManager.Instance.SetWindowPosition(MasterPanelWindowName, _masterPanelWindow.Position);
+        SettingsManager.Instance.SetWindowSize(PlayerWindow.Playlist, _logicalSizes[_playlist]);
+        SettingsManager.Instance.SetWindowSize(PlayerWindow.Visualizer, _logicalSizes[_visualizer]);
+        SettingsManager.Instance.SetWindowPosition(PlayerWindow.MasterPanel, _masterPanelWindow.Position);
 
-        SettingsManager.Instance.SetWindowPosition(EqualizerWindowName, _equalizerWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(EqualizerWindowName, _equalizerWindow.Visible);
+        SettingsManager.Instance.SetWindowPosition(PlayerWindow.Equalizer, _equalizerWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Equalizer, _equalizerWindow.Visible);
 
-        SettingsManager.Instance.SetWindowPosition(PlaylistWindowName, _playlistWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(PlaylistWindowName, _playlistWindow.Visible);
+        SettingsManager.Instance.SetWindowPosition(PlayerWindow.Playlist, _playlistWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Playlist, _playlistWindow.Visible);
 
-        SettingsManager.Instance.SetWindowPosition(VisualizerWindowName, _visualizerWindow.Position);
-        SettingsManager.Instance.SetWindowVisible(VisualizerWindowName, _visualizerWindow.Visible);
+        SettingsManager.Instance.SetWindowPosition(PlayerWindow.Visualizer, _visualizerWindow.Position);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Visualizer, _visualizerWindow.Visible);
     }
 
     /// <summary>Restores geometry before native positions, visibility, and docking relationships.</summary>
@@ -526,9 +540,9 @@ public partial class WindowManager : Node
         int zoomMultiplier = SettingsManager.Instance.GetZoomMode();
 
         _logicalSizes[_playlist] = NormalizeLogicalSize(_playlist,
-            SettingsManager.Instance.GetWindowSize(PlaylistWindowName, _logicalSizes[_playlist]));
+            SettingsManager.Instance.GetWindowSize(PlayerWindow.Playlist, _logicalSizes[_playlist]));
         _logicalSizes[_visualizer] = NormalizeLogicalSize(_visualizer,
-            SettingsManager.Instance.GetWindowSize(VisualizerWindowName, _logicalSizes[_visualizer]));
+            SettingsManager.Instance.GetWindowSize(PlayerWindow.Visualizer, _logicalSizes[_visualizer]));
 
         ApplyWindowGeometry(zoomMultiplier);
 
@@ -537,24 +551,24 @@ public partial class WindowManager : Node
         var totalGroupSize = new Vector2I(windowSize.X + _visualizerWindow.Size.X, windowSize.Y * 3);
         var groupCenteredPos = (screenSize - totalGroupSize) / 2;
 
-        var masterPos = SettingsManager.Instance.GetWindowPosition(MasterPanelWindowName, groupCenteredPos);
+        var masterPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.MasterPanel, groupCenteredPos);
         _masterPanelWindow.Position = masterPos;
 
-        var eqPos = SettingsManager.Instance.GetWindowPosition(EqualizerWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y));
+        var eqPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Equalizer, groupCenteredPos + new Vector2I(0, windowSize.Y));
         _equalizerWindow.Position = eqPos;
-        _equalizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(EqualizerWindowName, true);
+        _equalizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Equalizer, true);
         _masterPanel.ToggleEqualizerButton.ButtonPressed = _equalizerWindow.Visible;
         _masterPanel.WinampMenuButton.SetEqualizerChecked(_equalizerWindow.Visible);
 
-        var plPos = SettingsManager.Instance.GetWindowPosition(PlaylistWindowName, groupCenteredPos + new Vector2I(0, windowSize.Y * 2));
+        var plPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Playlist, groupCenteredPos + new Vector2I(0, windowSize.Y * 2));
         _playlistWindow.Position = plPos;
-        _playlistWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlaylistWindowName, true);
+        _playlistWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Playlist, true);
         _masterPanel.TogglePlaylistButton.ButtonPressed = _playlistWindow.Visible;
         _masterPanel.WinampMenuButton.SetPlaylistChecked(_playlistWindow.Visible);
 
-        var vizPos = SettingsManager.Instance.GetWindowPosition(VisualizerWindowName, groupCenteredPos + new Vector2I(windowSize.X, 0));
+        var vizPos = SettingsManager.Instance.GetWindowPosition(PlayerWindow.Visualizer, groupCenteredPos + new Vector2I(windowSize.X, 0));
         _visualizerWindow.Position = vizPos;
-        _visualizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(VisualizerWindowName, true);
+        _visualizerWindow.Visible = SettingsManager.Instance.GetWindowVisible(PlayerWindow.Visualizer, true);
         _masterPanel.WinampMenuButton.SetVisualizerChecked(_visualizerWindow.Visible);
 
         DetectAndRestoreGlueRelationships();
@@ -574,6 +588,8 @@ public partial class WindowManager : Node
     /// <param name="multiplier">Validated integer UI zoom.</param>
     private static void ApplyPanelGeometry(WindowPanelContainer panel, Vector2I logicalSize, int multiplier)
     {
+        if (panel.IsWindowShaded)
+            logicalSize.Y = panel.WindowshadeHeight;
         Window window = panel.WindowRef;
         window.ContentScaleSize = logicalSize;
         window.Size = logicalSize * multiplier;

@@ -26,6 +26,8 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private Label _sampleRateLabel = null!;
     [Export] private PlaybackIndicators _playbackIndicators = null!;
     [Export] private ClassicVisualization _visualization = null!;
+    [Export] private SkinSlider _windowshadeSeek = null!;
+    [Export] private Label _windowshadeTime = null!;
     [ExportSubgroup("Time display")]
     [Export] private Label _timeMinutesTensLabel = null!;
     [Export] private Label _timeMinutesOnesLabel = null!;
@@ -59,6 +61,8 @@ public partial class MasterPanel : WindowPanelContainer
         _positionSeekerSlider.Editable = _hasStarted && hasTrack;
         _positionSeekerSlider.MinValue = 0.0f;
         _positionSeekerSlider.MaxValue = hasTrack ? stream!.GetLength() : 1.0;
+        _windowshadeSeek.Editable = _positionSeekerSlider.Editable;
+        _windowshadeSeek.MaxValue = _positionSeekerSlider.MaxValue;
 
         _bitrateLabel.Text = hasTrack ? $"{track!.BitrateKbps}" : "0";
         _sampleRateLabel.Text = hasTrack ? $"{track!.SampleRateHz / 1000}" : "0";
@@ -75,9 +79,11 @@ public partial class MasterPanel : WindowPanelContainer
         }
 
         UpdateTimeDisplay();
+        _windowshadeSeek.SetValueNoSignal(_positionSeekerSlider.Value);
         _clockBlinkTimer += delta;
     }
 
+    /// <summary>Updates expanded digits and compact bitmap time from the shared playback position.</summary>
     private void UpdateTimeDisplay()
     {
         var playbackPosition = _trackPlayerRef.GetPlaybackPosition();
@@ -86,7 +92,7 @@ public partial class MasterPanel : WindowPanelContainer
         int totalMinutes = (int)time.TotalMinutes;
         int seconds = time.Seconds;
 
-        // Extract individual digits
+        _windowshadeTime.Text = $"{totalMinutes,3}:{seconds:00}";
         int minutesTens = totalMinutes / 10;
         int minutesOnes = totalMinutes % 10;
         int secondsTens = seconds / 10;
@@ -139,6 +145,7 @@ public partial class MasterPanel : WindowPanelContainer
         _masterLabel.SetValue(text);
     }
 
+    /// <summary>Starts the current track or requests a track picker when the playlist has no current track.</summary>
     private void OnPlayTrackButtonPressed()
     {
         if (_trackPlayerRef.CurrentTrack == null)
@@ -150,6 +157,7 @@ public partial class MasterPanel : WindowPanelContainer
         _hasStarted = true;
     }
 
+    /// <summary>Toggles pause while retaining the seek position for either presentation.</summary>
     private void OnPauseTrackButtonPressed()
     {
         _trackPlayerRef.StreamPaused = !_trackPlayerRef.StreamPaused;
@@ -163,6 +171,7 @@ public partial class MasterPanel : WindowPanelContainer
         }
     }
 
+    /// <summary>Stops the shared player and resets seek availability.</summary>
     private void OnStopTrackButtonPressed()
     {
         _trackPlayerRef.Stop();
@@ -173,6 +182,18 @@ public partial class MasterPanel : WindowPanelContainer
     {
         SignalBus.Instance.EmitSignal(SignalBus.SignalName.PositionSeekerChanged, value);
     }
+
+    /// <summary>Routes compact seeking through the expanded slider's existing playback handlers.</summary>
+    /// <param name="value">Requested playback position in seconds.</param>
+    private void OnWindowshadeSeekValueChanged(float value) => _positionSeekerSlider.Value = value;
+
+    /// <summary>Updates both presentations from a scene-connected compact volume control.</summary>
+    /// <param name="value">Requested linear volume between zero and one.</param>
+    private void OnWindowshadeVolumeChanged(float value) => _volumeSlider.Value = value;
+
+    /// <summary>Updates the existing balance control from the compact EQ presentation.</summary>
+    /// <param name="value">Requested stereo balance from minus one to one.</param>
+    private void OnWindowshadeBalanceChanged(float value) => _pannerAudioSlider.Value = value;
 
     private void OnPositionSeekerDragStarted()
     {
@@ -265,6 +286,9 @@ public partial class MasterPanel : WindowPanelContainer
     {
         GetTree().Quit();
     }
+
+    /// <summary>Minimizes the main native window using Godot's desktop window state.</summary>
+    private void OnIconifyButtonPressed() => WindowRef.Mode = Window.ModeEnum.Minimized;
 
     private static void OnLoadTracksButtonPressed()
     {

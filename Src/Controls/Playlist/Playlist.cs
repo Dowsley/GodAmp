@@ -18,6 +18,8 @@ public partial class Playlist : WindowPanelContainer
     [ExportSubgroup("Controls")]
     [Export] private VBoxContainer _trackEntryContainer = null!;
     [Export] private ScrollContainer _scrollContainer = null!;
+    [Export] private Label _windowshadeTitle = null!;
+    [Export] private Label _windowshadeDuration = null!;
 
     [ExportSubgroup("Button dropdowns")]
     [Export] public ButtonDropdown AddButtonDropdown = null!;
@@ -64,8 +66,12 @@ public partial class Playlist : WindowPanelContainer
         _playlistRef = playlist;
     }
 
+    /// <summary>Rebuilds expanded entries and updates the compact current-track display.</summary>
     public void Refresh()
     {
+        Track? current = _trackPlayerRef.CurrentTrack;
+        _windowshadeTitle.Text = current == null ? "" : AudioUtils.GetFullTrackTitle(current, _playlistRef.IndexOf(current) + 1);
+        _windowshadeDuration.Text = current == null ? "" : $"{(int)current.Duration / 60}:{(int)current.Duration % 60:00}";
         HashSet<Track> newSelectedTracks = [];
 
         _trackEntryContainer.GetChildren().ToList().ForEach(child => child.QueueFree());

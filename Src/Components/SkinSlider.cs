@@ -5,10 +5,11 @@ using Godot;
 namespace GodAmp.Components;
 
 /// <summary>Draws classic skin sliders with matching logical-pixel artwork and input geometry.</summary>
+[Tool]
 public partial class SkinSlider : Godot.Range
 {
     /// <summary>Classic sprite layouts supported by this control.</summary>
-    public enum SliderLayout { Volume, Balance, Seek, Equalizer }
+    public enum SliderLayout { Volume, Balance, Seek, Equalizer, WindowshadeSeek, WindowshadeVolume, WindowshadeBalance }
 
     private const int LastFrame = 27;
     private const int FrameStride = 15;
@@ -18,6 +19,9 @@ public partial class SkinSlider : Godot.Range
     private const int BalanceHalfTravel = 12;
     private const int VolumeTravel = 51;
     private const int EqualizerTravel = 51;
+    private const int WindowshadeSeekTravel = 12;
+    private const int WindowshadeVolumeTravel = 94;
+    private const int WindowshadeBalanceTravel = 39;
 
     /// <summary>Emitted before pointer or keyboard interaction changes the value.</summary>
     [Signal] public delegate void DragStartedEventHandler();
@@ -54,6 +58,9 @@ public partial class SkinSlider : Godot.Range
         SliderLayout.Equalizer => new Rect2(1, EqualizerTravel - (EqualizerPositions - 1 - EqualizerPosition) * (EqualizerTravel + 1) / EqualizerPositions, 11, 11),
         SliderLayout.Seek => new Rect2(Mathf.FloorToInt((float)Ratio * SeekTravel), 0, 29, 10),
         SliderLayout.Balance => new Rect2(BalanceHalfTravel + (int)((Ratio * 2 - 1) * BalanceHalfTravel), 1, 14, 11),
+        SliderLayout.WindowshadeSeek => new Rect2(1 + Mathf.FloorToInt((float)Ratio * WindowshadeSeekTravel), 0, 3, 7),
+        SliderLayout.WindowshadeVolume => new Rect2(Mathf.FloorToInt((float)Ratio * WindowshadeVolumeTravel), 0, 3, 7),
+        SliderLayout.WindowshadeBalance => new Rect2(Mathf.FloorToInt((float)Ratio * WindowshadeBalanceTravel), 0, 3, 7),
         _ => new Rect2(Mathf.FloorToInt((float)Ratio * VolumeTravel), 1, 14, 11)
     };
 
@@ -64,6 +71,8 @@ public partial class SkinSlider : Godot.Range
     {
         get
         {
+            if (Layout == SliderLayout.WindowshadeSeek)
+                return new Rect2(0, 36, 17, 7);
             if (Layout == SliderLayout.Seek)
                 return new Rect2(0, 0, 248, 10);
             if (Layout == SliderLayout.Equalizer)
@@ -82,6 +91,8 @@ public partial class SkinSlider : Godot.Range
     /// <inheritdoc />
     public override void _Ready()
     {
+        if (Engine.IsEditorHint())
+            return;
         /* The hosting window and autoload live outside this reusable control scene. */
         GetWindow().FocusExited += FinishDrag;
         SignalBus.Instance.SkinChanged += QueueRedraw;
@@ -90,6 +101,8 @@ public partial class SkinSlider : Godot.Range
     /// <inheritdoc />
     public override void _ExitTree()
     {
+        if (Engine.IsEditorHint())
+            return;
         GetWindow().FocusExited -= FinishDrag;
         SignalBus.Instance.SkinChanged -= QueueRedraw;
     }
@@ -101,14 +114,24 @@ public partial class SkinSlider : Godot.Range
     /// <inheritdoc />
     public override void _Draw()
     {
+        if (Sheet?.Atlas == null)
+            return;
+        if (Layout is SliderLayout.WindowshadeVolume or SliderLayout.WindowshadeBalance)
+        {
+            int frame = Math.Min(2, (int)(Ratio * 3));
+            int sourceX = Layout == SliderLayout.WindowshadeVolume ? 1 : 11;
+            DrawTextureRectRegion(Sheet.Atlas, ThumbRect, new Rect2(sourceX + frame * 3, 30, 3, 7));
+            return;
+        }
         Rect2 track = TrackRegion;
         DrawTextureRectRegion(Sheet.Atlas, new Rect2(Vector2.Zero, track.Size), track);
-        if (!Editable && Layout == SliderLayout.Seek)
+        if (!Editable && Layout is SliderLayout.Seek or SliderLayout.WindowshadeSeek)
             return;
         Rect2 source = Layout switch
         {
             SliderLayout.Equalizer => new Rect2(0, _dragging ? 176 : 164, 11, 11),
             SliderLayout.Seek => new Rect2(_dragging ? 278 : 248, 0, 29, 10),
+            SliderLayout.WindowshadeSeek => new Rect2(17 + (ThumbRect.Position.X < 6 ? 0 : ThumbRect.Position.X < 9 ? 3 : 6), 36, 3, 7),
             _ => new Rect2(_dragging ? 0 : 15, 422, 14, 11)
         };
         DrawTextureRectRegion(Sheet.Atlas, ThumbRect, source);
@@ -171,9 +194,13 @@ public partial class SkinSlider : Godot.Range
             SliderLayout.Seek => SeekTravel,
             SliderLayout.Balance => BalanceHalfTravel * 2,
             SliderLayout.Equalizer => EqualizerTravel,
+            SliderLayout.WindowshadeSeek => WindowshadeSeekTravel,
+            SliderLayout.WindowshadeVolume => WindowshadeVolumeTravel,
+            SliderLayout.WindowshadeBalance => WindowshadeBalanceTravel,
             _ => VolumeTravel
         };
-        float ratio = ((Layout == SliderLayout.Equalizer ? position.Y : position.X) - _grabOffset) / travel;
+        float origin = Layout == SliderLayout.WindowshadeSeek ? 1 : 0;
+        float ratio = ((Layout == SliderLayout.Equalizer ? position.Y : position.X) - _grabOffset - origin) / travel;
         Ratio = Mathf.Clamp(Layout == SliderLayout.Equalizer ? 1 - ratio : ratio, 0, 1);
     }
 

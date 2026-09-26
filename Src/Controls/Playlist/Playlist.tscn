@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://diw508vd3gr8k"]
+[gd_scene format=3 uid="uid://diw508vd3gr8k"]
 
 [ext_resource type="Script" uid="uid://35td6b067wck" path="res://Src/Controls/Playlist/Playlist.cs" id="1_qbsw1"]
 [ext_resource type="Script" path="res://Src/Components/SkinCursorController.cs" id="cursors"]
@@ -30,6 +30,49 @@
 [ext_resource type="Texture2D" uid="uid://bhlcuq0n0o35r" path="res://Data/SkinResources/PlaylistSecondaryVisualizationArea.tres" id="20_7604m"]
 [ext_resource type="Texture2D" uid="uid://8i6jdrj4bx7d" path="res://Data/SkinResources/PlaylistControlArea.tres" id="20_kvkyn"]
 [ext_resource type="Texture2D" uid="uid://jn8fnj8u2o73" path="res://Data/SkinResources/PlaylistListOptionsButton.tres" id="22_kvkyn"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadePlaylistSheet.tres" id="shade_sheet"]
+[ext_resource type="Script" path="res://Src/Components/BitmapLabel.cs" id="bitmap_label"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="bitmap_theme"]
+
+[sub_resource type="AtlasTexture" id="shade_left"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(72, 42, 25, 14)
+
+[sub_resource type="AtlasTexture" id="shade_middle"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(72, 57, 25, 14)
+
+[sub_resource type="AtlasTexture" id="shade_right"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(99, 42, 50, 14)
+
+[sub_resource type="AtlasTexture" id="shade_restore"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(128, 45, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_restore_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(150, 42, 9, 9)
+
+[sub_resource type="Resource" id="cursor_shade"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
+Role = 19
+
+[sub_resource type="Resource" id="cursor_shade_resize"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/ResizeHandle")])
+Role = 18
+
+[sub_resource type="Resource" id="cursor_shade_restore"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Restore")])
+Role = 12
+
+[sub_resource type="Resource" id="cursor_shade_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
+Role = 13
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibn1u"]
 
@@ -59,7 +102,7 @@ ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/AllContent/ContentCon
 Role = 15
 UseVerticalScrollBar = true
 
-[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox")]
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,6 +114,14 @@ script = ExtResource("1_qbsw1")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("3_bltap"), ExtResource("4_ajpn4"), ExtResource("5_njjkq"), ExtResource("6_njjkq")])
 InactiveTitlebarOffset = 21
 ResizeStep = Vector2i(25, 29)
+ExpandedControls = Array[NodePath]([NodePath("VBoxContainer"), NodePath("DraggableHitbox"), NodePath("ResizeLayer")])
+Windowshade = NodePath("Windowshade")
+WindowshadeDragHitbox = NodePath("Windowshade")
+WindowshadeButtons = Array[NodePath]([NodePath("VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton")])
+WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_right")])
+WindowshadeInactiveOffset = 15
+_windowshadeTitle = NodePath("Windowshade/Title")
+_windowshadeDuration = NodePath("Windowshade/Duration")
 TrackLabelScene = ExtResource("2_ecqcu")
 _trackEntryContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer/PlaylistTrackEntryContainer")
 _scrollContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")
@@ -90,7 +141,7 @@ _draggableHitbox = NodePath("DraggableHitbox")
 [node name="SkinCursors" type="Node" parent="."]
 script = ExtResource("cursors")
 DefaultRole = 17
-Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_scroll"), SubResource("cursor_resize")])
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_scroll"), SubResource("cursor_resize"), SubResource("cursor_shade"), SubResource("cursor_shade_restore"), SubResource("cursor_shade_close"), SubResource("cursor_shade_resize")])
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -139,7 +190,6 @@ offset_right = 14.0
 offset_bottom = 12.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-disabled = true
 texture_normal = ExtResource("4_esdbs")
 texture_pressed = ExtResource("5_bltap")
 stretch_mode = 3
@@ -340,6 +390,91 @@ mouse_filter = 2
 [node name="ResizeHandle" parent="ResizeLayer" node_paths=PackedStringArray("Panel") instance=ExtResource("resize_handle")]
 Panel = NodePath("../..")
 
+[node name="Windowshade" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(275, 14)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Left" type="TextureRect" parent="Windowshade"]
+offset_right = 25.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_left")
+
+[node name="Middle" type="NinePatchRect" parent="Windowshade"]
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = -50.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_middle")
+axis_stretch_horizontal = 1
+
+[node name="Right" type="TextureRect" parent="Windowshade"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_right")
+
+[node name="Title" type="Label" parent="Windowshade"]
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -69.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = ExtResource("bitmap_theme")
+text = "PLAYLIST"
+clip_text = true
+script = ExtResource("bitmap_label")
+
+[node name="Duration" type="Label" parent="Windowshade"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 4.0
+offset_right = -29.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = ExtResource("bitmap_theme")
+text = "0:00"
+horizontal_alignment = 2
+clip_text = true
+script = ExtResource("bitmap_label")
+
+[node name="Restore" type="TextureButton" parent="Windowshade"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = 3.0
+offset_right = -11.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_restore")
+texture_pressed = SubResource("shade_restore_held")
+
+[node name="Close" type="TextureButton" parent="Windowshade"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -11.0
+offset_top = 3.0
+offset_right = -2.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = ExtResource("6_esdbs")
+texture_pressed = ExtResource("7_bltap")
+
+[node name="ResizeHandle" parent="Windowshade" node_paths=PackedStringArray("Panel") instance=ExtResource("resize_handle")]
+offset_left = -2.0
+mouse_default_cursor_shape = 10
+Panel = NodePath("../..")
+
+[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
+[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/AddButton" to="." method="OnAddButtonPressed"]

@@ -17,6 +17,8 @@ public partial class ClassicVisualization : Control
     private const int PixelHeight = 16;
     private const int BarStride = 4;
     private const int BarCount = PixelWidth / BarStride;
+    private const int WindowshadeWidth = 38;
+    private const int WindowshadeHeight = 5;
     private const float MinimumFrequency = 20;
     private const float MaximumFrequency = 16000;
     private const float SpectrumRangeDb = 60;
@@ -30,6 +32,11 @@ public partial class ClassicVisualization : Control
     private AudioEffectCapture _capture = null!;
     private Image _image = null!;
     private ImageTexture _texture = null!;
+    private Image _windowshadeImage = null!;
+    private ImageTexture _windowshadeTexture = null!;
+
+    /// <summary>Compact scene display sharing this analyzer and capture buffer.</summary>
+    [Export] public TextureRect WindowshadeDisplay { get; set; } = null!;
 
     /// <summary>Visualization displayed in the main panel.</summary>
     [Export] public VisualizationMode Mode { get; set; }
@@ -44,6 +51,9 @@ public partial class ClassicVisualization : Control
         _capture = (AudioEffectCapture)AudioServer.GetBusEffect(bus, AudioUtils.OscilloscopeAudioEffectIndex);
         _image = Image.CreateEmpty(PixelWidth, PixelHeight, false, Image.Format.Rgba8);
         _texture = ImageTexture.CreateFromImage(_image);
+        _windowshadeImage = Image.CreateEmpty(WindowshadeWidth, WindowshadeHeight, false, Image.Format.Rgba8);
+        _windowshadeTexture = ImageTexture.CreateFromImage(_windowshadeImage);
+        WindowshadeDisplay.Texture = _windowshadeTexture;
     }
 
     /// <inheritdoc />
@@ -51,6 +61,8 @@ public partial class ClassicVisualization : Control
     {
         _texture.Dispose();
         _image.Dispose();
+        _windowshadeTexture.Dispose();
+        _windowshadeImage.Dispose();
     }
 
     /// <summary>Cycles spectrum, oscilloscope, and off when the display is clicked.</summary>
@@ -83,7 +95,40 @@ public partial class ClassicVisualization : Control
                 DrawWaveform(palette);
         }
         _texture.Update(_image);
+        DrawWindowshade(palette);
         QueueRedraw();
+    }
+
+    /// <summary>Renders the compact spectrum or waveform from the same audio samples and decay state.</summary>
+    /// <param name="palette">The active skin's classic visualization colors.</param>
+    private void DrawWindowshade(VisualizationPalette palette)
+    {
+        _windowshadeImage.Fill(palette[0]);
+        int previous = -1;
+        for (int x = 0; x < WindowshadeWidth; x++)
+        {
+            if (Mode == VisualizationMode.Spectrum && x % BarStride != BarStride - 1)
+            {
+                int band = Math.Min(BarCount - 1, x / BarStride * 2);
+                int height = (int)(_levels[band] * WindowshadeHeight / PixelHeight);
+                for (int y = WindowshadeHeight - height; y < WindowshadeHeight; y++)
+                    _windowshadeImage.SetPixel(x, y, palette[17 - (WindowshadeHeight - 1 - y) * 3]);
+                int peak = (int)(_peaks[band] * WindowshadeHeight / PixelHeight);
+                if (peak > 0)
+                    _windowshadeImage.SetPixel(x, Math.Max(0, WindowshadeHeight - peak), palette[23]);
+            }
+            else if (Mode == VisualizationMode.Oscilloscope)
+            {
+                int sample = x * (_scope.Length - 1) / (WindowshadeWidth - 1);
+                int y = Mathf.Clamp((int)((1 - _scope[sample]) * WindowshadeHeight / 2), 0, WindowshadeHeight - 1);
+                if (previous < 0)
+                    previous = y;
+                for (int row = Math.Min(y, previous); row <= Math.Max(y, previous); row++)
+                    _windowshadeImage.SetPixel(x, row, palette[18]);
+                previous = y;
+            }
+        }
+        _windowshadeTexture.Update(_windowshadeImage);
     }
 
     /// <summary>Consumes buffered stereo samples and resamples a rising-edge-triggered mono waveform.</summary>

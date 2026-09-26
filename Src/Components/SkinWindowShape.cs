@@ -12,10 +12,21 @@ public partial class SkinWindowShape : CanvasLayer
     [Export] public Control Panel { get; set; } = null!;
     /// <summary>The classic window mode represented by this scene.</summary>
     [Export] public SkinRegionMode Mode { get; set; }
+    /// <summary>Region metadata selected by the scene for its compact presentation.</summary>
+    [Export] public SkinRegionMode WindowshadeMode { get; set; }
     [Export] private ColorRect _mask = null!;
 
     private Window _window = null!;
     private bool _refreshPending;
+    private bool _windowShaded;
+
+    /// <summary>Selects mode-specific contours after a scene-authored presentation signal.</summary>
+    /// <param name="shaded">Whether the panel is compact.</param>
+    private void OnWindowshadeChanged(bool shaded)
+    {
+        _windowShaded = shaded;
+        RequestRefresh();
+    }
 
     /// <inheritdoc />
     public override void _Ready()
@@ -56,7 +67,7 @@ public partial class SkinWindowShape : CanvasLayer
         _refreshPending = false;
         if (!IsInsideTree())
             return;
-        var contours = SkinLoader.Instance.Regions.GetPolygons(Mode);
+        var contours = SkinLoader.Instance.Regions.GetPolygons(_windowShaded ? WindowshadeMode : Mode);
         string backend = DisplayServer.GetName();
         bool supported = !_window.IsEmbedded() && _window.Transparent && _window.TransparentBg &&
             DisplayServer.IsWindowTransparencyAvailable() && backend is "macOS" or "Windows" or "X11";

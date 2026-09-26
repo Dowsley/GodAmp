@@ -10,3 +10,4 @@ script = ExtResource("script")
 [connection signal="value_changed" from="." to="." method="OnValueChanged"]
 [connection signal="changed" from="." to="." method="queue_redraw"]
 [connection signal="focus_exited" from="." to="." method="FinishDrag"]
+[connection signal="visibility_changed" from="." to="." method="FinishDrag"]

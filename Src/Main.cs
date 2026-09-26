@@ -523,49 +523,55 @@ public partial class Main : HBoxContainer
         _windowManager.SetZoomMode(multiplier);
     }
 
+    /// <summary>Hides the EQ and synchronizes its visibility setting and menu controls.</summary>
     private void OnEqualizerCloseButtonClicked()
     {
         _equalizer.WindowRef.Hide();
         _masterPanel.ToggleEqualizerButton.ButtonPressed = false;
         _masterPanel.WinampMenuButton.SetEqualizerChecked(false);
-        SettingsManager.Instance.SetWindowVisible("equalizer", false);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Equalizer, false);
     }
 
+    /// <summary>Hides the playlist and synchronizes its visibility setting and menu controls.</summary>
     private void OnPlaylistCloseButtonClicked()
     {
         _playlist.WindowRef.Hide();
         _masterPanel.TogglePlaylistButton.ButtonPressed = false;
         _masterPanel.WinampMenuButton.SetPlaylistChecked(false);
-        SettingsManager.Instance.SetWindowVisible("playlist", false);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Playlist, false);
     }
 
+    /// <summary>Hides the visualizer and synchronizes its visibility setting and menu entry.</summary>
     private void OnVisualizerCloseButtonClicked()
     {
         _visualizer.WindowRef.Hide();
         _masterPanel.WinampMenuButton.SetVisualizerChecked(false);
-        SettingsManager.Instance.SetWindowVisible("visualizer", false);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Visualizer, false);
     }
 
+    /// <summary>Toggles EQ visibility and synchronizes the setting and both menu controls.</summary>
     private void OnToggleEqualizerRequested()
     {
         _equalizer.WindowRef.Visible = !_equalizer.WindowRef.Visible;
         _masterPanel.ToggleEqualizerButton.ButtonPressed = _equalizer.WindowRef.Visible;
         _masterPanel.WinampMenuButton.SetEqualizerChecked(_equalizer.WindowRef.Visible);
-        SettingsManager.Instance.SetWindowVisible("equalizer", _equalizer.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Equalizer, _equalizer.WindowRef.Visible);
     }
 
+    /// <summary>Toggles playlist visibility and synchronizes the setting and both menu controls.</summary>
     private void OnTogglePlaylistRequested()
     {
         _playlist.WindowRef.Visible = !_playlist.WindowRef.Visible;
         _masterPanel.TogglePlaylistButton.ButtonPressed = _playlist.WindowRef.Visible;
         _masterPanel.WinampMenuButton.SetPlaylistChecked(_playlist.WindowRef.Visible);
-        SettingsManager.Instance.SetWindowVisible("playlist", _playlist.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Playlist, _playlist.WindowRef.Visible);
     }
 
+    /// <summary>Toggles visualizer visibility and synchronizes the setting and menu entry.</summary>
     private void OnToggleVisualizerRequested()
     {
         _visualizer.WindowRef.Visible = !_visualizer.WindowRef.Visible;
         _masterPanel.WinampMenuButton.SetVisualizerChecked(_visualizer.WindowRef.Visible);
-        SettingsManager.Instance.SetWindowVisible("visualizer", _visualizer.WindowRef.Visible);
+        SettingsManager.Instance.SetWindowVisible(PlayerWindow.Visualizer, _visualizer.WindowRef.Visible);
     }
 }

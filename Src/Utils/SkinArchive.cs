@@ -34,7 +34,7 @@ public sealed class SkinArchive
         ["MAIN"] = new(275, 116), ["CBUTTONS"] = new(136, 36),
         ["TITLEBAR"] = new(302, 29), ["SHUFREP"] = new(92, 85),
         ["VOLUME"] = new(68, 418), ["BALANCE"] = new(47, 418),
-        ["POSBAR"] = new(307, 5), ["EQMAIN"] = new(275, 315),
+        ["POSBAR"] = new(307, 5), ["EQMAIN"] = new(275, 315), ["EQ_EX"] = new(275, 56),
         ["PLEDIT"] = new(280, 186), ["GEN"] = new(194, 109),
         ["TEXT"] = new(155, 18), ["NUMBERS"] = new(99, 13), ["NUMS_EX"] = new(108, 13),
         ["PLAYPAUS"] = new(42, 9), ["MONOSTER"] = new(57, 24)

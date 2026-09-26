@@ -1,4 +1,5 @@
 using GodAmp.Components;
+using GodAmp.Autoload;
 using GodAmp.Utils;
 using Godot;
 
@@ -7,6 +8,8 @@ namespace GodAmp.Controls.Equalizer;
 /// <summary>Applies the skinned equalizer controls to the master audio bus.</summary>
 public partial class Equalizer : WindowPanelContainer
 {
+    /// <inheritdoc />
+    public override bool SupportsWindowshade => base.SupportsWindowshade && SkinLoader.Instance.EqualizerWindowshadeAvailable;
     [ExportGroup("References")]
     [Export] private TextureButton _equalizerToggleButton = null!;
     [Export] private EqualizerGraph _graph = null!;

@@ -1,4 +1,5 @@
 using System.Linq;
+using GodAmp.Autoload;
 using Godot;
 
 namespace GodAmp.Components;
@@ -14,6 +15,31 @@ public partial class WindowPanelContainer : PanelContainer
     [Signal] public delegate void DragMovedEventHandler(WindowPanelContainer c, Vector2I position);
     /// <summary>Notifies the docking manager that a panel drag has ended.</summary>
     [Signal] public delegate void DragEndedEventHandler(WindowPanelContainer c);
+    /// <summary>Requests a mode change from the native geometry owner.</summary>
+    [Signal] public delegate void WindowshadeRequestedEventHandler(WindowPanelContainer panel, bool shaded);
+    /// <summary>Notifies scene components after the presentation changes.</summary>
+    [Signal] public delegate void WindowshadeChangedEventHandler(bool shaded);
+
+    /// <summary>Expanded scene layers hidden while the compact presentation is active.</summary>
+    [Export] public Godot.Collections.Array<Control> ExpandedControls { get; set; } = [];
+    /// <summary>Scene-authored compact presentation, or null for windows without this mode.</summary>
+    [Export] public Control? Windowshade { get; set; }
+    /// <summary>Compact titlebar hit target, excluding its interactive controls.</summary>
+    [Export] public Control? WindowshadeDragHitbox { get; set; }
+    /// <summary>Buttons whose availability follows the current skin's compact artwork.</summary>
+    [Export] public Godot.Collections.Array<BaseButton> WindowshadeButtons { get; set; } = [];
+    /// <summary>Compact active titlebar atlas segments.</summary>
+    [Export] public Godot.Collections.Array<AtlasTexture> WindowshadeTitlebarTextures { get; set; } = [];
+    /// <summary>Offset between active and inactive compact titlebar rows.</summary>
+    [Export] public int WindowshadeInactiveOffset { get; set; } = 15;
+    /// <summary>Whether the current skin and scene provide a compact presentation.</summary>
+    public virtual bool SupportsWindowshade => Windowshade != null;
+    /// <summary>Whether the compact presentation is active.</summary>
+    public bool IsWindowShaded { get; private set; }
+    /// <summary>Scene-authored minimum dimensions of the expanded presentation.</summary>
+    public Vector2 ExpandedMinimumSize { get; private set; }
+    /// <summary>Scene-authored compact height in skin pixels.</summary>
+    public int WindowshadeHeight => (int)(Windowshade?.CustomMinimumSize.Y ?? 0);
 
     [ExportGroup("References")]
     [Export] private Control _draggableHitbox = null!;
@@ -25,6 +51,7 @@ public partial class WindowPanelContainer : PanelContainer
     [Export] public Vector2I ResizeStep { get; set; } = Vector2I.One;
 
     private Rect2[] _activeTitlebarRegions = [];
+    private Rect2[] _activeWindowshadeRegions = [];
 
     /// <summary>Native window hosting this panel.</summary>
     public Window WindowRef = null!;
@@ -34,25 +61,29 @@ public partial class WindowPanelContainer : PanelContainer
     private Vector2I _dragOffset;
     private bool _nativeDrag;
     private bool _previousInputAccumulation;
-    private BaseButton[] _buttons = [];
+    private Control[] _dragExclusions = [];
 
     /// <inheritdoc />
     public override void _Ready()
     {
         WindowRef = GetWindow();
-        _buttons = [.. FindChildren("*", "BaseButton", true, false).OfType<BaseButton>()];
-        _activeTitlebarRegions = new Rect2[TitlebarTextures.Count];
-        for (int i = 0; i < TitlebarTextures.Count; i++)
-            _activeTitlebarRegions[i] = TitlebarTextures[i].Region;
+        ExpandedMinimumSize = CustomMinimumSize;
+        _dragExclusions = [.. FindChildren("*", "Control", true, false).OfType<Control>()
+            .Where(control => control is BaseButton or Godot.Range || control.MouseFilter == MouseFilterEnum.Stop)];
+        _activeWindowshadeRegions = [.. WindowshadeTitlebarTextures.Select(texture => texture.Region)];
+        _activeTitlebarRegions = [.. TitlebarTextures.Select(texture => texture.Region)];
         WindowRef.FocusEntered += OnWindowActivated;
         WindowRef.FocusExited += OnWindowDeactivated;
         SetTitlebarActive(WindowRef.HasFocus());
+        SignalBus.Instance.SkinChanged += RefreshWindowshadeAvailability;
+        RefreshWindowshadeAvailability();
     }
 
     /// <inheritdoc />
     public override void _ExitTree()
     {
         FinishDrag();
+        SignalBus.Instance.SkinChanged -= RefreshWindowshadeAvailability;
         WindowRef.FocusEntered -= OnWindowActivated;
         WindowRef.FocusExited -= OnWindowDeactivated;
         SetTitlebarActive(true);
@@ -72,13 +103,49 @@ public partial class WindowPanelContainer : PanelContainer
     /// <param name="active">Whether the native window has input focus.</param>
     private void SetTitlebarActive(bool active)
     {
-        for (int i = 0; i < _activeTitlebarRegions.Length; i++)
+        ApplyTitlebarState(TitlebarTextures, _activeTitlebarRegions, InactiveTitlebarOffset, active);
+        ApplyTitlebarState(WindowshadeTitlebarTextures, _activeWindowshadeRegions, WindowshadeInactiveOffset, active);
+    }
+
+    /// <summary>Selects atlas rows for one scene-defined titlebar presentation.</summary>
+    /// <param name="textures">Mutable atlas segments referencing shared skin sheets.</param>
+    /// <param name="regions">Active regions captured when the scene enters the tree.</param>
+    /// <param name="inactiveOffset">Vertical displacement to the inactive artwork.</param>
+    /// <param name="active">Whether the hosting window has focus.</param>
+    private static void ApplyTitlebarState(Godot.Collections.Array<AtlasTexture> textures, Rect2[] regions,
+        int inactiveOffset, bool active)
+    {
+        for (int i = 0; i < regions.Length; i++)
         {
-            Rect2 region = _activeTitlebarRegions[i];
+            Rect2 region = regions[i];
             if (!active)
-                region.Position += new Vector2(0, InactiveTitlebarOffset);
-            TitlebarTextures[i].Region = region;
+                region.Position += new Vector2(0, inactiveOffset);
+            textures[i].Region = region;
         }
+    }
+
+    /// <summary>Updates mode buttons and requests expansion if the active skin lacks compact artwork.</summary>
+    private void RefreshWindowshadeAvailability()
+    {
+        foreach (BaseButton button in WindowshadeButtons)
+            button.Disabled = !SupportsWindowshade;
+        if (IsWindowShaded && !SupportsWindowshade)
+            EmitSignal(SignalName.WindowshadeRequested, this, false);
+    }
+
+    /// <summary>Selects scene layers and minimum bounds before the manager applies native geometry.</summary>
+    /// <param name="shaded">True for the compact presentation, false for expanded controls.</param>
+    public void SetWindowshadePresentation(bool shaded)
+    {
+        IsWindowShaded = shaded && SupportsWindowshade;
+        FinishDrag();
+        foreach (Control control in ExpandedControls)
+            control.Visible = !IsWindowShaded;
+        if (Windowshade != null)
+            Windowshade.Visible = IsWindowShaded;
+        CustomMinimumSize = IsWindowShaded
+            ? new Vector2(ExpandedMinimumSize.X, WindowshadeHeight) : ExpandedMinimumSize;
+        EmitSignal(SignalName.WindowshadeChanged, IsWindowShaded);
     }
 
     /// <inheritdoc />
@@ -91,11 +158,18 @@ public partial class WindowPanelContainer : PanelContainer
             return;
         }
         if (input is not InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } button ||
-            IsOverButton(button.Position))
+            IsOverInteractiveControl(button.Position))
             return;
-        Vector2 localPosition = _draggableHitbox.GetGlobalTransformWithCanvas().AffineInverse() * button.Position;
-        if (!new Rect2(Vector2.Zero, _draggableHitbox.Size).HasPoint(localPosition))
+        Control hitbox = IsWindowShaded ? WindowshadeDragHitbox! : _draggableHitbox;
+        Vector2 localPosition = hitbox.GetGlobalTransformWithCanvas().AffineInverse() * button.Position;
+        if (!new Rect2(Vector2.Zero, hitbox.Size).HasPoint(localPosition))
             return;
+        if (button.DoubleClick && SupportsWindowshade)
+        {
+            OnMinimizeButtonPressed();
+            GetViewport().SetInputAsHandled();
+            return;
+        }
 
         WindowRef.GrabFocus();
         IsDragging = true;
@@ -111,17 +185,17 @@ public partial class WindowPanelContainer : PanelContainer
         CheckDragReleased();
     }
 
-    /// <summary>Excludes button hitboxes before Godot updates its GUI hover state for the press.</summary>
+    /// <summary>Excludes interactive controls before Godot updates GUI hover state for the press.</summary>
     /// <param name="position">Pointer position in the hosting viewport.</param>
-    /// <returns>Whether a visible button occupies the pressed point.</returns>
-    private bool IsOverButton(Vector2 position)
+    /// <returns>Whether a visible interactive control occupies the pressed point.</returns>
+    private bool IsOverInteractiveControl(Vector2 position)
     {
-        foreach (BaseButton button in _buttons)
+        foreach (Control control in _dragExclusions)
         {
-            if (!button.IsVisibleInTree())
+            if (!control.IsVisibleInTree())
                 continue;
-            Vector2 local = button.GetGlobalTransformWithCanvas().AffineInverse() * position;
-            if (new Rect2(Vector2.Zero, button.Size).HasPoint(local))
+            Vector2 local = control.GetGlobalTransformWithCanvas().AffineInverse() * position;
+            if (new Rect2(Vector2.Zero, control.Size).HasPoint(local))
                 return true;
         }
         return false;
@@ -161,8 +235,10 @@ public partial class WindowPanelContainer : PanelContainer
         EmitSignal(SignalName.CloseButtonClicked);
     }
 
-    /// <summary>Reserved callback for the unsupported windowshade mode.</summary>
+    /// <summary>Requests the opposite presentation while preserving the existing window and controllers.</summary>
     public virtual void OnMinimizeButtonPressed()
     {
+        if (SupportsWindowshade)
+            EmitSignal(SignalName.WindowshadeRequested, this, !IsWindowShaded);
     }
 }
