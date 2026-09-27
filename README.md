@@ -85,7 +85,7 @@ Packaged interaction checks remain open.
 - [X] Actual window
 - [X] Functional playlists
 - [X] Multiple windows
-- [ ] Full theme support
+- [X] Classic .wsz skin support within the compatibility limits documented above
 - [X] EQ response graph and main-panel spectrum/oscilloscope displays
 - [ ] More visualizers (and flexibility for them)
 - [ ] Integration with special keys
