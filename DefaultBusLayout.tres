@@ -14,7 +14,6 @@ resource_name = "Panner"
 
 [sub_resource type="AudioEffectCapture" id="AudioEffectCapture_scope"]
 resource_name = "Oscilloscope"
-buffer_length = 0.1
 
 [resource]
 bus/0/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_j3pel")
