@@ -49,7 +49,10 @@ public partial class Playlist : WindowPanelContainer
     [Export] public TextureButton ListOptionsButton = null!;
 
     private readonly HashSet<long> _selectedEntries = [];
+    private readonly HashSet<long> _presentedSelection = [];
+    private readonly Dictionary<long, PlaylistTrackEntry> _rows = [];
     private long? _selectionAnchorId;
+    private long? _currentRowId;
 
     /// <inheritdoc />
     public override void _Ready()
@@ -67,52 +70,90 @@ public partial class Playlist : WindowPanelContainer
         base._ExitTree();
     }
 
-    /// <summary>Rebuilds rows from queue state while retaining surviving selection identities.</summary>
+    /// <summary>Reconciles queue order while retaining surviving rows, selection anchors, and scroll state.</summary>
     public void Refresh()
     {
-        _selectedEntries.IntersectWith(_playbackController.Entries.Select(e => e.Id));
+        HashSet<long> surviving = [.. _playbackController.Entries.Select(e => e.Id)];
+        _selectedEntries.IntersectWith(surviving);
+        _presentedSelection.IntersectWith(surviving);
         if (_selectionAnchorId is { } anchor && EntryIndex(anchor) < 0)
             _selectionAnchorId = null;
-        DisconnectRows();
-        foreach (Node child in _trackEntryContainer.GetChildren())
+        foreach (long id in _rows.Keys.Where(id => !surviving.Contains(id)).ToArray())
         {
-            _trackEntryContainer.RemoveChild(child);
-            child.QueueFree();
+            PlaylistTrackEntry row = _rows[id];
+            DisconnectRow(row);
+            _rows.Remove(id);
+            _trackEntryContainer.RemoveChild(row);
+            row.QueueFree();
         }
 
         for (int i = 0; i < _playbackController.Entries.Count; i++)
         {
             QueueEntry entry = _playbackController.Entries[i];
-            var row = TrackLabelScene.Instantiate<PlaylistTrackEntry>();
-            _trackEntryContainer.AddChild(row);
-            row.Selected += OnEntrySelected;
-            row.Activated += OnEntryActivated;
-            row.MoveRequested += OnMoveRequested;
-            row.Setup(AudioUtils.GetFullTrackTitle(entry.Track, i + 1), entry.Track.Duration,
-                entry.Id, _selectedEntries.Contains(entry.Id), entry.Id == _playbackController.CurrentEntry?.Id);
+            string title = AudioUtils.GetFullTrackTitle(entry.Track, i + 1);
+            if (!_rows.TryGetValue(entry.Id, out PlaylistTrackEntry? row))
+            {
+                row = TrackLabelScene.Instantiate<PlaylistTrackEntry>();
+                _rows.Add(entry.Id, row);
+                _trackEntryContainer.AddChild(row);
+                row.Selected += OnEntrySelected;
+                row.Activated += OnEntryActivated;
+                row.MoveRequested += OnMoveRequested;
+                row.Setup(title, entry.Track.Duration, entry.Id, false);
+            }
+            else
+                row.UpdateMetadata(title, entry.Track.Duration);
+            if (row.GetIndex() != i)
+                _trackEntryContainer.MoveChild(row, i);
         }
+        RefreshSelection();
         RefreshCurrentEntry();
     }
 
-    /// <summary>Updates current-entry presentation without changing UI selection.</summary>
+    /// <summary>Updates the previous and current occurrence without changing UI selection.</summary>
     public void RefreshCurrentEntry()
     {
         QueueEntry? current = _playbackController.CurrentEntry;
         _windowshadeTitle.Text = current == null ? "" : AudioUtils.GetFullTrackTitle(current.Track, _playbackController.CurrentIndex + 1);
         _windowshadeDuration.Text = current == null ? "" : TimeUtils.FormatAsTrackTime(current.Track.Duration);
-        foreach (PlaylistTrackEntry row in _trackEntryContainer.GetChildren().OfType<PlaylistTrackEntry>())
-            row.SetCurrent(row.EntryId == current?.Id);
+        if (_currentRowId == current?.Id)
+            return;
+        if (_currentRowId is { } previous && _rows.TryGetValue(previous, out PlaylistTrackEntry? previousRow))
+            previousRow.SetCurrent(false);
+        _currentRowId = current?.Id;
+        if (_currentRowId is { } id && _rows.TryGetValue(id, out PlaylistTrackEntry? currentRow))
+            currentRow.SetCurrent(true);
+    }
+
+    /// <summary>Refreshes metadata for surviving occurrences without changing row identity or selection.</summary>
+    /// <param name="entryIds">Occurrences whose track metadata changed.</param>
+    public void RefreshMetadata(long[] entryIds)
+    {
+        foreach (long id in entryIds)
+        {
+            int index = EntryIndex(id);
+            if (index >= 0 && _rows.TryGetValue(id, out PlaylistTrackEntry? row))
+            {
+                Track track = _playbackController.Entries[index].Track;
+                row.UpdateMetadata(AudioUtils.GetFullTrackTitle(track, index + 1), track.Duration);
+            }
+        }
+        if (_currentRowId is { } current && entryIds.Contains(current))
+            RefreshCurrentEntry();
     }
 
     /// <summary>Disconnects subscriptions owned by dynamically instantiated rows.</summary>
     private void DisconnectRows()
     {
-        foreach (PlaylistTrackEntry row in _trackEntryContainer.GetChildren().OfType<PlaylistTrackEntry>())
-        {
-            row.Selected -= OnEntrySelected;
-            row.Activated -= OnEntryActivated;
-            row.MoveRequested -= OnMoveRequested;
-        }
+        foreach (PlaylistTrackEntry row in _rows.Values)
+            DisconnectRow(row);
+    }
+
+    private void DisconnectRow(PlaylistTrackEntry row)
+    {
+        row.Selected -= OnEntrySelected;
+        row.Activated -= OnEntryActivated;
+        row.MoveRequested -= OnMoveRequested;
     }
 
     private int EntryIndex(long id)
@@ -155,8 +196,13 @@ public partial class Playlist : WindowPanelContainer
 
     private void RefreshSelection()
     {
-        foreach (PlaylistTrackEntry row in _trackEntryContainer.GetChildren().OfType<PlaylistTrackEntry>())
-            row.IsSelected = _selectedEntries.Contains(row.EntryId);
+        HashSet<long> changed = [.. _presentedSelection];
+        changed.SymmetricExceptWith(_selectedEntries);
+        foreach (long id in changed)
+            if (_rows.TryGetValue(id, out PlaylistTrackEntry? row))
+                row.IsSelected = _selectedEntries.Contains(id);
+        _presentedSelection.Clear();
+        _presentedSelection.UnionWith(_selectedEntries);
     }
 
     private void OnEntryActivated(long entryId) => EmitSignal(SignalName.EntryActivated, entryId);

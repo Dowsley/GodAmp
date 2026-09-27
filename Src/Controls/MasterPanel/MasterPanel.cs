@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GodAmp.Components;
 using GodAmp.Audio.Playback;
 using GodAmp.Audio.Processing;
@@ -53,6 +54,8 @@ public partial class MasterPanel : WindowPanelContainer
     private bool _clockBlinking = false;
     private enum LabelDisplay { Track, Slider, Seek }
     private LabelDisplay _labelDisplay;
+    private int _displayedSecond = -1;
+    private float _clockAlpha = float.NaN;
 
     /// <inheritdoc />
     public override void _Ready()
@@ -60,6 +63,7 @@ public partial class MasterPanel : WindowPanelContainer
         base._Ready();
         _positionSeekerSlider.Value = 0.0f;
         RefreshTrackTitle();
+        RefreshTrackPresentation();
         RefreshAudioState();
     }
 
@@ -68,20 +72,7 @@ public partial class MasterPanel : WindowPanelContainer
     {
         base._Process(delta);
 
-        var track = _playbackController.CurrentEntry?.Track;
-        var hasTrack = track != null;
-
-        bool hasStarted = _playbackController.CanSeek;
-        _positionSeekerSlider.Editable = hasStarted;
-        _positionSeekerSlider.MinValue = 0.0f;
-        float duration = _playbackController.CurrentDuration;
-        _positionSeekerSlider.MaxValue = duration > 0 ? duration : 1.0;
-        _windowshadeSeek.Editable = _positionSeekerSlider.Editable;
-        _windowshadeSeek.MaxValue = _positionSeekerSlider.MaxValue;
-
-        _bitrateLabel.Text = hasTrack ? $"{track!.BitrateKbps}" : "0";
-        _sampleRateLabel.Text = hasTrack ? $"{track!.SampleRateHz / 1000}" : "0";
-        if (hasStarted && hasTrack)
+        if (_playbackController.CanSeek)
         {
             if (!_dragging)
             {
@@ -98,6 +89,29 @@ public partial class MasterPanel : WindowPanelContainer
         _clockBlinkTimer += delta;
     }
 
+    /// <summary>Reflects source metadata and seek availability when playback inputs change.</summary>
+    public void RefreshTrackPresentation()
+    {
+        var track = _playbackController.CurrentEntry?.Track;
+        _bitrateLabel.Text = track?.BitrateKbps.ToString() ?? "0";
+        _sampleRateLabel.Text = track == null ? "0" : (track.SampleRateHz / 1000).ToString();
+        _positionSeekerSlider.Editable = _playbackController.CanSeek;
+        float duration = _playbackController.CurrentDuration;
+        _positionSeekerSlider.MaxValue = duration > 0 ? duration : 1.0;
+        _windowshadeSeek.Editable = _positionSeekerSlider.Editable;
+        _windowshadeSeek.MaxValue = _positionSeekerSlider.MaxValue;
+    }
+
+    /// <summary>Updates the main display only when metadata affects the current occurrence.</summary>
+    /// <param name="entryIds">Queue occurrences whose metadata changed.</param>
+    public void RefreshMetadata(long[] entryIds)
+    {
+        if (_playbackController.CurrentEntry is not { } current || !entryIds.Contains(current.Id))
+            return;
+        RefreshTrackTitle();
+        RefreshTrackPresentation();
+    }
+
     /// <summary>Updates expanded digits and compact bitmap time from the shared playback position.</summary>
     private void UpdateTimeDisplay()
     {
@@ -107,23 +121,20 @@ public partial class MasterPanel : WindowPanelContainer
         int totalMinutes = (int)time.TotalMinutes;
         int seconds = time.Seconds;
 
-        _windowshadeTime.Text = $"{totalMinutes,3}:{seconds:00}";
-        int minutesTens = totalMinutes / 10;
-        int minutesOnes = totalMinutes % 10;
-        int secondsTens = seconds / 10;
-        int secondsOnes = seconds % 10;
-
-        _timeMinutesTensLabel.Text = minutesTens.ToString();
-        _timeMinutesOnesLabel.Text = minutesOnes.ToString();
-        _timeSecondsTensLabel.Text = secondsTens.ToString();
-        _timeSecondsOnesLabel.Text = secondsOnes.ToString();
+        int wholeSeconds = (int)time.TotalSeconds;
+        if (_displayedSecond != wholeSeconds)
+        {
+            _displayedSecond = wholeSeconds;
+            _windowshadeTime.Text = $"{totalMinutes,3}:{seconds:00}";
+            _timeMinutesTensLabel.Text = (totalMinutes / 10).ToString();
+            _timeMinutesOnesLabel.Text = (totalMinutes % 10).ToString();
+            _timeSecondsTensLabel.Text = (seconds / 10).ToString();
+            _timeSecondsOnesLabel.Text = (seconds % 10).ToString();
+        }
 
         if (_playbackController.State == PlaybackState.Playing)
         {
-            _timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, 1.0f);
-            _timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, 1.0f);
-            _timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, 1.0f);
-            _timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, 1.0f);
+            SetClockAlpha(1.0f);
         }
         else
         {
@@ -131,14 +142,22 @@ public partial class MasterPanel : WindowPanelContainer
                 return;
 
             float alpha = _clockBlinking ? 0.5f : 1.0f;
-            _timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, alpha);
-            _timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, alpha);
-            _timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, alpha);
-            _timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, alpha);
+            SetClockAlpha(alpha);
 
             _clockBlinking = !_clockBlinking;
             _clockBlinkTimer = 0.0;
         }
+    }
+
+    private void SetClockAlpha(float alpha)
+    {
+        if (_clockAlpha == alpha)
+            return;
+        _clockAlpha = alpha;
+        _timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, alpha);
+        _timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, alpha);
+        _timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, alpha);
+        _timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, alpha);
     }
 
     /// <summary>Reflects navigation policy without emitting another toggle request.</summary>

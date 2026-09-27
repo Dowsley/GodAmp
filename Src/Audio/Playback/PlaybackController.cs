@@ -14,6 +14,7 @@ namespace GodAmp.Audio.Playback;
 public partial class PlaybackController : Node
 {
     [Signal] public delegate void QueueChangedEventHandler();
+    [Signal] public delegate void MetadataChangedEventHandler(long[] entryIds);
     [Signal] public delegate void CurrentEntryChangedEventHandler();
     [Signal] public delegate void PlaybackStateChangedEventHandler();
     [Signal] public delegate void ModesChangedEventHandler();
@@ -348,7 +349,21 @@ public partial class PlaybackController : Node
             EmitSignal(SignalName.PlaybackFailed, CurrentEntry!.Track.SourcePath,
                 (int)kind, exception.Message);
         }
+        RefreshDecodedMetadata();
         EmitSignal(SignalName.PlaybackStateChanged);
+    }
+
+    /// <summary>Publishes decoded duration corrections for every occurrence sharing the current metadata.</summary>
+    private void RefreshDecodedMetadata()
+    {
+        if (CurrentEntry == null || _trackPlayer.Stream == null)
+            return;
+        Track track = CurrentEntry.Track;
+        float duration = CurrentDuration;
+        if (Mathf.IsEqualApprox(track.Duration, duration))
+            return;
+        track.Duration = duration;
+        EmitSignal(SignalName.MetadataChanged, _entries.Where(entry => entry.Track == track).Select(entry => entry.Id).ToArray());
     }
 
     private void CancelPendingLoad()

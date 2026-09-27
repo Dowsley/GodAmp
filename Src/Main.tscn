@@ -39,8 +39,7 @@ layout_mode = 2
 _playbackController = NodePath("../PlaybackController")
 _audio = NodePath("../AudioController")
 
-[node name="PlaybackIndicators" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player", "Playback")]
-Player = NodePath("../../../TrackPlayer")
+[node name="PlaybackIndicators" parent="MasterPanel/Controls" node_paths=PackedStringArray("Playback")]
 Playback = NodePath("../../../PlaybackController")
 
 [node name="Visualization" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player", "_audio")]
@@ -148,6 +147,12 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="ToggleVisualizerRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnToggleVisualizerRequested"]
 [connection signal="ZoomModeRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnZoomModeRequested"]
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackTitle"]
+[connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackPresentation"]
+[connection signal="PlaybackStateChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackPresentation"]
+[connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel" method="RefreshMetadata"]
+[connection signal="MetadataChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshMetadata"]
+[connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh"]
+[connection signal="PlaybackStateChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh"]
 [connection signal="QueueChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackTitle"]
 [connection signal="PlaybackStateChanged" from="PlaybackController" to="." method="OnPlaybackStateChanged"]
 [connection signal="StatusChanged" from="AudioImportController" to="ImportStatus" method="Refresh"]

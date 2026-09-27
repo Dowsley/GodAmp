@@ -22,6 +22,7 @@ public partial class PlaylistTrackEntry : PanelContainer
     private bool _isPointerDown = false;
     private bool _dragStarted = false;
     private bool _isCurrentTrack;
+    private float? _duration;
     public bool IsSelected
     {
         get => _isSelected;
@@ -54,10 +55,22 @@ public partial class PlaylistTrackEntry : PanelContainer
         IsSelected = selected;
 
         EntryId = entryId;
-        _trackTitleLabel.Text = title;
-        _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
+        UpdateMetadata(title, duration);
         _isCurrentTrack = current;
         ApplySkin();
+    }
+
+    /// <summary>Changes display metadata without resetting row interaction or skin state.</summary>
+    /// <param name="title">Formatted title in queue order.</param>
+    /// <param name="duration">Track length in seconds.</param>
+    public void UpdateMetadata(string title, float duration)
+    {
+        if (_trackTitleLabel.Text != title)
+            _trackTitleLabel.Text = title;
+        if (_duration == duration)
+            return;
+        _duration = duration;
+        _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
     }
 
     /// <summary>Changes playback highlighting independently of row selection.</summary>
@@ -67,7 +80,7 @@ public partial class PlaylistTrackEntry : PanelContainer
         if (_isCurrentTrack == current)
             return;
         _isCurrentTrack = current;
-        ApplySkin();
+        ApplyPlaybackColor();
     }
 
     /// <summary>Updates both labels and the selection background from the active playlist style.</summary>
@@ -81,9 +94,17 @@ public partial class PlaylistTrackEntry : PanelContainer
             label.TextureFilter = TextureFilterEnum.Linear;
             label.AddThemeFontOverride("font", skin.PlaylistFont);
             label.AddThemeFontSizeOverride("font_size", PlaylistFontSize);
-            label.AddThemeColorOverride("font_color", _isCurrentTrack ? skin.PlaylistStyle.Current : skin.PlaylistStyle.Normal);
             label.AddThemeColorOverride("font_shadow_color", Colors.Transparent);
         }
+        ApplyPlaybackColor();
+    }
+
+    private void ApplyPlaybackColor()
+    {
+        var style = SkinLoader.Instance.PlaylistStyle;
+        Color color = _isCurrentTrack ? style.Current : style.Normal;
+        _trackTitleLabel.AddThemeColorOverride("font_color", color);
+        _durationLabel.AddThemeColorOverride("font_color", color);
     }
 
     public override void _GuiInput(InputEvent @event)

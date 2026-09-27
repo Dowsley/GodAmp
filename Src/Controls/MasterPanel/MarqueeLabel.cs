@@ -13,14 +13,22 @@ public partial class MarqueeLabel : BitmapLabel
     private string _value = "";
     private int _offset = 0;
     private bool _rotate = false;
+    private string? _sourceValue;
+    private int _sourceWidth;
 
+    /// <summary>Changes the displayed title while preserving scroll progress for unchanged text and width.</summary>
+    /// <param name="value">Unformatted display text.</param>
     public void SetValue(string value)
     {
+        if (_sourceValue == value && _sourceWidth == MaxLength)
+            return;
+        _sourceValue = value;
+        _sourceWidth = MaxLength;
         _rotate = value.Length > MaxLength;
-        var upperValue = value.ToUpper();
+        var upperValue = value.ToUpperInvariant();
 
         var newValue = _rotate
-            ? upperValue + "   ***   " // Separator for scrolling
+            ? upperValue + "   ***   "
             : upperValue + new string(' ', Math.Max(0, MaxLength - upperValue.Length));
 
         if (_value != newValue)
