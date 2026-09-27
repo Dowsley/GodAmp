@@ -473,6 +473,10 @@ mouse_default_cursor_shape = 10
 Panel = NodePath("../..")
 
 [connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="RemoveSelectionRequested" from="RemoveButtonDropdown" to="." method="OnRemoveSelectionRequested"]
+[connection signal="CropRequested" from="RemoveButtonDropdown" to="." method="OnCropRequested"]
+[connection signal="ClearRequested" from="RemoveButtonDropdown" to="." method="OnClearRequested"]
+[connection signal="ClearRequested" from="ListOptionsButtonDropdown" to="." method="OnClearRequested"]
 [connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
 [connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton" to="." method="OnMinimizeButtonPressed"]

@@ -40,8 +40,8 @@ public partial class ClassicVisualization : Control
 
     /// <summary>Visualization displayed in the main panel.</summary>
     [Export] public VisualizationMode Mode { get; set; }
-    /// <summary>Runtime player reference used to clear stale samples on pause and stop.</summary>
-    public TrackPlayer? Player { get; set; }
+    /// <summary>Scene-assigned player used to clear stale samples on pause and stop.</summary>
+    [Export] public TrackPlayer? Player { get; set; }
 
     /// <inheritdoc />
     public override void _Ready()

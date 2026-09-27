@@ -1,24 +1,16 @@
-using GodAmp.Autoload;
+using Godot;
 
 namespace GodAmp.Controls.Playlist.ButtonDropdowns;
 
 public partial class RemoveButtonDropdown : ButtonDropdown
 {
-    private static void OnRemoveSelectionButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.RemoveSelectedTracksFromPlaylistRequested);
-    }
+    [Signal] public delegate void RemoveSelectionRequestedEventHandler();
+    [Signal] public delegate void CropRequestedEventHandler();
+    [Signal] public delegate void ClearRequestedEventHandler();
 
-    // Removes everything that is not selected
-    private static void OnCropButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.CropPlaylistRequested);
-    }
-
-    private static void OnRemoveAllButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.RemoveAllTracksFromPlaylistRequested);
-    }
+    private void OnRemoveSelectionButtonPressed() => EmitSignal(SignalName.RemoveSelectionRequested);
+    private void OnCropButtonPressed() => EmitSignal(SignalName.CropRequested);
+    private void OnRemoveAllButtonPressed() => EmitSignal(SignalName.ClearRequested);
 
     private static void OnRemoveMiscButtonPressed()
     {

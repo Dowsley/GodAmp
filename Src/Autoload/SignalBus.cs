@@ -2,18 +2,12 @@ using Godot;
 
 namespace GodAmp.Autoload;
 
+/* DO NOT ADD MORE SIGNALS HERE. Migrate existing signals to their owning components,
+ * prefer scene-authored connections, and remove this bus once all callers are migrated. */
 public partial class SignalBus : Node
 {
-    [Signal] public delegate void NextTrackRequestedEventHandler();
-    [Signal] public delegate void PreviousTrackRequestedEventHandler();
-    [Signal] public delegate void ShuffleModeRequestedEventHandler();
-    [Signal] public delegate void RepeatModeRequestedEventHandler();
-    [Signal] public delegate void ChangeToTrackRequestedEventHandler(int index);
     [Signal] public delegate void LoadTracksRequestedEventHandler(bool overridePlaylist = false);
     [Signal] public delegate void LoadTracksFromDirRequestedEventHandler(bool overridePlaylist = false);
-    [Signal] public delegate void RemoveSelectedTracksFromPlaylistRequestedEventHandler();
-    [Signal] public delegate void RemoveAllTracksFromPlaylistRequestedEventHandler();
-    [Signal] public delegate void CropPlaylistRequestedEventHandler();
     [Signal] public delegate void InverseSelectionRequestedEventHandler();
     [Signal] public delegate void SelectZeroRequestedEventHandler();
     [Signal] public delegate void SelectAllRequestedEventHandler();

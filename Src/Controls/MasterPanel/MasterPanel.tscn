@@ -145,7 +145,7 @@ Button/styles/hover = SubResource("empty_style")
 Button/styles/pressed = SubResource("empty_style")
 Button/styles/focus = SubResource("empty_style")
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_playbackIndicators", "_visualization", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek", "_windowshadeTime")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_shuffleButton", "_repeatButton", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek", "_windowshadeTime")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -168,8 +168,8 @@ _volumeSlider = NodePath("Controls/VolumeSlider")
 _pannerAudioSlider = NodePath("Controls/PannerAudioSlider")
 _bitrateLabel = NodePath("TextDisplay/BitrateLabel")
 _sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
-_playbackIndicators = NodePath("Controls/PlaybackIndicators")
-_visualization = NodePath("Controls/Visualization")
+_shuffleButton = NodePath("Controls/ShuffleModeButton")
+_repeatButton = NodePath("Controls/RepeatModeButton")
 _timeMinutesTensLabel = NodePath("TextDisplay/TimeMinutesTensLabel")
 _timeMinutesOnesLabel = NodePath("TextDisplay/TimeMinutesOnesLabel")
 _timeSecondsTensLabel = NodePath("TextDisplay/TimeSecondsTensLabel")
@@ -615,6 +615,6 @@ texture_pressed = ExtResource("close_held")
 [connection signal="pressed" from="Controls/StopTrackButton" to="." method="OnStopTrackButtonPressed"]
 [connection signal="pressed" from="Controls/NextTrackButton" to="." method="OnNextTrackButtonPressed"]
 [connection signal="pressed" from="Controls/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
-[connection signal="pressed" from="Controls/ShuffleModeButton" to="." method="OnShuffleModeButtonPressed"]
-[connection signal="pressed" from="Controls/RepeatModeButton" to="." method="OnRepeatModeButtonPressed"]
+[connection signal="toggled" from="Controls/ShuffleModeButton" to="." method="OnShuffleModeToggled"]
+[connection signal="toggled" from="Controls/RepeatModeButton" to="." method="OnRepeatModeToggled"]
 [connection signal="gui_input" from="Controls/Visualization" to="Controls/Visualization" method="OnGuiInput"]

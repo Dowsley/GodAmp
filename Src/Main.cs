@@ -26,19 +26,9 @@ public partial class Main : HBoxContainer
     [Export] private Playlist _playlist = null!;
     [Export] private Visualizer.Visualizer _visualizer = null!;
     [Export] private TrackPlayer _trackPlayer = null!;
+    [Export] private PlaybackController _playbackController = null!;
     [Export] private WindowManager _windowManager = null!;
 
-    private Window _masterPanelWindow = null!;
-    private WindowPanelContainer? _windowContainerBeingDragged = null;
-    private bool _grabbingFocusLock = false;
-
-    private List<Track> _trackPlaylist = null!;
-    private int _currentTrackIndex = 0;
-
-    private bool _repeatMode = false;
-    private bool _shuffleMode = false;
-    private int _randomizedTrackIndex = 0;
-    private List<int> _randomizedTrackIndices = [];
     private bool _masterLabelLocked = false;
     private bool _masterLabelLockedByPositionSeeker = false;
 
@@ -46,27 +36,12 @@ public partial class Main : HBoxContainer
 
     public override void _Ready()
     {
-        _trackPlaylist = LoadInitialPlaylist();
-
-        if (_trackPlaylist.Count > 0)
-        {
-            _trackPlaylist.Sort((a, b) => a.TrackNumber - b.TrackNumber);
-            _trackPlayer.SetCurrentTrack(_trackPlaylist[_currentTrackIndex], false);
-        }
+        List<Track> tracks = LoadInitialPlaylist();
+        tracks.Sort((a, b) => a.TrackNumber.CompareTo(b.TrackNumber));
+        _playbackController.Replace(tracks);
+        _masterPanel.RefreshModes();
         _visualizer.Pause();
 
-        _masterPanel.ToggleEqualizerRequested += OnToggleEqualizerRequested;
-        _masterPanel.TogglePlaylistRequested += OnTogglePlaylistRequested;
-        _masterPanel.Setup(_trackPlayer);
-        _playlist.Setup(_trackPlayer, _trackPlaylist);
-        _masterPanel.Refresh();
-        _playlist.Refresh();
-
-        SignalBus.Instance.NextTrackRequested += OnNextTrackRequested;
-        SignalBus.Instance.PreviousTrackRequested += OnPreviousTrackRequested;
-        SignalBus.Instance.ShuffleModeRequested += OnShuffleModeRequested;
-        SignalBus.Instance.RepeatModeRequested += OnRepeatModeRequested;
-        SignalBus.Instance.ChangeToTrackRequested += OnChangeToTrackRequested;
         SignalBus.Instance.LockMasterLabel += LockMasterLabel;
         SignalBus.Instance.UnlockMasterLabel += UnlockMasterLabel;
         SignalBus.Instance.VolumeChanged += OnVolumeChanged;
@@ -74,9 +49,6 @@ public partial class Main : HBoxContainer
         SignalBus.Instance.PositionSeekerChanged += OnPositionSeekerChanged;
         SignalBus.Instance.LoadTracksRequested += OnLoadTracksRequested;
         SignalBus.Instance.LoadTracksFromDirRequested += OnLoadTracksFromDirRequested;
-        SignalBus.Instance.RemoveSelectedTracksFromPlaylistRequested += RemoveSelectedTracksFromPlaylist;
-        SignalBus.Instance.RemoveAllTracksFromPlaylistRequested += RemoveAllTracksFromPlaylist;
-        SignalBus.Instance.CropPlaylistRequested += CropPlaylist;
         SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
         SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
         SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
@@ -89,13 +61,26 @@ public partial class Main : HBoxContainer
 
     public override void _ExitTree()
     {
+        SignalBus.Instance.LockMasterLabel -= LockMasterLabel;
+        SignalBus.Instance.UnlockMasterLabel -= UnlockMasterLabel;
+        SignalBus.Instance.VolumeChanged -= OnVolumeChanged;
+        SignalBus.Instance.PannerBalanceChanged -= OnPannerBalanceChanged;
+        SignalBus.Instance.PositionSeekerChanged -= OnPositionSeekerChanged;
+        SignalBus.Instance.LoadTracksRequested -= OnLoadTracksRequested;
+        SignalBus.Instance.LoadTracksFromDirRequested -= OnLoadTracksFromDirRequested;
+        SignalBus.Instance.LoadPlaylistRequested -= OnLoadPlaylistRequested;
+        SignalBus.Instance.SavePlaylistRequested -= OnSavePlaylistRequested;
+        SignalBus.Instance.ZoomModeRequested -= OnZoomModeRequested;
+        SignalBus.Instance.ToggleEqualizerRequested -= OnToggleEqualizerRequested;
+        SignalBus.Instance.TogglePlaylistRequested -= OnTogglePlaylistRequested;
+        SignalBus.Instance.ToggleVisualizerRequested -= OnToggleVisualizerRequested;
         _windowManager.SaveWindowStates();
         SettingsManager.Instance.SaveAllSettings();
     }
 
     public override void _Process(double delta)
     {
-        if (_trackPlayer.IsPlaying())
+        if (_playbackController.State == PlaybackState.Playing)
             _visualizer.Unpause();
         else
             _visualizer.Pause();
@@ -103,51 +88,10 @@ public partial class Main : HBoxContainer
         if (!_masterLabelLocked)
         {
             if (_trackPlayer.CurrentTrack is { } currentTrack)
-                _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _currentTrackIndex + 1));
+                _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _playbackController.CurrentIndex + 1));
             else
                 _masterPanel.SetMasterLabelText("");
         }
-    }
-
-    private void OnNextTrackRequested()
-    {
-        NextTrack();
-    }
-
-    private void OnPreviousTrackRequested()
-    {
-        PreviousTrack();
-    }
-
-    private void OnTrackPlayerFinished()
-    {
-        NextTrack(true);
-    }
-
-    private void OnShuffleModeRequested()
-    {
-        _shuffleMode = !_shuffleMode;
-        if (_shuffleMode)
-        {
-            _randomizedTrackIndex = 0;
-            var random = new Random();
-            _randomizedTrackIndices = [.. Enumerable.Range(0, _trackPlaylist.Count).OrderBy(_ => random.Next())];
-        }
-        else
-        {
-            var realIndexToResumeOn = _randomizedTrackIndices[_randomizedTrackIndex];
-            _currentTrackIndex = realIndexToResumeOn;
-        }
-    }
-
-    private void OnRepeatModeRequested()
-    {
-        _repeatMode = !_repeatMode;
-    }
-
-    private void OnChangeToTrackRequested(int index)
-    {
-        ChangeToTrack(index, true);
     }
 
     private void OnVolumeChanged(float volume)
@@ -192,79 +136,8 @@ public partial class Main : HBoxContainer
         _masterLabelLockedByPositionSeeker = false;
     }
 
-    private void NextTrack(bool autoplay = false)
-    {
-        int index;
-        if (_shuffleMode)
-        {
-            _randomizedTrackIndex += 1;
-            if (_randomizedTrackIndex >= _trackPlaylist.Count)
-            {
-                _randomizedTrackIndex = _repeatMode ? 0 : _trackPlaylist.Count - 1;
-            }
-            index = _randomizedTrackIndices[_randomizedTrackIndex];
-        }
-        else
-        {
-            _currentTrackIndex += 1;
-            if (_currentTrackIndex >= _trackPlaylist.Count)
-            {
-                _currentTrackIndex = _repeatMode ? 0 : _trackPlaylist.Count - 1;
-            }
-            index = _currentTrackIndex;
-        }
-
-        if (!(index < _trackPlaylist.Count && index >= 0))
-            return;
-
-        _trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
-        _masterPanel.Refresh();
-        _playlist.Refresh();
-    }
-
-    private void PreviousTrack(bool autoplay = false)
-    {
-        int index;
-        if (_shuffleMode)
-        {
-            _randomizedTrackIndex -= 1;
-            if (_randomizedTrackIndex < 0)
-            {
-                _randomizedTrackIndex = _repeatMode ? _trackPlaylist.Count - 1 : 0;
-            }
-            index = _randomizedTrackIndices[_randomizedTrackIndex];
-        }
-        else
-        {
-            _currentTrackIndex -= 1;
-            if (_currentTrackIndex < 0)
-            {
-                _currentTrackIndex = _repeatMode ? _trackPlaylist.Count - 1 : 0;
-            }
-            index = _currentTrackIndex;
-        }
-
-        if (!(index < _trackPlaylist.Count && index >= 0))
-            return;
-
-        _trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
-        _masterPanel.Refresh();
-        _playlist.Refresh();
-    }
-
-    private void ChangeToTrack(int index, bool autoplay = false)
-    {
-        ref var indexRef = ref _currentTrackIndex;
-        if (_shuffleMode)
-        {
-            indexRef = ref _randomizedTrackIndex;
-        }
-
-        indexRef = index;
-        _trackPlayer.SetCurrentTrack(_trackPlaylist[index], autoplay || _trackPlayer.IsPlaying());
-        _masterPanel.Refresh();
-        _playlist.Refresh();
-    }
+    /// <summary>Opens a replacement-track picker in response to Play on an empty queue.</summary>
+    private void OnOpenTracksRequested() => OnLoadTracksRequested(true);
 
     /// <summary>Creates a filesystem picker starting in the platform's configured music directory.</summary>
     /// <param name="mode">Selection operation performed by the picker.</param>
@@ -349,34 +222,43 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = dialog;
     }
 
+    /// <summary>Writes queue source paths in visual order, including duplicate occurrences.</summary>
+    /// <param name="path">Destination playlist path, with an optional M3U extension.</param>
     private void SavePlaylist(string path)
     {
         var ext = Path.GetExtension(path);
         if (string.IsNullOrWhiteSpace(ext))
             path += ".m3u";
-        var absolutePaths = _trackPlaylist
-            .Select(t => t.SourcePath)
+        var absolutePaths = _playbackController.Entries
+            .Select(entry => entry.Track.SourcePath)
             .Where(p => !string.IsNullOrWhiteSpace(p));
         M3UParser.Write(path, absolutePaths, relativePaths: false);
         OnFileDialogClosed();
     }
 
+    /// <summary>Replaces playback only after importing a readable playlist or an intentionally empty list.</summary>
+    /// <param name="path">Filesystem path to an M3U playlist.</param>
     private void LoadPlaylist(string path)
     {
-        var resolved = M3UParser.Parse(path);
-        var tracks = AudioUtils.LoadTracksFromPathList(resolved);
-        _trackPlaylist.Clear();
-        _trackPlaylist.AddRange(tracks);
-        if (_trackPlaylist.Count > 0)
-            _trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
-        _visualizer.Pause();
-        _masterPanel.Refresh();
-        _playlist.Refresh();
-
-        // Save the last loaded playlist path
-        SettingsManager.Instance.SetLastPlaylistPath(path);
-
-        OnFileDialogClosed();
+        try
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException("Playlist not found.", path);
+            var resolved = M3UParser.Parse(path);
+            var tracks = AudioUtils.LoadTracksFromPathList(resolved);
+            if (resolved.Length > 0 && tracks.Count == 0)
+                return;
+            _playbackController.Replace(tracks);
+            SettingsManager.Instance.SetLastPlaylistPath(path);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            GD.PrintErr($"Failed to load playlist: {exception.Message}");
+        }
+        finally
+        {
+            OnFileDialogClosed();
+        }
     }
 
     private void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
@@ -390,45 +272,6 @@ public partial class Main : HBoxContainer
         }
 
         LoadTracks(audioFiles, overridePlaylist);
-    }
-
-    private void RemoveAllTracksFromPlaylist()
-    {
-        _trackPlaylist.Clear();
-        ClearCurrentTrackIfPlaylistEmpty();
-        _playlist.Refresh();
-    }
-
-    private void CropPlaylist()
-    {
-        var selected = _playlist.GetSelectedIndices();
-        for (int i = _trackPlaylist.Count - 1; i >= 0; i--)
-        {
-            if (!selected.Contains(i))
-                _trackPlaylist.RemoveAt(i);
-        }
-        ClearCurrentTrackIfPlaylistEmpty();
-        _playlist.Refresh();
-    }
-
-    private void RemoveSelectedTracksFromPlaylist()
-    {
-        var selected = _playlist.GetSelectedIndices();
-        foreach (var i in selected.OrderByDescending(x => x))
-        {
-            _trackPlaylist.RemoveAt(i);
-        }
-        ClearCurrentTrackIfPlaylistEmpty();
-        _playlist.Refresh();
-    }
-
-    private void ClearCurrentTrackIfPlaylistEmpty()
-    {
-        if (_trackPlaylist.Count == 0)
-        {
-            _trackPlayer.ClearCurrentTrack();
-            _masterPanel.Refresh();
-        }
     }
 
     private static string[] GetAudioFilesFromDirectory(string directoryPath)
@@ -459,6 +302,9 @@ public partial class Main : HBoxContainer
         return [.. audioFiles];
     }
 
+    /// <summary>Imports audio files before applying an append or replacement to the queue owner.</summary>
+    /// <param name="paths">Source audio paths selected by a picker.</param>
+    /// <param name="overridePlaylist">Whether to replace the queue and load it stopped.</param>
     private void LoadTracks(string[] paths, bool overridePlaylist = false)
     {
         var tracks = AudioUtils.LoadTracksFromPathList(paths);
@@ -468,14 +314,11 @@ public partial class Main : HBoxContainer
             return;
         }
 
+        tracks.Sort((a, b) => a.TrackNumber.CompareTo(b.TrackNumber));
         if (overridePlaylist)
-            _trackPlaylist.Clear();
-        tracks.Sort((a, b) => a.TrackNumber - b.TrackNumber);
-        _trackPlaylist.AddRange(tracks);
-        _trackPlayer.SetCurrentTrack(_trackPlaylist[0], false);
-        _visualizer.Pause();
-        _masterPanel.Refresh();
-        _playlist.Refresh();
+            _playbackController.Replace(tracks);
+        else
+            _playbackController.Append(tracks);
 
         OnFileDialogClosed();
     }

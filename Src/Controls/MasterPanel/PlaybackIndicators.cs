@@ -7,8 +7,8 @@ namespace GodAmp.Controls.MasterPanel;
 /// <summary>Draws classic transport and source-channel indicators from the active skin.</summary>
 public partial class PlaybackIndicators : Control
 {
-    /// <summary>Player supplied by the owning panel when the application wires its runtime references.</summary>
-    public TrackPlayer? Player { get; set; }
+    /// <summary>Scene-assigned player supplying transport and channel information.</summary>
+    [Export] public TrackPlayer? Player { get; set; }
     private int _transport = -1;
     private int _channels = -1;
 

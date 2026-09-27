@@ -10,11 +10,23 @@ public partial class MasterPanel : WindowPanelContainer
 {
     [Signal] public delegate void ToggleEqualizerRequestedEventHandler();
     [Signal] public delegate void TogglePlaylistRequestedEventHandler();
+    [Signal] public delegate void PlayRequestedEventHandler();
+    [Signal] public delegate void PauseRequestedEventHandler();
+    [Signal] public delegate void StopRequestedEventHandler();
+    [Signal] public delegate void NextRequestedEventHandler();
+    [Signal] public delegate void PreviousRequestedEventHandler();
+    [Signal] public delegate void SeekRequestedEventHandler(float position);
+    [Signal] public delegate void ShuffleRequestedEventHandler(bool enabled);
+    [Signal] public delegate void RepeatRequestedEventHandler(bool enabled);
 
     [ExportGroup("Config")]
     [Export] public double ClockBlinkEverySeconds = 1.0f;
 
     [ExportGroup("References")]
+    [Export] private PlaybackController _playbackController = null!;
+    [Export] private TrackPlayer _trackPlayerRef = null!;
+    [Export] private TextureButton _shuffleButton = null!;
+    [Export] private TextureButton _repeatButton = null!;
     [Export] public WinampMenuButton WinampMenuButton = null!;
     [Export] public TextureButton ToggleEqualizerButton = null!;
     [Export] public TextureButton TogglePlaylistButton = null!;
@@ -24,8 +36,6 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private SkinSlider _pannerAudioSlider = null!;
     [Export] private Label _bitrateLabel = null!;
     [Export] private Label _sampleRateLabel = null!;
-    [Export] private PlaybackIndicators _playbackIndicators = null!;
-    [Export] private ClassicVisualization _visualization = null!;
     [Export] private SkinSlider _windowshadeSeek = null!;
     [Export] private Label _windowshadeTime = null!;
     [ExportSubgroup("Time display")]
@@ -34,11 +44,7 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private Label _timeSecondsTensLabel = null!;
     [Export] private Label _timeSecondsOnesLabel = null!;
 
-    private TrackPlayer _trackPlayerRef = null!;
-
     private bool _dragging = false;
-    private bool _hasStarted = false;
-    private float _resumeTrackAtPosition;
     private double _clockBlinkTimer = 1.0f;
     private bool _clockBlinking = false;
 
@@ -58,7 +64,8 @@ public partial class MasterPanel : WindowPanelContainer
         var stream = _trackPlayerRef.Stream;
         var hasTrack = track != null && stream != null;
 
-        _positionSeekerSlider.Editable = _hasStarted && hasTrack;
+        bool hasStarted = _playbackController.State != PlaybackState.Stopped;
+        _positionSeekerSlider.Editable = hasStarted && hasTrack;
         _positionSeekerSlider.MinValue = 0.0f;
         _positionSeekerSlider.MaxValue = hasTrack ? stream!.GetLength() : 1.0;
         _windowshadeSeek.Editable = _positionSeekerSlider.Editable;
@@ -66,11 +73,11 @@ public partial class MasterPanel : WindowPanelContainer
 
         _bitrateLabel.Text = hasTrack ? $"{track!.BitrateKbps}" : "0";
         _sampleRateLabel.Text = hasTrack ? $"{track!.SampleRateHz / 1000}" : "0";
-        if (_hasStarted && hasTrack)
+        if (hasStarted && hasTrack)
         {
-            if (!_dragging && !_trackPlayerRef.StreamPaused)
+            if (!_dragging)
             {
-                _positionSeekerSlider.Value = _trackPlayerRef.GetPlaybackPosition();
+                _positionSeekerSlider.Value = _playbackController.Position;
             }
         }
         else
@@ -86,7 +93,7 @@ public partial class MasterPanel : WindowPanelContainer
     /// <summary>Updates expanded digits and compact bitmap time from the shared playback position.</summary>
     private void UpdateTimeDisplay()
     {
-        var playbackPosition = _trackPlayerRef.GetPlaybackPosition();
+        var playbackPosition = _playbackController.Position;
         var time = System.TimeSpan.FromSeconds(playbackPosition);
 
         int totalMinutes = (int)time.TotalMinutes;
@@ -103,7 +110,7 @@ public partial class MasterPanel : WindowPanelContainer
         _timeSecondsTensLabel.Text = secondsTens.ToString();
         _timeSecondsOnesLabel.Text = secondsOnes.ToString();
 
-        if (_trackPlayerRef.IsPlaying() && !_trackPlayerRef.StreamPaused)
+        if (_playbackController.State == PlaybackState.Playing)
         {
             _timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, 1.0f);
             _timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, 1.0f);
@@ -126,18 +133,11 @@ public partial class MasterPanel : WindowPanelContainer
         }
     }
 
-    /// <summary>Connects the panel's runtime playback source to its controls and displays.</summary>
-    /// <param name="trackPlayer">Application-owned audio player.</param>
-    public void Setup(TrackPlayer trackPlayer)
+    /// <summary>Reflects navigation policy without emitting another toggle request.</summary>
+    public void RefreshModes()
     {
-        _trackPlayerRef = trackPlayer;
-        _playbackIndicators.Player = trackPlayer;
-        _visualization.Player = trackPlayer;
-    }
-
-    public void Refresh()
-    {
-        _hasStarted = _trackPlayerRef.IsPlaying();
+        _shuffleButton.SetPressedNoSignal(_playbackController.ShuffleEnabled);
+        _repeatButton.SetPressedNoSignal(_playbackController.RepeatEnabled);
     }
 
     public void SetMasterLabelText(string text)
@@ -145,38 +145,9 @@ public partial class MasterPanel : WindowPanelContainer
         _masterLabel.SetValue(text);
     }
 
-    /// <summary>Starts the current track or requests a track picker when the playlist has no current track.</summary>
-    private void OnPlayTrackButtonPressed()
-    {
-        if (_trackPlayerRef.CurrentTrack == null)
-        {
-            SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, true);
-            return;
-        }
-        _trackPlayerRef.Play(0.0f);
-        _hasStarted = true;
-    }
-
-    /// <summary>Toggles pause while retaining the seek position for either presentation.</summary>
-    private void OnPauseTrackButtonPressed()
-    {
-        _trackPlayerRef.StreamPaused = !_trackPlayerRef.StreamPaused;
-        if (_trackPlayerRef.StreamPaused)
-        {
-            _resumeTrackAtPosition = (float)_positionSeekerSlider.Value;
-        }
-        else
-        {
-            _trackPlayerRef.Seek(_resumeTrackAtPosition);
-        }
-    }
-
-    /// <summary>Stops the shared player and resets seek availability.</summary>
-    private void OnStopTrackButtonPressed()
-    {
-        _trackPlayerRef.Stop();
-        _hasStarted = false;
-    }
+    private void OnPlayTrackButtonPressed() => EmitSignal(SignalName.PlayRequested);
+    private void OnPauseTrackButtonPressed() => EmitSignal(SignalName.PauseRequested);
+    private void OnStopTrackButtonPressed() => EmitSignal(SignalName.StopRequested);
 
     private static void OnPositionSeekerValueChanged(float value)
     {
@@ -206,11 +177,7 @@ public partial class MasterPanel : WindowPanelContainer
     private void OnPositionSeekerDragEnded(bool _)
     {
         _dragging = false;
-        _resumeTrackAtPosition = (float)_positionSeekerSlider.Value;
-        if (!_trackPlayerRef.StreamPaused)
-        {
-            _trackPlayerRef.Seek(_resumeTrackAtPosition);
-        }
+        EmitSignal(SignalName.SeekRequested, (float)_positionSeekerSlider.Value);
         OnSliderDragEnded();
     }
 
@@ -252,25 +219,10 @@ public partial class MasterPanel : WindowPanelContainer
         _volumeSlider.Value = volume;
     }
 
-    private static void OnNextTrackButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.NextTrackRequested);
-    }
-
-    private static void OnPreviousTrackButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.PreviousTrackRequested);
-    }
-
-    private static void OnShuffleModeButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.ShuffleModeRequested);
-    }
-
-    private static void OnRepeatModeButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.RepeatModeRequested);
-    }
+    private void OnNextTrackButtonPressed() => EmitSignal(SignalName.NextRequested);
+    private void OnPreviousTrackButtonPressed() => EmitSignal(SignalName.PreviousRequested);
+    private void OnShuffleModeToggled(bool enabled) => EmitSignal(SignalName.ShuffleRequested, enabled);
+    private void OnRepeatModeToggled(bool enabled) => EmitSignal(SignalName.RepeatRequested, enabled);
 
     private void OnToggleEqualizerButton()
     {

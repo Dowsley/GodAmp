@@ -5,7 +5,7 @@ namespace GodAmp.Core;
 
 public partial class TrackPlayer : AudioStreamPlayer
 {
-    public Track? CurrentTrack = null;
+    public Track? CurrentTrack { get; private set; }
 
     /// <inheritdoc />
     public override void _ExitTree() => ClearCurrentTrack();
@@ -16,6 +16,7 @@ public partial class TrackPlayer : AudioStreamPlayer
     public void SetCurrentTrack(Track track, bool autoplay = true)
     {
         CurrentTrack = track;
+        StreamPaused = false;
         Stream = CurrentTrack.Stream;
         Seek(0.0f);
         Playing = autoplay;
@@ -25,6 +26,7 @@ public partial class TrackPlayer : AudioStreamPlayer
     public void ClearCurrentTrack()
     {
         Stop();
+        StreamPaused = false;
         CurrentTrack = null;
         Stream = null;
     }

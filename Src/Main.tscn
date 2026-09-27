@@ -7,8 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
 [ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
 [ext_resource type="Script" uid="uid://bk43amrt51gfy" path="res://Src/Core/WindowManager.cs" id="7_4ajm2"]
+[ext_resource type="Script" path="res://Src/Core/PlaybackController.cs" id="playback_controller"]
 
-[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_windowManager")]
+[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_playbackController", "_windowManager")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,13 +23,26 @@ _equalizer = NodePath("EqualizerWindow/Equalizer")
 _playlist = NodePath("PlaylistWindow/Playlist")
 _visualizer = NodePath("VisualizerWindow/Visualizer")
 _trackPlayer = NodePath("TrackPlayer")
+_playbackController = NodePath("PlaybackController")
 _windowManager = NodePath("WindowManager")
 
-[node name="MasterPanel" parent="." unique_id=1833787973 instance=ExtResource("3_rlaii")]
+[node name="MasterPanel" parent="." unique_id=1833787973 node_paths=PackedStringArray("_playbackController", "_trackPlayerRef") instance=ExtResource("3_rlaii")]
 layout_mode = 2
+_playbackController = NodePath("../PlaybackController")
+_trackPlayerRef = NodePath("../TrackPlayer")
+
+[node name="PlaybackIndicators" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player")]
+Player = NodePath("../../../TrackPlayer")
+
+[node name="Visualization" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player")]
+Player = NodePath("../../../TrackPlayer")
 
 [node name="TrackPlayer" type="AudioStreamPlayer" parent="." unique_id=1411099585]
 script = ExtResource("3_4ajm2")
+
+[node name="PlaybackController" type="Node" parent="." node_paths=PackedStringArray("_trackPlayer")]
+script = ExtResource("playback_controller")
+_trackPlayer = NodePath("../TrackPlayer")
 
 [node name="EqualizerWindow" type="Window" parent="." unique_id=348012390]
 transparent_bg = true
@@ -59,7 +73,8 @@ borderless = true
 content_scale_size = Vector2i(275, 116)
 content_scale_mode = 1
 
-[node name="Playlist" parent="PlaylistWindow" unique_id=2110127996 instance=ExtResource("5_kf8lf")]
+[node name="Playlist" parent="PlaylistWindow" unique_id=2110127996 node_paths=PackedStringArray("_playbackController") instance=ExtResource("5_kf8lf")]
+_playbackController = NodePath("../../PlaybackController")
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
@@ -98,14 +113,31 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="DragMoved" from="MasterPanel" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="MasterPanel" to="WindowManager" method="OnWindowDragStart"]
 [connection signal="WindowshadeRequested" from="MasterPanel" to="WindowManager" method="SetWindowShaded"]
-[connection signal="finished" from="TrackPlayer" to="." method="OnTrackPlayerFinished"]
+[connection signal="finished" from="TrackPlayer" to="PlaybackController" method="OnTrackFinished"]
+[connection signal="PlayRequested" from="MasterPanel" to="PlaybackController" method="Play"]
+[connection signal="ToggleEqualizerRequested" from="MasterPanel" to="." method="OnToggleEqualizerRequested"]
+[connection signal="TogglePlaylistRequested" from="MasterPanel" to="." method="OnTogglePlaylistRequested"]
+[connection signal="PauseRequested" from="MasterPanel" to="PlaybackController" method="TogglePause"]
+[connection signal="StopRequested" from="MasterPanel" to="PlaybackController" method="Stop"]
+[connection signal="NextRequested" from="MasterPanel" to="PlaybackController" method="Next"]
+[connection signal="PreviousRequested" from="MasterPanel" to="PlaybackController" method="Previous"]
+[connection signal="SeekRequested" from="MasterPanel" to="PlaybackController" method="Seek"]
+[connection signal="ShuffleRequested" from="MasterPanel" to="PlaybackController" method="SetShuffle"]
+[connection signal="RepeatRequested" from="MasterPanel" to="PlaybackController" method="SetRepeat"]
+[connection signal="OpenTracksRequested" from="PlaybackController" to="." method="OnOpenTracksRequested"]
+[connection signal="QueueChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="Refresh"]
+[connection signal="CurrentEntryChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshCurrentEntry"]
+[connection signal="ModesChanged" from="PlaybackController" to="MasterPanel" method="RefreshModes"]
+[connection signal="EntryActivated" from="PlaylistWindow/Playlist" to="PlaybackController" method="Activate"]
+[connection signal="RemoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Remove"]
+[connection signal="RetainEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Retain"]
+[connection signal="ClearRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Clear"]
+[connection signal="MoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Move"]
 [connection signal="CloseButtonClicked" from="EqualizerWindow/Equalizer" to="." method="OnEqualizerCloseButtonClicked"]
 [connection signal="DragEnded" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragStart"]
 [connection signal="WindowshadeRequested" from="EqualizerWindow/Equalizer" to="WindowManager" method="SetWindowShaded"]
-[connection signal="focus_entered" from="PlaylistWindow" to="." method="Test2"]
-[connection signal="window_input" from="PlaylistWindow" to="." method="Test"]
 [connection signal="CloseButtonClicked" from="PlaylistWindow/Playlist" to="." method="OnPlaylistCloseButtonClicked"]
 [connection signal="DragEnded" from="PlaylistWindow/Playlist" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="PlaylistWindow/Playlist" to="WindowManager" method="OnWindowDragMoved"]
@@ -115,3 +147,5 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="DragEnded" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragStart"]
+
+[editable path="MasterPanel"]

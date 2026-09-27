@@ -1,3 +1,4 @@
+using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Utils;
 using Godot;
@@ -7,13 +8,15 @@ namespace GodAmp.Controls.Playlist;
 public partial class PlaylistTrackEntry : PanelContainer
 {
     private const int PlaylistFontSize = 10;
-    [Signal] public delegate void SelectedEventHandler(int index);
+    [Signal] public delegate void SelectedEventHandler(long entryId);
+    [Signal] public delegate void ActivatedEventHandler(long entryId);
+    [Signal] public delegate void MoveRequestedEventHandler(long[] entryIds, long targetId, bool insertAfter);
 
     [Export] private Label _trackTitleLabel = null!;
     [Export] private Label _durationLabel = null!;
     [Export] private ColorRect _selectedBg = null!;
 
-    public int Index;
+    public long EntryId { get; private set; }
 
     private bool _isSelected = false;
     private bool _isPointerDown = false;
@@ -43,16 +46,26 @@ public partial class PlaylistTrackEntry : PanelContainer
     /// <summary>Populates the row and applies its selection and playback styling.</summary>
     /// <param name="title">Track title as displayed, preserving its letter case.</param>
     /// <param name="duration">Track length in seconds.</param>
-    /// <param name="index">Zero-based position in the playlist.</param>
+    /// <param name="entryId">Identity of this queue occurrence.</param>
     /// <param name="selected">Whether the row is selected.</param>
     /// <param name="current">Whether the row represents the playing track.</param>
-    public void Setup(string title, float duration, int index, bool selected, bool current = false)
+    public void Setup(string title, float duration, long entryId, bool selected, bool current = false)
     {
         IsSelected = selected;
 
-        Index = index;
+        EntryId = entryId;
         _trackTitleLabel.Text = title;
         _durationLabel.Text = TimeUtils.FormatAsTrackTime(duration);
+        _isCurrentTrack = current;
+        ApplySkin();
+    }
+
+    /// <summary>Changes playback highlighting independently of row selection.</summary>
+    /// <param name="current">Whether this occurrence is selected for playback.</param>
+    public void SetCurrent(bool current)
+    {
+        if (_isCurrentTrack == current)
+            return;
         _isCurrentTrack = current;
         ApplySkin();
     }
@@ -86,13 +99,12 @@ public partial class PlaylistTrackEntry : PanelContainer
                 _dragStarted = false;
 
                 if (eventMouseButton.DoubleClick)
-                    SignalBus.Instance.EmitSignal(SignalBus.SignalName.ChangeToTrackRequested, Index);
+                    EmitSignal(SignalName.Activated, EntryId);
             }
             else
             {
-                // Mouse released
                 if (_isPointerDown && !_dragStarted)
-                    EmitSignal(SignalName.Selected, Index); // plain click -> single select
+                    EmitSignal(SignalName.Selected, EntryId);
 
                 _isPointerDown = false;
                 _dragStarted = false;
@@ -103,56 +115,33 @@ public partial class PlaylistTrackEntry : PanelContainer
     public override Variant _GetDragData(Vector2 atPosition)
     {
         _dragStarted = true;
-        // Build selection indices from siblings' visual state
         var parent = GetParent();
-        var selectedIndices = new Godot.Collections.Array<int>();
-        foreach (var child in parent.GetChildren())
+        long[] selectedIds = IsSelected
+            ? [.. parent.GetChildren().OfType<PlaylistTrackEntry>().Where(row => row.IsSelected).Select(row => row.EntryId)]
+            : [EntryId];
+        var data = new PlaylistDragData
         {
-            if (child is PlaylistTrackEntry { IsSelected: true } entry)
-                selectedIndices.Add(entry.Index);
-        }
-
-        if (selectedIndices.Count == 0)
-            selectedIndices.Add(Index);
-
-        var data = new Godot.Collections.Dictionary
-        {
-            { "type", "playlist-reorder" },
-            { "indices", selectedIndices }
+            ContainerId = parent.GetInstanceId(),
+            EntryIds = selectedIds
         };
 
-        var preview = new Label { Text = $"Move {selectedIndices.Count} track(s)" };
+        var preview = new Label { Text = $"Move {selectedIds.Length} track(s)" };
         SetDragPreview(preview);
         return data;
     }
 
     public override bool _CanDropData(Vector2 atPosition, Variant data)
     {
-        if (data.VariantType != Variant.Type.Dictionary)
-            return false;
-        var dict = (Godot.Collections.Dictionary)data;
-        return dict.ContainsKey("type") && (string)dict["type"] == "playlist-reorder";
+        return data.VariantType == Variant.Type.Object && data.AsGodotObject() is PlaylistDragData drag &&
+            drag.ContainerId == GetParent().GetInstanceId();
     }
 
     public override void _DropData(Vector2 atPosition, Variant data)
     {
-        var dict = (Godot.Collections.Dictionary)data;
-        var arr = (Godot.Collections.Array<int>)dict["indices"];
-        var indices = new System.Collections.Generic.List<int>(arr);
+        if (!_CanDropData(atPosition, data))
+            return;
+        var drag = (PlaylistDragData)data.AsGodotObject();
         bool insertAfter = atPosition.Y > Size.Y * 0.5f;
-
-        Node? ancestor = GetParent();
-        Playlist? playlist = null;
-        while (ancestor != null)
-        {
-            if (ancestor is Playlist p)
-            {
-                playlist = p;
-                break;
-            }
-            ancestor = ancestor.GetParent();
-        }
-
-        playlist?.ReorderSelectedTracks(indices, Index, insertAfter);
+        EmitSignal(SignalName.MoveRequested, drag.EntryIds, EntryId, insertAfter);
     }
 }
