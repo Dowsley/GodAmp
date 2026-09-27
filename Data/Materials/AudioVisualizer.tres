@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://ty4sblrnaka7"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://ty4sblrnaka7"]
 
 [ext_resource type="Shader" uid="uid://bgc8tyjhjowar" path="res://Data/Shaders/AudioVisualizer.gdshader" id="1_renju"]
 
