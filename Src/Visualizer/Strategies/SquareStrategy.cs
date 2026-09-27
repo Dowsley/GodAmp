@@ -26,9 +26,9 @@ public partial class SquareStrategy : VisualizerStrategy
     private float _timeAccumulator = 0.0f;
     private static readonly Vector2[] ForceDirections = [Vector2.Right, Vector2.Down, Vector2.Left, Vector2.Up];
 
-    public override void Initialize(Vector2 viewportSize)
+    public override void Initialize(Vector2 viewportSize, AudioEffectSpectrumAnalyzerInstance spectrum)
     {
-        base.Initialize(viewportSize);
+        base.Initialize(viewportSize, spectrum);
         InitializeSquare();
         InitializePhysicsBoundaries(viewportSize);
         ResetPosition();

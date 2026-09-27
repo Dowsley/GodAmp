@@ -1,7 +1,7 @@
 using System;
-using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Audio.Playback;
+using GodAmp.Audio.Processing;
 using GodAmp.Utils;
 using Godot;
 
@@ -20,13 +20,15 @@ public partial class MasterPanel : WindowPanelContainer
     [Signal] public delegate void ShuffleRequestedEventHandler(bool enabled);
     [Signal] public delegate void RepeatRequestedEventHandler(bool enabled);
     [Signal] public delegate void FilesRequestedEventHandler(bool replace);
+    [Signal] public delegate void VolumeRequestedEventHandler(float value);
+    [Signal] public delegate void BalanceRequestedEventHandler(float value);
 
     [ExportGroup("Config")]
     [Export] public double ClockBlinkEverySeconds = 1.0f;
 
     [ExportGroup("References")]
     [Export] private PlaybackController _playbackController = null!;
-    [Export] private TrackPlayer _trackPlayerRef = null!;
+    [Export] private AudioController _audio = null!;
     [Export] private TextureButton _shuffleButton = null!;
     [Export] private TextureButton _repeatButton = null!;
     [Export] public WinampMenuButton WinampMenuButton = null!;
@@ -58,6 +60,7 @@ public partial class MasterPanel : WindowPanelContainer
         base._Ready();
         _positionSeekerSlider.Value = 0.0f;
         RefreshTrackTitle();
+        RefreshAudioState();
     }
 
     /// <inheritdoc />
@@ -174,14 +177,6 @@ public partial class MasterPanel : WindowPanelContainer
     /// <param name="value">Requested playback position in seconds.</param>
     private void OnWindowshadeSeekValueChanged(float value) => _positionSeekerSlider.Value = value;
 
-    /// <summary>Updates both presentations from a scene-connected compact volume control.</summary>
-    /// <param name="value">Requested linear volume between zero and one.</param>
-    private void OnWindowshadeVolumeChanged(float value) => _volumeSlider.Value = value;
-
-    /// <summary>Updates the existing balance control from the compact EQ presentation.</summary>
-    /// <param name="value">Requested stereo balance from minus one to one.</param>
-    private void OnWindowshadeBalanceChanged(float value) => _pannerAudioSlider.Value = value;
-
     private void OnPositionSeekerDragStarted()
     {
         _dragging = true;
@@ -197,14 +192,13 @@ public partial class MasterPanel : WindowPanelContainer
         OnSliderDragEnded();
     }
 
-    /// <summary>Applies the volume and persists the setting.</summary>
+    /// <summary>Requests shared volume and displays feedback during an active slider interaction.</summary>
     /// <param name="value">Linear volume from zero to one.</param>
     private void OnVolumeSliderValueChanged(float value)
     {
-        _trackPlayerRef.VolumeLinear = value;
+        EmitSignal(SignalName.VolumeRequested, value);
         if (_labelDisplay == LabelDisplay.Slider)
             SetMasterLabelText($"VOLUME: {Convert.ToInt64(value * 100)}%");
-        SettingsManager.Instance.SetVolume(value);
     }
 
     private void OnSliderDragStarted()
@@ -220,23 +214,21 @@ public partial class MasterPanel : WindowPanelContainer
         RefreshTrackTitle();
     }
 
-    /// <summary>Updates the master bus balance and its display notification.</summary>
+    /// <summary>Requests shared balance and displays feedback during an active slider interaction.</summary>
     /// <param name="value">Balance from minus one (left) to one (right).</param>
     private void OnPannerAudioSliderValueChanged(float value)
     {
-        var busIndex = AudioServer.GetBusIndex("Master");
-        if (AudioServer.GetBusEffect(busIndex, AudioUtils.PannerAudioEffectIndex) is AudioEffectPanner effect)
-        {
-            effect.Pan = value;
-        }
+        EmitSignal(SignalName.BalanceRequested, value);
         if (_labelDisplay == LabelDisplay.Slider)
             SetMasterLabelText(Mathf.IsZeroApprox(value) ? "BALANCE: CENTER"
                 : $"BALANCE: {Convert.ToInt64(float.Abs(value) * 100)}% " + (value < 0 ? "LEFT" : "RIGHT"));
     }
 
-    public void SetVolumeValue(float volume)
+    /// <summary>Reflects shared audio state without producing another change request.</summary>
+    public void RefreshAudioState()
     {
-        _volumeSlider.Value = volume;
+        _volumeSlider.SetValueNoSignal(_audio.Volume);
+        _pannerAudioSlider.SetValueNoSignal(_audio.Balance);
     }
 
     private void OnNextTrackButtonPressed() => EmitSignal(SignalName.NextRequested);

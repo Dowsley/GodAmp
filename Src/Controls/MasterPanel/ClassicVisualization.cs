@@ -1,6 +1,7 @@
 using System;
 using GodAmp.Autoload;
 using GodAmp.Audio.Playback;
+using GodAmp.Audio.Processing;
 using GodAmp.Data;
 using GodAmp.Utils;
 using Godot;
@@ -42,13 +43,13 @@ public partial class ClassicVisualization : Control
     [Export] public VisualizationMode Mode { get; set; }
     /// <summary>Scene-assigned player used to clear stale samples on pause and stop.</summary>
     [Export] public TrackPlayer? Player { get; set; }
+    [Export] private AudioController _audio = null!;
 
     /// <inheritdoc />
     public override void _Ready()
     {
-        int bus = AudioServer.GetBusIndex("Master");
-        _analyzer = (AudioEffectSpectrumAnalyzerInstance)AudioServer.GetBusEffectInstance(bus, AudioUtils.SpectrumAnalyzerAudioEffectIndex);
-        _capture = (AudioEffectCapture)AudioServer.GetBusEffect(bus, AudioUtils.OscilloscopeAudioEffectIndex);
+        _analyzer = _audio.Spectrum;
+        _capture = _audio.Capture;
         _image = Image.CreateEmpty(PixelWidth, PixelHeight, false, Image.Format.Rgba8);
         _texture = ImageTexture.CreateFromImage(_image);
         _windowshadeImage = Image.CreateEmpty(WindowshadeWidth, WindowshadeHeight, false, Image.Format.Rgba8);

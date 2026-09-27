@@ -15,9 +15,9 @@ public partial class LineStrategy : VisualizerStrategy
     [Export] private Line2D _line = null!;
     private Vector2[] _points = null!;
 
-    public override void Initialize(Vector2 viewportSize)
+    public override void Initialize(Vector2 viewportSize, AudioEffectSpectrumAnalyzerInstance spectrum)
     {
-        base.Initialize(viewportSize);
+        base.Initialize(viewportSize, spectrum);
         InitializePoints();
         InitializeLines();
     }

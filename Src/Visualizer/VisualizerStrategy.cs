@@ -1,4 +1,3 @@
-using GodAmp.Utils;
 using Godot;
 
 namespace GodAmp.Visualizer;
@@ -42,19 +41,17 @@ public abstract partial class VisualizerStrategy : Node2D
     protected int FrameCount = 0;
     protected Vector2 ViewportSize;
 
-    public virtual void Initialize(Vector2 viewportSize)
+    /// <summary>Initializes a dynamically instantiated strategy with its scene's shared audio analysis source.</summary>
+    /// <param name="viewportSize">Current rendering dimensions.</param>
+    /// <param name="spectrum">Analyzer owned and validated by the scene's audio controller.</param>
+    public virtual void Initialize(Vector2 viewportSize, AudioEffectSpectrumAnalyzerInstance spectrum)
     {
         ViewportSize = viewportSize;
-        InitializeAudioSpectrum();
+        Spectrum = spectrum;
     }
 
     public virtual void Update(double delta)
     {
     }
 
-    private void InitializeAudioSpectrum()
-    {
-        int masterBus = AudioServer.GetBusIndex("Master");
-        Spectrum = (AudioEffectSpectrumAnalyzerInstance)AudioServer.GetBusEffectInstance(masterBus, AudioUtils.SpectrumAnalyzerAudioEffectIndex);
-    }
 }

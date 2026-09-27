@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using GodAmp.Data;
+using GodAmp.Audio.Processing;
 using Godot;
 
 namespace GodAmp.Visualizer
@@ -9,6 +10,7 @@ namespace GodAmp.Visualizer
     public partial class AudioVisualizer : Control
     {
         [Export(PropertyHint.Dir)] private string _strategyTypeDirectory = null!;
+        [Export] private AudioController _audio = null!;
 
         public Dictionary<StringName, VisualizerStrategyType> StrategyTypeMap = [];
 
@@ -83,8 +85,8 @@ namespace GodAmp.Visualizer
 
         private void RefreshStrategy(Vector2 viewportSize)
         {
-            _strategyA?.Initialize(viewportSize);
-            _strategyB?.Initialize(viewportSize);
+            _strategyA?.Initialize(viewportSize, _audio.Spectrum);
+            _strategyB?.Initialize(viewportSize, _audio.Spectrum);
         }
 
         private void UpdateStrategy(double delta)

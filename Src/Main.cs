@@ -26,7 +26,6 @@ public partial class Main : HBoxContainer
     [Export] private Equalizer _equalizer = null!;
     [Export] private Playlist _playlist = null!;
     [Export] private Visualizer.Visualizer _visualizer = null!;
-    [Export] private TrackPlayer _trackPlayer = null!;
     [Export] private PlaybackController _playbackController = null!;
     [Export] private AudioImportController _audioImportController = null!;
     [Export] private WindowManager _windowManager = null!;
@@ -192,10 +191,6 @@ public partial class Main : HBoxContainer
 
     private void LoadSettingsState()
     {
-        float savedVolume = SettingsManager.Instance.GetVolume();
-        _masterPanel.SetVolumeValue(savedVolume);
-        _trackPlayer.VolumeLinear = savedVolume;
-
         var multiplier = SettingsManager.Instance.GetZoomMode();
         _windowManager.SetZoomMode(multiplier);
     }

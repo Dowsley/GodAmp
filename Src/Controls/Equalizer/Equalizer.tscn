@@ -76,7 +76,7 @@ script = ExtResource("cursor_binding")
 ControlPaths = Array[NodePath]([NodePath("../Controls/PreampSlider"), NodePath("../Controls/60Slider"), NodePath("../Controls/170Slider"), NodePath("../Controls/310Slider"), NodePath("../Controls/600Slider"), NodePath("../Controls/1KSlider"), NodePath("../Controls/3KSlider"), NodePath("../Controls/6KSlider"), NodePath("../Controls/12KSlider"), NodePath("../Controls/14KSlider"), NodePath("../Controls/16KSlider")])
 Role = 20
 
-[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons")]
+[node name="Equalizer" type="PanelContainer" node_paths=PackedStringArray("_equalizerToggleButton", "_graph", "_preampSlider", "_volumeSlider", "_balanceSlider", "_bandSliders", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,6 +86,10 @@ grow_vertical = 2
 script = ExtResource("script")
 _equalizerToggleButton = NodePath("Controls/EqualizerToggleButton")
 _graph = NodePath("Controls/Graph")
+_preampSlider = NodePath("Controls/PreampSlider")
+_volumeSlider = NodePath("Windowshade/Volume")
+_balanceSlider = NodePath("Windowshade/Balance")
+_bandSliders = Array[NodePath]([NodePath("Controls/60Slider"), NodePath("Controls/170Slider"), NodePath("Controls/310Slider"), NodePath("Controls/600Slider"), NodePath("Controls/1KSlider"), NodePath("Controls/3KSlider"), NodePath("Controls/6KSlider"), NodePath("Controls/12KSlider"), NodePath("Controls/14KSlider"), NodePath("Controls/16KSlider")])
 _draggableHitbox = NodePath("DraggableHitbox")
 TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
 ExpandedControls = Array[NodePath]([NodePath("Background"), NodePath("Controls"), NodePath("DraggableHitbox")])
@@ -305,6 +309,8 @@ texture_pressed = SubResource("shade_close_held")
 [connection signal="pressed" from="Controls/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="pressed" from="Controls/EqualizerToggleButton" to="." method="OnEqualizerToggleButtonPressed"]
 [connection signal="value_changed" from="Controls/PreampSlider" to="." method="OnPreampSliderValueChanged"]
+[connection signal="value_changed" from="Windowshade/Volume" to="." method="OnVolumeChanged"]
+[connection signal="value_changed" from="Windowshade/Balance" to="." method="OnBalanceChanged"]
 [connection signal="value_changed" from="Controls/60Slider" to="." method="OnBandValueChanged" binds=[0]]
 [connection signal="value_changed" from="Controls/170Slider" to="." method="OnBandValueChanged" binds=[1]]
 [connection signal="value_changed" from="Controls/310Slider" to="." method="OnBandValueChanged" binds=[2]]

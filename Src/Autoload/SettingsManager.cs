@@ -20,6 +20,10 @@ public partial class SettingsManager : Node
     private const string LastPlaylistPathKey = "last_playlist_path";
     private const string ZoomModeKey = "zoom_mode";
     private const string VolumeKey = "volume";
+    private const string BalanceKey = "balance";
+    private const string PreampKey = "preamp_db";
+    private const string EqualizerEnabledKey = "equalizer_enabled";
+    private const string EqualizerGainsKey = "equalizer_gains";
     private const string ActiveSkinKey = "active_skin";
     private const string WindowPositionKeyFormat = "window_{0}_position";
     private const string WindowVisibleKeyFormat = "window_{0}_visible";
@@ -127,6 +131,34 @@ public partial class SettingsManager : Node
         }
     }
 
+    /// <summary>Reads audio preferences with typed fallbacks for missing or malformed values.</summary>
+    /// <returns>A detached snapshot; the audio owner validates gain and volume ranges.</returns>
+    public AudioSettings GetAudioSettings()
+    {
+        Variant enabled = GetSetting(EqualizerEnabledKey);
+        Variant gains = GetSetting(EqualizerGainsKey);
+        return new AudioSettings(ReadAudioNumber(VolumeKey, AudioSettings.DefaultVolume), ReadAudioNumber(BalanceKey, 0), ReadAudioNumber(PreampKey, 0),
+            enabled.VariantType == Variant.Type.Bool && enabled.AsBool(),
+            gains.VariantType == Variant.Type.PackedFloat32Array ? gains.AsFloat32Array() : []);
+    }
+
+    /// <summary>Stores the audio owner's validated preferences for the normal settings-save boundary.</summary>
+    /// <param name="settings">Snapshot whose band gains use native ten-band order.</param>
+    public void SetAudioSettings(AudioSettings settings)
+    {
+        SetVolume(settings.Volume);
+        SetSetting(BalanceKey, settings.Balance);
+        SetSetting(PreampKey, settings.PreampDb);
+        SetSetting(EqualizerEnabledKey, settings.EqualizerEnabled);
+        SetSetting(EqualizerGainsKey, settings.BandGains);
+    }
+
+    private float ReadAudioNumber(string key, float fallback)
+    {
+        Variant value = GetSetting(key);
+        return value.VariantType is Variant.Type.Float or Variant.Type.Int ? value.AsSingle() : fallback;
+    }
+
     /// <summary>
     /// Gets the last played playlist path.
     /// </summary>
@@ -162,7 +194,7 @@ public partial class SettingsManager : Node
     /// </summary>
     public float GetVolume()
     {
-        return (float)GetSetting(VolumeKey, 0.8f);
+        return ReadAudioNumber(VolumeKey, AudioSettings.DefaultVolume);
     }
 
     /// <summary>
