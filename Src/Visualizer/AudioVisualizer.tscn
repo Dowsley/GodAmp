@@ -4,6 +4,7 @@
 [ext_resource type="Material" uid="uid://ty4sblrnaka7" path="res://Data/Materials/AudioVisualizer.tres" id="3_l5oub"]
 
 [node name="AudioVisualizer" type="Control" node_paths=PackedStringArray("_containerA", "_containerB", "_viewportA", "_viewportB", "_rectA", "_rectB", "_strategyContainerA", "_strategyContainerB")]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -194,12 +194,16 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="PlaybackIndicators" type="Control" parent="Controls"]
+layout_mode = 0
+anchors_preset = 0
 offset_right = 275.0
 offset_bottom = 116.0
 mouse_filter = 2
 script = ExtResource("indicators")
 
 [node name="Visualization" type="Control" parent="Controls" node_paths=PackedStringArray("WindowshadeDisplay")]
+layout_mode = 0
+anchors_preset = 0
 offset_left = 24.0
 offset_top = 43.0
 offset_right = 100.0
@@ -210,12 +214,14 @@ script = ExtResource("visualization")
 WindowshadeDisplay = NodePath("../../Windowshade/Visualization")
 
 [node name="TopBar" type="TextureRect" parent="Controls"]
+layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = ExtResource("titlebar")
 
 [node name="MinimizeButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
 offset_right = 263.0
@@ -225,6 +231,7 @@ texture_normal = ExtResource("minimize")
 texture_pressed = ExtResource("minimize_held")
 
 [node name="CloseButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
 offset_right = 273.0
@@ -234,6 +241,7 @@ texture_normal = ExtResource("close")
 texture_pressed = ExtResource("close_held")
 
 [node name="WinampMenuButton" parent="Controls" instance=ExtResource("menu")]
+layout_mode = 0
 offset_left = 6.0
 offset_top = 3.0
 offset_right = 15.0
@@ -245,6 +253,7 @@ theme_override_styles/focus = SubResource("empty_style")
 flat = false
 
 [node name="VolumeSlider" parent="Controls" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 107.0
 offset_top = 57.0
 offset_right = 175.0
@@ -254,6 +263,7 @@ step = 0.01
 Sheet = ExtResource("volume")
 
 [node name="PannerAudioSlider" parent="Controls" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 177.0
 offset_top = 57.0
 offset_right = 215.0
@@ -265,6 +275,7 @@ Layout = 1
 Sheet = ExtResource("balance")
 
 [node name="PositionSeeker" parent="Controls" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 72.0
 offset_right = 264.0
@@ -274,6 +285,7 @@ Layout = 2
 Sheet = ExtResource("seek")
 
 [node name="ToggleEqualizerButton" parent="Controls" instance=ExtResource("toggle")]
+layout_mode = 0
 offset_left = 219.0
 offset_top = 58.0
 offset_right = 242.0
@@ -285,6 +297,7 @@ texture_pressed = ExtResource("eq_on")
 HeldOffset = Vector2(46, 0)
 
 [node name="TogglePlaylistButton" parent="Controls" instance=ExtResource("toggle")]
+layout_mode = 0
 offset_left = 242.0
 offset_top = 58.0
 offset_right = 265.0
@@ -296,6 +309,7 @@ texture_pressed = ExtResource("pl_on")
 HeldOffset = Vector2(46, 0)
 
 [node name="PreviousTrackButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 88.0
 offset_right = 39.0
@@ -305,6 +319,7 @@ texture_normal = ExtResource("previous")
 texture_pressed = ExtResource("previous_held")
 
 [node name="PlayTrackButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 39.0
 offset_top = 88.0
 offset_right = 62.0
@@ -314,6 +329,7 @@ texture_normal = ExtResource("play")
 texture_pressed = ExtResource("play_held")
 
 [node name="PauseTrackButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 62.0
 offset_top = 88.0
 offset_right = 85.0
@@ -323,6 +339,7 @@ texture_normal = ExtResource("pause")
 texture_pressed = ExtResource("pause_held")
 
 [node name="StopTrackButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 85.0
 offset_top = 88.0
 offset_right = 108.0
@@ -332,6 +349,7 @@ texture_normal = ExtResource("stop")
 texture_pressed = ExtResource("stop_held")
 
 [node name="NextTrackButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 108.0
 offset_top = 88.0
 offset_right = 130.0
@@ -341,6 +359,7 @@ texture_normal = ExtResource("next")
 texture_pressed = ExtResource("next_held")
 
 [node name="LoadTracksButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 136.0
 offset_top = 89.0
 offset_right = 158.0
@@ -350,6 +369,7 @@ texture_normal = ExtResource("eject")
 texture_pressed = ExtResource("eject_held")
 
 [node name="ShuffleModeButton" parent="Controls" instance=ExtResource("toggle")]
+layout_mode = 0
 offset_left = 164.0
 offset_top = 89.0
 offset_right = 211.0
@@ -360,6 +380,7 @@ texture_pressed = ExtResource("shuffle_on")
 HeldOffset = Vector2(0, 15)
 
 [node name="RepeatModeButton" parent="Controls" instance=ExtResource("toggle")]
+layout_mode = 0
 offset_left = 210.0
 offset_top = 89.0
 offset_right = 238.0
@@ -375,12 +396,14 @@ mouse_filter = 2
 theme = ExtResource("text_theme")
 
 [node name="MasterLabel" parent="TextDisplay" instance=ExtResource("marquee")]
+layout_mode = 0
 offset_left = 111.0
 offset_top = 27.0
 offset_right = 265.0
 offset_bottom = 33.0
 
 [node name="BitrateLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 offset_left = 111.0
 offset_top = 43.0
 offset_right = 126.0
@@ -390,6 +413,7 @@ horizontal_alignment = 2
 script = ExtResource("label")
 
 [node name="SampleRateLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 offset_left = 156.0
 offset_top = 43.0
 offset_right = 166.0
@@ -399,6 +423,7 @@ horizontal_alignment = 2
 script = ExtResource("label")
 
 [node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 48.0
 offset_top = 26.0
@@ -409,6 +434,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 60.0
 offset_top = 26.0
@@ -419,6 +445,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 78.0
 offset_top = 26.0
@@ -429,6 +456,7 @@ script = ExtResource("label")
 UseNumberFont = true
 
 [node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay"]
+layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 90.0
 offset_top = 26.0
@@ -452,6 +480,7 @@ mouse_filter = 2
 theme = SubResource("shade_controls_theme")
 
 [node name="Iconify" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 244.0
 offset_top = 3.0
 offset_right = 253.0
@@ -461,12 +490,14 @@ texture_normal = SubResource("iconify")
 texture_pressed = SubResource("iconify_held")
 
 [node name="Background" type="TextureRect" parent="Windowshade"]
+layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = SubResource("shade_background")
 
 [node name="Menu" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 6.0
 offset_top = 3.0
 offset_right = 15.0
@@ -476,6 +507,7 @@ texture_normal = ExtResource("menu_normal")
 texture_pressed = ExtResource("menu_pressed")
 
 [node name="Time" type="Label" parent="Windowshade"]
+layout_mode = 0
 offset_left = 129.0
 offset_top = 4.0
 offset_right = 159.0
@@ -486,6 +518,7 @@ text = " 00:00"
 script = ExtResource("label")
 
 [node name="Visualization" type="TextureRect" parent="Windowshade"]
+layout_mode = 0
 offset_left = 79.0
 offset_top = 5.0
 offset_right = 117.0
@@ -496,6 +529,7 @@ stretch_mode = 0
 tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
 
 [node name="Previous" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 167.0
 offset_top = 3.0
 offset_right = 176.0
@@ -504,6 +538,7 @@ focus_mode = 0
 flat = true
 
 [node name="Play" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 176.0
 offset_top = 3.0
 offset_right = 186.0
@@ -512,6 +547,7 @@ focus_mode = 0
 flat = true
 
 [node name="Pause" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 186.0
 offset_top = 3.0
 offset_right = 196.0
@@ -520,6 +556,7 @@ focus_mode = 0
 flat = true
 
 [node name="Stop" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 196.0
 offset_top = 3.0
 offset_right = 206.0
@@ -528,6 +565,7 @@ focus_mode = 0
 flat = true
 
 [node name="Next" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 206.0
 offset_top = 3.0
 offset_right = 216.0
@@ -536,6 +574,7 @@ focus_mode = 0
 flat = true
 
 [node name="Eject" type="Button" parent="Windowshade"]
+layout_mode = 0
 offset_left = 216.0
 offset_top = 3.0
 offset_right = 225.0
@@ -544,6 +583,7 @@ focus_mode = 0
 flat = true
 
 [node name="Seek" parent="Windowshade" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 226.0
 offset_top = 4.0
 offset_right = 243.0
@@ -553,6 +593,7 @@ Layout = 4
 Sheet = ExtResource("shade_sheet")
 
 [node name="Restore" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
 offset_right = 263.0
@@ -562,6 +603,7 @@ texture_normal = SubResource("shade_restore")
 texture_pressed = SubResource("shade_restore_held")
 
 [node name="Iconify" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 244.0
 offset_top = 3.0
 offset_right = 253.0
@@ -571,6 +613,7 @@ texture_normal = SubResource("iconify")
 texture_pressed = SubResource("iconify_held")
 
 [node name="Close" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
 offset_right = 273.0

@@ -118,12 +118,15 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="TopBar" type="TextureRect" parent="Controls"]
+layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = ExtResource("titlebar")
 
 [node name="Graph" type="Control" parent="Controls"]
+layout_mode = 0
+anchors_preset = 0
 offset_left = 86.0
 offset_top = 17.0
 offset_right = 199.0
@@ -132,6 +135,7 @@ mouse_filter = 2
 script = ExtResource("graph")
 
 [node name="CloseButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
 offset_right = 273.0
@@ -141,6 +145,7 @@ texture_normal = ExtResource("close")
 texture_pressed = ExtResource("close_held")
 
 [node name="EqualizerToggleButton" parent="Controls" instance=ExtResource("toggle")]
+layout_mode = 0
 offset_left = 14.0
 offset_top = 18.0
 offset_right = 39.0
@@ -150,6 +155,7 @@ texture_pressed = ExtResource("on")
 HeldOffset = Vector2(118, 0)
 
 [node name="AutoEqualizeToggleButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 39.0
 offset_top = 18.0
 offset_right = 72.0
@@ -160,6 +166,7 @@ texture_normal = ExtResource("auto")
 texture_disabled = ExtResource("auto")
 
 [node name="PresetsButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 217.0
 offset_top = 18.0
 offset_right = 261.0
@@ -170,66 +177,77 @@ texture_normal = ExtResource("presets")
 texture_disabled = ExtResource("presets")
 
 [node name="PreampSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 21.0
 offset_top = 38.0
 offset_right = 35.0
 offset_bottom = 101.0
 
 [node name="60Slider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 78.0
 offset_top = 38.0
 offset_right = 92.0
 offset_bottom = 101.0
 
 [node name="170Slider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 38.0
 offset_right = 110.0
 offset_bottom = 101.0
 
 [node name="310Slider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 114.0
 offset_top = 38.0
 offset_right = 128.0
 offset_bottom = 101.0
 
 [node name="600Slider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 132.0
 offset_top = 38.0
 offset_right = 146.0
 offset_bottom = 101.0
 
 [node name="1KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 150.0
 offset_top = 38.0
 offset_right = 164.0
 offset_bottom = 101.0
 
 [node name="3KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 168.0
 offset_top = 38.0
 offset_right = 182.0
 offset_bottom = 101.0
 
 [node name="6KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 186.0
 offset_top = 38.0
 offset_right = 200.0
 offset_bottom = 101.0
 
 [node name="12KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 204.0
 offset_top = 38.0
 offset_right = 218.0
 offset_bottom = 101.0
 
 [node name="14KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 222.0
 offset_top = 38.0
 offset_right = 236.0
 offset_bottom = 101.0
 
 [node name="16KSlider" parent="Controls" instance=ExtResource("band")]
+layout_mode = 0
 offset_left = 240.0
 offset_top = 38.0
 offset_right = 254.0
@@ -242,6 +260,7 @@ size_flags_vertical = 0
 mouse_filter = 2
 
 [node name="WindowshadeButton" type="TextureButton" parent="Controls"]
+layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
 offset_right = 263.0
@@ -257,12 +276,14 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="Background" type="TextureRect" parent="Windowshade"]
+layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = SubResource("shade_background")
 
 [node name="Volume" parent="Windowshade" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 61.0
 offset_top = 4.0
 offset_right = 158.0
@@ -273,6 +294,7 @@ Layout = 5
 Sheet = ExtResource("shade_sheet")
 
 [node name="Balance" parent="Windowshade" instance=ExtResource("slider")]
+layout_mode = 0
 offset_left = 164.0
 offset_top = 4.0
 offset_right = 206.0
@@ -284,6 +306,7 @@ Layout = 6
 Sheet = ExtResource("shade_sheet")
 
 [node name="Restore" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
 offset_right = 263.0
@@ -293,6 +316,7 @@ texture_normal = SubResource("shade_restore")
 texture_pressed = SubResource("shade_restore_held")
 
 [node name="Close" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
 offset_right = 273.0

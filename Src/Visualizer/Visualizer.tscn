@@ -71,6 +71,7 @@ size_flags_vertical = 0
 texture = ExtResource("4_gnf20")
 
 [node name="TitleTextureRect" type="Control" parent="VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(75, 20)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0

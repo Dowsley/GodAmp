@@ -7,7 +7,8 @@ uniform float rotation_speed : hint_range(0.1, 5.0) = 1.0;
 uniform float rotation_direction : hint_range(-1.0, 1.0) = 1.0;
 uniform float tunnel_depth : hint_range(0.1, 2.0) = 1.0;
 uniform float distortion : hint_range(0.1, 2.0) = 1.0;
-uniform sampler2D previous_frame; // Texture from the other viewport
+/* The editor has no runtime feedback texture. */
+uniform sampler2D previous_frame : hint_default_black;
 uniform float decay : hint_range(0.0, 1.0) = 0.85; // How much of the previous frame persists
 uniform float color_decay : hint_range(0.0, 1.0) = 0.92;
 uniform sampler2D SCREEN_TEXTURE : hint_screen_texture;
