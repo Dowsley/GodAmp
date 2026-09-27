@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace GodAmp.Utils;
 
 public static class M3UParser
 {
-    public static string[] Parse(string filePath)
+    /// <summary>Resolves playlist entries relative to their file while retaining order and duplicates.</summary>
+    /// <param name="filePath">Filesystem path to an M3U or M3U8 playlist.</param>
+    /// <param name="cancellation">Cancels parsing between lines.</param>
+    /// <returns>Resolved source paths in playlist order.</returns>
+    public static string[] Parse(string filePath, CancellationToken cancellation = default)
     {
         var result = new List<string>();
         var baseDir = Path.GetDirectoryName(filePath) ?? string.Empty;
         foreach (var raw in File.ReadLines(filePath))
         {
+            cancellation.ThrowIfCancellationRequested();
             var line = raw.Trim();
             if (string.IsNullOrEmpty(line))
                 continue;
-            if (line.StartsWith("#"))
+            if (line.StartsWith('#'))
                 continue;
             string path = line;
             if (!Path.IsPathRooted(path))
@@ -59,5 +65,3 @@ public static class M3UParser
         return path;
     }
 }
-
-

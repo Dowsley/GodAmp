@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using GodAmp.Data;
 using Godot;
 
-namespace GodAmp.Core;
+namespace GodAmp.Audio.Playback;
 
 /// <summary>Owns queue identity, navigation policy, and the scene's playback transport.</summary>
 public partial class PlaybackController : Node
@@ -15,6 +18,7 @@ public partial class PlaybackController : Node
     [Signal] public delegate void PlaybackStateChangedEventHandler();
     [Signal] public delegate void ModesChangedEventHandler();
     [Signal] public delegate void OpenTracksRequestedEventHandler();
+    [Signal] public delegate void PlaybackFailedEventHandler(string path, AudioIssueKind kind, string message);
 
     [Export] private TrackPlayer _trackPlayer = null!;
 
@@ -23,6 +27,10 @@ public partial class PlaybackController : Node
     private readonly ReadOnlyCollection<QueueEntry> _readOnlyEntries;
     private long _lastEntryId;
     private float _pausedPosition;
+    private readonly AudioStreamLoader _loader = new();
+    private Task<AudioStream>? _loadTask;
+    private CancellationTokenSource? _loadCancellation;
+    private PlaybackState _requestedState;
 
     public PlaybackController() => _readOnlyEntries = _entries.AsReadOnly();
 
@@ -33,6 +41,10 @@ public partial class PlaybackController : Node
     public PlaybackState State { get; private set; }
     public bool ShuffleEnabled { get; private set; }
     public bool RepeatEnabled { get; private set; }
+    /// <summary>Decoded duration when available, otherwise the selected source's metadata duration.</summary>
+    public float CurrentDuration => (float)(_trackPlayer.Stream?.GetLength() ?? CurrentEntry?.Track.Duration ?? 0);
+    /// <summary>Whether a loaded, active transport can accept seek requests.</summary>
+    public bool CanSeek => (State is PlaybackState.Playing or PlaybackState.Paused) && _trackPlayer.Stream != null;
 
     /// <summary>Current playback position, including a seek requested while paused.</summary>
     public float Position => State switch
@@ -64,7 +76,7 @@ public partial class PlaybackController : Node
         PublishChanges(true, previous, previousState);
     }
 
-    /// <summary>Replaces the queue with fresh occurrences and loads the first entry stopped.</summary>
+    /// <summary>Replaces the queue with fresh occurrences and selects the first entry stopped.</summary>
     /// <param name="tracks">Replacement order; an empty sequence clears playback.</param>
     public void Replace(IEnumerable<Track> tracks)
     {
@@ -157,6 +169,11 @@ public partial class PlaybackController : Node
     /// <summary>Toggles pause for an active session and applies any paused seek on resume.</summary>
     public void TogglePause()
     {
+        if (State == PlaybackState.Loading)
+        {
+            _requestedState = _requestedState == PlaybackState.Paused ? PlaybackState.Playing : PlaybackState.Paused;
+            return;
+        }
         if (State == PlaybackState.Stopped)
             return;
         if (State == PlaybackState.Playing)
@@ -178,6 +195,7 @@ public partial class PlaybackController : Node
     public void Stop()
     {
         PlaybackState previous = State;
+        CancelPendingLoad();
         _trackPlayer.Stop();
         _trackPlayer.StreamPaused = false;
         _pausedPosition = 0.0f;
@@ -190,9 +208,9 @@ public partial class PlaybackController : Node
     /// <param name="position">Requested seconds; nonfinite values and stopped sessions are ignored.</param>
     public void Seek(float position)
     {
-        if (State == PlaybackState.Stopped || CurrentEntry == null || !float.IsFinite(position))
+        if (!CanSeek || !float.IsFinite(position))
             return;
-        float bounded = Mathf.Clamp(position, 0.0f, (float)CurrentEntry.Track.Stream.GetLength());
+        float bounded = Mathf.Clamp(position, 0.0f, CurrentDuration);
         if (State == PlaybackState.Paused)
             _pausedPosition = bounded;
         else
@@ -267,24 +285,99 @@ public partial class PlaybackController : Node
         }
         QueueEntry? previous = CurrentEntry;
         PlaybackState previousState = State;
-        LoadEntry(_entries.First(e => e.Id == order[index]), finished ? PlaybackState.Playing : State);
+        PlaybackState targetState = State == PlaybackState.Loading ? _requestedState : State;
+        LoadEntry(_entries.First(e => e.Id == order[index]), finished ? PlaybackState.Playing : targetState);
         PublishChanges(false, previous, previousState);
     }
 
     /// <summary>Loads transport state without notifying views until the queue mutation is complete.</summary>
     private void LoadEntry(QueueEntry? entry, PlaybackState state)
     {
+        bool reuseStream = CurrentEntry?.Id == entry?.Id && _trackPlayer.Stream != null;
+        CancelPendingLoad();
         CurrentEntry = entry;
         _pausedPosition = 0.0f;
-        if (entry == null)
+        _requestedState = state;
+        if (entry == null || state == PlaybackState.Stopped)
         {
             _trackPlayer.ClearCurrentTrack();
             State = PlaybackState.Stopped;
             return;
         }
-        _trackPlayer.SetCurrentTrack(entry.Track, state != PlaybackState.Stopped);
-        _trackPlayer.StreamPaused = state == PlaybackState.Paused;
-        State = state;
+        if (reuseStream)
+        {
+            _trackPlayer.StreamPaused = false;
+            _trackPlayer.Play();
+            _trackPlayer.StreamPaused = state == PlaybackState.Paused;
+            State = state;
+            return;
+        }
+        _trackPlayer.ClearCurrentTrack();
+        State = PlaybackState.Loading;
+        _loadCancellation = new CancellationTokenSource();
+        _loadTask = _loader.LoadAsync(entry.Track.SourcePath, _loadCancellation.Token);
+    }
+
+    /// <summary>Transfers completed audio to the player only while its request remains current.</summary>
+    public override void _Process(double delta)
+    {
+        if (_loadTask is not { IsCompleted: true })
+            return;
+        Task<AudioStream> task = _loadTask;
+        _loadTask = null;
+        _loadCancellation!.Dispose();
+        _loadCancellation = null;
+        try
+        {
+            AudioStream stream = task.GetAwaiter().GetResult();
+            _trackPlayer.SetCurrentTrack(CurrentEntry!.Track, stream);
+            _trackPlayer.StreamPaused = _requestedState == PlaybackState.Paused;
+            State = _requestedState;
+        }
+        catch (Exception exception)
+        {
+            _trackPlayer.ClearCurrentTrack();
+            State = PlaybackState.Stopped;
+            AudioIssueKind kind = exception switch
+            {
+                InvalidDataException => AudioIssueKind.Decoding,
+                IOException or UnauthorizedAccessException => AudioIssueKind.Access,
+                NotSupportedException => AudioIssueKind.UnsupportedFormat,
+                _ => AudioIssueKind.Decoding
+            };
+            EmitSignal(SignalName.PlaybackFailed, CurrentEntry!.Track.SourcePath,
+                (int)kind, exception.Message);
+        }
+        EmitSignal(SignalName.PlaybackStateChanged);
+    }
+
+    private void CancelPendingLoad()
+    {
+        Task<AudioStream>? task = _loadTask;
+        CancellationTokenSource? cancellation = _loadCancellation;
+        _loadTask = null;
+        _loadCancellation = null;
+        cancellation?.Cancel();
+        if (task == null)
+        {
+            cancellation?.Dispose();
+            return;
+        }
+        /* A completed but unclaimed stream still belongs to the cancelled request. */
+        _ = task.ContinueWith(completed =>
+        {
+            if (completed.Status == TaskStatus.RanToCompletion)
+                completed.Result.Dispose();
+            else
+                _ = completed.Exception;
+            cancellation?.Dispose();
+        }, TaskScheduler.Default);
+    }
+
+    public override void _ExitTree()
+    {
+        CancelPendingLoad();
+        _trackPlayer.ClearCurrentTrack();
     }
 
     private List<long> NavigationOrder() => ShuffleEnabled ? [.. _shuffleOrder] : [.. _entries.Select(e => e.Id)];

@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Src/Components/ImportStatus/ImportStatus.cs" id="1"]
+
+[node name="ImportStatus" type="Window" node_paths=PackedStringArray("_status", "_progress", "_issues", "_cancel", "_dismiss", "_showDelay")]
+title = "Audio imports"
+size = Vector2i(540, 300)
+min_size = Vector2i(360, 220)
+visible = false
+exclusive = false
+transient = true
+script = ExtResource("1")
+_status = NodePath("Margin/Contents/Status")
+_progress = NodePath("Margin/Contents/Progress")
+_issues = NodePath("Margin/Contents/Issues")
+_cancel = NodePath("Margin/Contents/Buttons/Cancel")
+_dismiss = NodePath("Margin/Contents/Buttons/Dismiss")
+_showDelay = NodePath("ShowDelay")
+
+[node name="ShowDelay" type="Timer" parent="."]
+wait_time = 0.35
+one_shot = true
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Contents" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Status" type="Label" parent="Margin/Contents"]
+layout_mode = 2
+text = "Preparing audio import"
+autowrap_mode = 3
+
+[node name="Progress" type="ProgressBar" parent="Margin/Contents"]
+layout_mode = 2
+show_percentage = false
+
+[node name="Issues" type="TextEdit" parent="Margin/Contents"]
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+wrap_mode = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Contents"]
+layout_mode = 2
+alignment = 2
+
+[node name="Cancel" type="Button" parent="Margin/Contents/Buttons"]
+layout_mode = 2
+text = "Cancel imports"
+
+[node name="Dismiss" type="Button" parent="Margin/Contents/Buttons"]
+layout_mode = 2
+text = "Dismiss"
+
+[connection signal="close_requested" from="." to="." method="OnCloseRequested"]
+[connection signal="timeout" from="ShowDelay" to="." method="Refresh"]
+[connection signal="pressed" from="Margin/Contents/Buttons/Cancel" to="." method="Cancel"]
+[connection signal="pressed" from="Margin/Contents/Buttons/Dismiss" to="." method="Dismiss"]

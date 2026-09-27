@@ -1,15 +1,17 @@
 [gd_scene format=3 uid="uid://db6b3hi4hou7w"]
 
 [ext_resource type="Script" uid="uid://bmff2loty0s32" path="res://Src/Main.cs" id="1_gh0ne"]
-[ext_resource type="Script" uid="uid://oykoef1pbjhy" path="res://Src/Core/TrackPlayer.cs" id="3_4ajm2"]
+[ext_resource type="Script" uid="uid://oykoef1pbjhy" path="res://Src/Audio/Playback/TrackPlayer.cs" id="3_4ajm2"]
 [ext_resource type="PackedScene" uid="uid://6yi01spga8fj" path="res://Src/Visualizer/Visualizer.tscn" id="3_5q4o7"]
 [ext_resource type="PackedScene" uid="uid://cpme6jm30nl1o" path="res://Src/Controls/MasterPanel/MasterPanel.tscn" id="3_rlaii"]
 [ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
 [ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
 [ext_resource type="Script" uid="uid://bk43amrt51gfy" path="res://Src/Core/WindowManager.cs" id="7_4ajm2"]
-[ext_resource type="Script" path="res://Src/Core/PlaybackController.cs" id="playback_controller"]
+[ext_resource type="Script" uid="uid://d1topflgp5yi1" path="res://Src/Audio/Playback/PlaybackController.cs" id="playback_controller"]
+[ext_resource type="Script" path="res://Src/Audio/Importing/AudioImportController.cs" id="audio_imports"]
+[ext_resource type="PackedScene" path="res://Src/Components/ImportStatus/ImportStatus.tscn" id="import_status"]
 
-[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_playbackController", "_windowManager")]
+[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_trackPlayer", "_playbackController", "_audioImportController", "_windowManager")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -24,6 +26,7 @@ _playlist = NodePath("PlaylistWindow/Playlist")
 _visualizer = NodePath("VisualizerWindow/Visualizer")
 _trackPlayer = NodePath("TrackPlayer")
 _playbackController = NodePath("PlaybackController")
+_audioImportController = NodePath("AudioImportController")
 _windowManager = NodePath("WindowManager")
 
 [node name="MasterPanel" parent="." unique_id=1833787973 node_paths=PackedStringArray("_playbackController", "_trackPlayerRef") instance=ExtResource("3_rlaii")]
@@ -31,11 +34,19 @@ layout_mode = 2
 _playbackController = NodePath("../PlaybackController")
 _trackPlayerRef = NodePath("../TrackPlayer")
 
-[node name="PlaybackIndicators" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player")]
+[node name="PlaybackIndicators" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player", "Playback")]
 Player = NodePath("../../../TrackPlayer")
+Playback = NodePath("../../../PlaybackController")
 
 [node name="Visualization" parent="MasterPanel/Controls" node_paths=PackedStringArray("Player")]
 Player = NodePath("../../../TrackPlayer")
+
+[node name="AudioImportController" type="Node" parent="." node_paths=PackedStringArray("_playbackController")]
+script = ExtResource("audio_imports")
+_playbackController = NodePath("../PlaybackController")
+
+[node name="ImportStatus" parent="." node_paths=PackedStringArray("_imports") instance=ExtResource("import_status")]
+_imports = NodePath("../AudioImportController")
 
 [node name="TrackPlayer" type="AudioStreamPlayer" parent="." unique_id=1411099585]
 script = ExtResource("3_4ajm2")
@@ -114,6 +125,8 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="DragStarted" from="MasterPanel" to="WindowManager" method="OnWindowDragStart"]
 [connection signal="WindowshadeRequested" from="MasterPanel" to="WindowManager" method="SetWindowShaded"]
 [connection signal="finished" from="TrackPlayer" to="PlaybackController" method="OnTrackFinished"]
+[connection signal="StatusChanged" from="AudioImportController" to="ImportStatus" method="Refresh"]
+[connection signal="PlaybackFailed" from="PlaybackController" to="AudioImportController" method="ReportPlaybackFailure"]
 [connection signal="PlayRequested" from="MasterPanel" to="PlaybackController" method="Play"]
 [connection signal="ToggleEqualizerRequested" from="MasterPanel" to="." method="OnToggleEqualizerRequested"]
 [connection signal="TogglePlaylistRequested" from="MasterPanel" to="." method="OnTogglePlaylistRequested"]

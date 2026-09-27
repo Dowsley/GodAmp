@@ -1,6 +1,6 @@
 using GodAmp.Autoload;
 using GodAmp.Components;
-using GodAmp.Core;
+using GodAmp.Audio.Playback;
 using GodAmp.Utils;
 using Godot;
 
@@ -60,14 +60,14 @@ public partial class MasterPanel : WindowPanelContainer
     {
         base._Process(delta);
 
-        var track = _trackPlayerRef.CurrentTrack;
-        var stream = _trackPlayerRef.Stream;
-        var hasTrack = track != null && stream != null;
+        var track = _playbackController.CurrentEntry?.Track;
+        var hasTrack = track != null;
 
-        bool hasStarted = _playbackController.State != PlaybackState.Stopped;
-        _positionSeekerSlider.Editable = hasStarted && hasTrack;
+        bool hasStarted = _playbackController.CanSeek;
+        _positionSeekerSlider.Editable = hasStarted;
         _positionSeekerSlider.MinValue = 0.0f;
-        _positionSeekerSlider.MaxValue = hasTrack ? stream!.GetLength() : 1.0;
+        float duration = _playbackController.CurrentDuration;
+        _positionSeekerSlider.MaxValue = duration > 0 ? duration : 1.0;
         _windowshadeSeek.Editable = _positionSeekerSlider.Editable;
         _windowshadeSeek.MaxValue = _positionSeekerSlider.MaxValue;
 

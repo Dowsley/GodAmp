@@ -1,5 +1,5 @@
 using GodAmp.Autoload;
-using GodAmp.Core;
+using GodAmp.Audio.Playback;
 using Godot;
 
 namespace GodAmp.Controls.MasterPanel;
@@ -9,6 +9,7 @@ public partial class PlaybackIndicators : Control
 {
     /// <summary>Scene-assigned player supplying transport and channel information.</summary>
     [Export] public TrackPlayer? Player { get; set; }
+    [Export] public PlaybackController? Playback { get; set; }
     private int _transport = -1;
     private int _channels = -1;
 
@@ -21,8 +22,8 @@ public partial class PlaybackIndicators : Control
     /// <inheritdoc />
     public override void _Process(double delta)
     {
-        int transport = Player?.CurrentTrack == null ? 27 : !Player.HasStreamPlayback() ? 18 : Player.StreamPaused ? 9 : 0;
-        int channels = Player?.CurrentTrack?.Channels ?? 0;
+        int transport = Playback?.CurrentEntry == null ? 27 : Player?.HasStreamPlayback() != true ? 18 : Player.StreamPaused ? 9 : 0;
+        int channels = Playback?.CurrentEntry?.Track.Channels ?? 0;
         if (transport == _transport && channels == _channels)
             return;
         _transport = transport;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GodAmp.Autoload;
 using GodAmp.Components;
-using GodAmp.Core;
+using GodAmp.Audio.Playback;
 using GodAmp.Data;
 using GodAmp.Utils;
 using Godot;

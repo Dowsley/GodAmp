@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Controls.Equalizer;
@@ -10,6 +8,9 @@ using GodAmp.Controls.MasterPanel;
 using GodAmp.Controls.Playlist;
 using GodAmp.Core;
 using GodAmp.Data;
+using GodAmp.Audio;
+using GodAmp.Audio.Importing;
+using GodAmp.Audio.Playback;
 using GodAmp.Utils;
 using Godot;
 
@@ -27,6 +28,7 @@ public partial class Main : HBoxContainer
     [Export] private Visualizer.Visualizer _visualizer = null!;
     [Export] private TrackPlayer _trackPlayer = null!;
     [Export] private PlaybackController _playbackController = null!;
+    [Export] private AudioImportController _audioImportController = null!;
     [Export] private WindowManager _windowManager = null!;
 
     private bool _masterLabelLocked = false;
@@ -36,9 +38,7 @@ public partial class Main : HBoxContainer
 
     public override void _Ready()
     {
-        List<Track> tracks = LoadInitialPlaylist();
-        tracks.Sort((a, b) => a.TrackNumber.CompareTo(b.TrackNumber));
-        _playbackController.Replace(tracks);
+        _audioImportController.Restore(SettingsManager.Instance.GetLastPlaylistPath(), DefaultSongsPath);
         _masterPanel.RefreshModes();
         _visualizer.Pause();
 
@@ -87,7 +87,7 @@ public partial class Main : HBoxContainer
 
         if (!_masterLabelLocked)
         {
-            if (_trackPlayer.CurrentTrack is { } currentTrack)
+            if (_playbackController.CurrentEntry?.Track is { } currentTrack)
                 _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _playbackController.CurrentIndex + 1));
             else
                 _masterPanel.SetMasterLabelText("");
@@ -115,10 +115,12 @@ public partial class Main : HBoxContainer
 
     private void OnPositionSeekerChanged(float value)
     {
-        if (_trackPlayer.CurrentTrack is not { } track)
+        if (!_playbackController.CanSeek)
             return;
 
-        var totalTimeSecs = track.Duration;
+        var totalTimeSecs = _playbackController.CurrentDuration;
+        if (totalTimeSecs <= 0)
+            return;
         if (_masterLabelLocked && _masterLabelLockedByPositionSeeker)
             _masterPanel.SetMasterLabelText(
                 $"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(totalTimeSecs)} ({value / totalTimeSecs * 100:F0}%)");
@@ -180,8 +182,7 @@ public partial class Main : HBoxContainer
     private void OnLoadTracksRequested(bool overridePlaylist = false)
     {
         FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenFiles);
-        dialog.SetFilters(CollectionsMarshal.AsSpan(
-            AudioUtils.GetAllowedFileFilters()));
+        dialog.SetFilters(AudioFormats.FileFilters);
         var filesSelectedCallback = Callable.From((string[] paths) => LoadTracks(paths, overridePlaylist));
         dialog.Connect(FileDialog.SignalName.FilesSelected, filesSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -240,66 +241,15 @@ public partial class Main : HBoxContainer
     /// <param name="path">Filesystem path to an M3U playlist.</param>
     private void LoadPlaylist(string path)
     {
-        try
-        {
-            if (!File.Exists(path))
-                throw new FileNotFoundException("Playlist not found.", path);
-            var resolved = M3UParser.Parse(path);
-            var tracks = AudioUtils.LoadTracksFromPathList(resolved);
-            if (resolved.Length > 0 && tracks.Count == 0)
-                return;
-            _playbackController.Replace(tracks);
-            SettingsManager.Instance.SetLastPlaylistPath(path);
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-        {
-            GD.PrintErr($"Failed to load playlist: {exception.Message}");
-        }
-        finally
-        {
-            OnFileDialogClosed();
-        }
+        OnFileDialogClosed();
+        _audioImportController.Enqueue(new ImportRequest(ImportSource.Playlist, [path], ImportMode.Replace));
     }
 
     private void LoadTracksFromDirectory(string directoryPath, bool overridePlaylist = false)
     {
-        var audioFiles = GetAudioFilesFromDirectory(directoryPath);
-        if (audioFiles.Length == 0)
-        {
-            GD.Print("No audio files found in directory");
-            OnFileDialogClosed();
-            return;
-        }
-
-        LoadTracks(audioFiles, overridePlaylist);
-    }
-
-    private static string[] GetAudioFilesFromDirectory(string directoryPath)
-    {
-        var audioFiles = new List<string>();
-        var allowedExtensions = AudioUtils.GetAllowedFileExtensions();
-        using var dir = DirAccess.Open(directoryPath);
-
-        if (dir == null)
-            return [];
-
-        dir.ListDirBegin();
-        string fileName = dir.GetNext();
-
-        while (fileName != "")
-        {
-            if (!dir.CurrentIsDir())
-            {
-                string extension = $".{fileName.GetExtension().ToLower()}";
-                if (allowedExtensions.Contains(extension))
-                {
-                    audioFiles.Add(Path.Combine(directoryPath, fileName));
-                }
-            }
-            fileName = dir.GetNext();
-        }
-
-        return [.. audioFiles];
+        OnFileDialogClosed();
+        _audioImportController.Enqueue(new ImportRequest(ImportSource.Folder, [directoryPath],
+            overridePlaylist ? ImportMode.Replace : ImportMode.Append));
     }
 
     /// <summary>Imports audio files before applying an append or replacement to the queue owner.</summary>
@@ -307,20 +257,9 @@ public partial class Main : HBoxContainer
     /// <param name="overridePlaylist">Whether to replace the queue and load it stopped.</param>
     private void LoadTracks(string[] paths, bool overridePlaylist = false)
     {
-        var tracks = AudioUtils.LoadTracksFromPathList(paths);
-        if (tracks.Count == 0)
-        {
-            OnFileDialogClosed();
-            return;
-        }
-
-        tracks.Sort((a, b) => a.TrackNumber.CompareTo(b.TrackNumber));
-        if (overridePlaylist)
-            _playbackController.Replace(tracks);
-        else
-            _playbackController.Append(tracks);
-
         OnFileDialogClosed();
+        _audioImportController.Enqueue(new ImportRequest(ImportSource.Files, paths,
+            overridePlaylist ? ImportMode.Replace : ImportMode.Append));
     }
 
     public void OnFileDialogClosed()
@@ -329,26 +268,6 @@ public partial class Main : HBoxContainer
             return;
         _lastUsedFileDialog.QueueFree();
         _lastUsedFileDialog = null;
-    }
-
-    private List<Track> LoadInitialPlaylist()
-    {
-        string lastPlaylistPath = SettingsManager.Instance.GetLastPlaylistPath();
-        if (!string.IsNullOrWhiteSpace(lastPlaylistPath) && File.Exists(lastPlaylistPath))
-        {
-            try
-            {
-                var resolved = M3UParser.Parse(lastPlaylistPath);
-                var tracks = AudioUtils.LoadTracksFromPathList(resolved);
-                if (tracks.Count > 0)
-                    return tracks;
-            }
-            catch (Exception ex)
-            {
-                GD.PrintErr($"Failed to load last playlist: {ex.Message}");
-            }
-        }
-        return AudioUtils.LoadAllTracksFromDir(DefaultSongsPath);
     }
 
     private void LoadSettingsState()
