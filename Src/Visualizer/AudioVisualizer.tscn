@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://r7gpn38se4hj" path="res://Src/Visualizer/AudioVisualizer.cs" id="1_neykf"]
 [ext_resource type="Material" uid="uid://ty4sblrnaka7" path="res://Data/Materials/AudioVisualizer.tres" id="3_l5oub"]
 
-[node name="AudioVisualizer" type="Control"]
+[node name="AudioVisualizer" type="Control" node_paths=PackedStringArray("_containerA", "_containerB", "_viewportA", "_viewportB", "_rectA", "_rectB", "_strategyContainerA", "_strategyContainerB")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,9 +13,16 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_neykf")
 _strategyTypeDirectory = "res://Data/StrategyTypes"
+_containerA = NodePath("ContainerA")
+_containerB = NodePath("ContainerB")
+_viewportA = NodePath("ContainerA/SubViewport")
+_viewportB = NodePath("ContainerB/SubViewport")
+_rectA = NodePath("ContainerA/SubViewport/ColorRect")
+_rectB = NodePath("ContainerB/SubViewport/ColorRect")
+_strategyContainerA = NodePath("ContainerA/SubViewport/StrategyContainerA")
+_strategyContainerB = NodePath("ContainerB/SubViewport/StrategyContainerB")
 
 [node name="ContainerA" type="SubViewportContainer" parent="."]
-visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 15
@@ -29,7 +36,8 @@ mouse_filter = 2
 handle_input_locally = false
 gui_disable_input = true
 size = Vector2i(576, 324)
-render_target_update_mode = 0
+render_target_clear_mode = 1
+render_target_update_mode = 1
 
 [node name="Background" type="ColorRect" parent="ContainerA/SubViewport"]
 anchors_preset = 15
@@ -53,7 +61,6 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="ContainerB" type="SubViewportContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,7 +73,8 @@ mouse_filter = 2
 handle_input_locally = false
 gui_disable_input = true
 size = Vector2i(576, 324)
-render_target_update_mode = 0
+render_target_clear_mode = 1
+render_target_update_mode = 1
 
 [node name="Background" type="ColorRect" parent="ContainerB/SubViewport"]
 anchors_preset = 15

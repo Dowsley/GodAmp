@@ -7,6 +7,10 @@ namespace GodAmp.Components;
 
 public partial class WinampMenuButton : MenuButton
 {
+    [Signal] public delegate void ToggleEqualizerRequestedEventHandler();
+    [Signal] public delegate void TogglePlaylistRequestedEventHandler();
+    [Signal] public delegate void ToggleVisualizerRequestedEventHandler();
+    [Signal] public delegate void ZoomModeRequestedEventHandler(int multiplier);
     private const int EqualizerItemId = 100;
     private const int PlaylistItemId = 101;
     private const int VisualizerItemId = 102;
@@ -47,18 +51,18 @@ public partial class WinampMenuButton : MenuButton
         _popup.SetItemChecked(_popup.GetItemIndex(VisualizerItemId), true);
     }
 
-    private static void OnPopupItemPressed(long id)
+    private void OnPopupItemPressed(long id)
     {
         switch (id)
         {
             case EqualizerItemId:
-                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ToggleEqualizerRequested);
+                EmitSignal(SignalName.ToggleEqualizerRequested);
                 break;
             case PlaylistItemId:
-                SignalBus.Instance.EmitSignal(SignalBus.SignalName.TogglePlaylistRequested);
+                EmitSignal(SignalName.TogglePlaylistRequested);
                 break;
             case VisualizerItemId:
-                SignalBus.Instance.EmitSignal(SignalBus.SignalName.ToggleVisualizerRequested);
+                EmitSignal(SignalName.ToggleVisualizerRequested);
                 break;
         }
     }
@@ -116,10 +120,10 @@ public partial class WinampMenuButton : MenuButton
         }
     }
 
-    private static void OnScaleMenuItemPressed(long id)
+    private void OnScaleMenuItemPressed(long id)
     {
         int multiplier = (int)id;
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.ZoomModeRequested, multiplier);
+        EmitSignal(SignalName.ZoomModeRequested, multiplier);
     }
 
     private void OnSkinMenuItemPressed(long index)
@@ -148,5 +152,14 @@ public partial class WinampMenuButton : MenuButton
                 }
                 break;
         }
+    }
+
+    /// <inheritdoc />
+    public override void _ExitTree()
+    {
+        _popup.IdPressed -= OnPopupItemPressed;
+        _scaleSubmenu.IdPressed -= OnScaleMenuItemPressed;
+        _skinSubmenu.AboutToPopup -= RefreshSkinList;
+        _skinSubmenu.IndexPressed -= OnSkinMenuItemPressed;
     }
 }

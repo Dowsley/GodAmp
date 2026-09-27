@@ -31,9 +31,6 @@ public partial class Main : HBoxContainer
     [Export] private AudioImportController _audioImportController = null!;
     [Export] private WindowManager _windowManager = null!;
 
-    private bool _masterLabelLocked = false;
-    private bool _masterLabelLockedByPositionSeeker = false;
-
     private FileDialog? _lastUsedFileDialog = null;
 
     public override void _Ready()
@@ -42,100 +39,23 @@ public partial class Main : HBoxContainer
         _masterPanel.RefreshModes();
         _visualizer.Pause();
 
-        SignalBus.Instance.LockMasterLabel += LockMasterLabel;
-        SignalBus.Instance.UnlockMasterLabel += UnlockMasterLabel;
-        SignalBus.Instance.VolumeChanged += OnVolumeChanged;
-        SignalBus.Instance.PannerBalanceChanged += OnPannerBalanceChanged;
-        SignalBus.Instance.PositionSeekerChanged += OnPositionSeekerChanged;
-        SignalBus.Instance.LoadTracksRequested += OnLoadTracksRequested;
-        SignalBus.Instance.LoadTracksFromDirRequested += OnLoadTracksFromDirRequested;
-        SignalBus.Instance.LoadPlaylistRequested += OnLoadPlaylistRequested;
-        SignalBus.Instance.SavePlaylistRequested += OnSavePlaylistRequested;
-        SignalBus.Instance.ZoomModeRequested += OnZoomModeRequested;
-        SignalBus.Instance.ToggleEqualizerRequested += OnToggleEqualizerRequested;
-        SignalBus.Instance.TogglePlaylistRequested += OnTogglePlaylistRequested;
-        SignalBus.Instance.ToggleVisualizerRequested += OnToggleVisualizerRequested;
-
         LoadSettingsState();
     }
 
     public override void _ExitTree()
     {
-        SignalBus.Instance.LockMasterLabel -= LockMasterLabel;
-        SignalBus.Instance.UnlockMasterLabel -= UnlockMasterLabel;
-        SignalBus.Instance.VolumeChanged -= OnVolumeChanged;
-        SignalBus.Instance.PannerBalanceChanged -= OnPannerBalanceChanged;
-        SignalBus.Instance.PositionSeekerChanged -= OnPositionSeekerChanged;
-        SignalBus.Instance.LoadTracksRequested -= OnLoadTracksRequested;
-        SignalBus.Instance.LoadTracksFromDirRequested -= OnLoadTracksFromDirRequested;
-        SignalBus.Instance.LoadPlaylistRequested -= OnLoadPlaylistRequested;
-        SignalBus.Instance.SavePlaylistRequested -= OnSavePlaylistRequested;
-        SignalBus.Instance.ZoomModeRequested -= OnZoomModeRequested;
-        SignalBus.Instance.ToggleEqualizerRequested -= OnToggleEqualizerRequested;
-        SignalBus.Instance.TogglePlaylistRequested -= OnTogglePlaylistRequested;
-        SignalBus.Instance.ToggleVisualizerRequested -= OnToggleVisualizerRequested;
         _windowManager.SaveWindowStates();
         SettingsManager.Instance.SaveAllSettings();
     }
 
-    public override void _Process(double delta)
+    /// <summary>Reflects transport changes in the visualizer without polling static state each frame.</summary>
+    private void OnPlaybackStateChanged()
     {
         if (_playbackController.State == PlaybackState.Playing)
             _visualizer.Unpause();
         else
             _visualizer.Pause();
 
-        if (!_masterLabelLocked)
-        {
-            if (_playbackController.CurrentEntry?.Track is { } currentTrack)
-                _masterPanel.SetMasterLabelText(AudioUtils.GetFullTrackTitle(currentTrack, _playbackController.CurrentIndex + 1));
-            else
-                _masterPanel.SetMasterLabelText("");
-        }
-    }
-
-    private void OnVolumeChanged(float volume)
-    {
-        _masterPanel.SetMasterLabelText($"VOLUME: {Convert.ToInt64(volume * 100)}%");
-    }
-
-    private void OnPannerBalanceChanged(float value)
-    {
-        string text;
-        if (Mathf.IsZeroApprox(value))
-        {
-            text = "BALANCE: CENTER";
-        }
-        else
-        {
-            text = $"BALANCE: {Convert.ToInt64(float.Abs(value) * 100)}% " + (value < 0.0f ? "LEFT" : "RIGHT");
-        }
-        _masterPanel.SetMasterLabelText(text);
-    }
-
-    private void OnPositionSeekerChanged(float value)
-    {
-        if (!_playbackController.CanSeek)
-            return;
-
-        var totalTimeSecs = _playbackController.CurrentDuration;
-        if (totalTimeSecs <= 0)
-            return;
-        if (_masterLabelLocked && _masterLabelLockedByPositionSeeker)
-            _masterPanel.SetMasterLabelText(
-                $"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(totalTimeSecs)} ({value / totalTimeSecs * 100:F0}%)");
-    }
-
-    private void LockMasterLabel(bool byPositionSeeker = false)
-    {
-        _masterLabelLocked = true;
-        _masterLabelLockedByPositionSeeker = byPositionSeeker;
-    }
-
-    private void UnlockMasterLabel()
-    {
-        _masterLabelLocked = false;
-        _masterLabelLockedByPositionSeeker = false;
     }
 
     /// <summary>Opens a replacement-track picker in response to Play on an empty queue.</summary>

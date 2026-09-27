@@ -12,13 +12,8 @@ public partial class LineStrategy : VisualizerStrategy
     [Export] private int _pointsPerSegment = 5;
     [Export(PropertyHint.Range, "0.0,1.0")] private float _lineVerticalPosition = 0.75f;
 
-    private Line2D _line = null!;
+    [Export] private Line2D _line = null!;
     private Vector2[] _points = null!;
-
-    public override void _Ready()
-    {
-        _line = GetNode<Line2D>("Line2D");
-    }
 
     public override void Initialize(Vector2 viewportSize)
     {
@@ -60,12 +55,7 @@ public partial class LineStrategy : VisualizerStrategy
 
     private void InitializeLines()
     {
-        _line.Width = 2.0f;
         _line.DefaultColor = LineColor;
-        _line.JointMode = Line2D.LineJointMode.Round;
-        _line.BeginCapMode = Line2D.LineCapMode.Round;
-        _line.EndCapMode = Line2D.LineCapMode.Round;
-        _line.Antialiased = true;
         _line.Points = _points;
     }
 

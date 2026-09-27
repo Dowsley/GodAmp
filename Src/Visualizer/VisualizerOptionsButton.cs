@@ -73,4 +73,11 @@ public partial class VisualizerOptionsButton : MenuButton
         UpdateCheckedItem();
         EmitSignal(SignalName.VizChanged, _vizIds[_currentVizIndex]);
     }
+
+    /// <inheritdoc />
+    public override void _ExitTree()
+    {
+        _popup.AboutToPopup -= OnAboutToPopup;
+        _vizSubmenu.IndexPressed -= OnVizMenuItemPressed;
+    }
 }

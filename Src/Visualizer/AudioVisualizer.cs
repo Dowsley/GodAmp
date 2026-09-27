@@ -12,20 +12,21 @@ namespace GodAmp.Visualizer
 
         public Dictionary<StringName, VisualizerStrategyType> StrategyTypeMap = [];
 
-        private SubViewportContainer? _containerA;
-        private SubViewportContainer? _containerB;
-        private SubViewport? _viewportA;
-        private SubViewport? _viewportB;
-        private ColorRect? _rectA;
-        private ColorRect? _rectB;
+        [Export] private SubViewportContainer _containerA = null!;
+        [Export] private SubViewportContainer _containerB = null!;
+        [Export] private SubViewport _viewportA = null!;
+        [Export] private SubViewport _viewportB = null!;
+        [Export] private ColorRect _rectA = null!;
+        [Export] private ColorRect _rectB = null!;
         private VisualizerStrategy? _strategyA;
         private VisualizerStrategy? _strategyB;
-        private Node2D? _strategyContainerA;
-        private Node2D? _strategyContainerB;
+        [Export] private Node2D _strategyContainerA = null!;
+        [Export] private Node2D _strategyContainerB = null!;
 
         private ImageTexture? _feedbackTexture;
         private Image? _feedbackImage;
         private bool _isUsingA = true;
+        private bool _initialized;
 
         private ShaderMaterial? _shaderMaterialA;
         private ShaderMaterial? _shaderMaterialB;
@@ -42,12 +43,14 @@ namespace GodAmp.Visualizer
         public override void _Ready()
         {
             LoadStrategies();
-            InitializeViewports();
+            _shaderMaterialA = (ShaderMaterial)_rectA.Material;
+            _shaderMaterialB = (ShaderMaterial)_rectB.Material;
+            _initialized = true;
+            OnResized();
 
             if (StrategyTypeMap.Count > 0 && _viewportA is { } vp)
                 InitializeStrategy(vp.Size, StrategyTypeMap.First().Key);
 
-            InitializeFeedbackTexture();
         }
 
         public override void _Process(double delta)
@@ -63,8 +66,6 @@ namespace GodAmp.Visualizer
 
         private void InitializeStrategy(Vector2 viewportSize, StringName strategyId)
         {
-            _strategyContainerA ??= GetNode<Node2D>("%StrategyContainerA");
-            _strategyContainerB ??= GetNode<Node2D>("%StrategyContainerB");
             _strategyA?.QueueFree();
             _strategyB?.QueueFree();
             _strategyA = StrategyTypeMap[strategyId].Scene.Instantiate<VisualizerStrategy>();
@@ -92,31 +93,10 @@ namespace GodAmp.Visualizer
             _strategyB?.Update(delta);
         }
 
-        private void InitializeViewports()
-        {
-            _containerA = GetNode<SubViewportContainer>("ContainerA");
-            _containerB = GetNode<SubViewportContainer>("ContainerB");
-            _viewportA = _containerA.GetNode<SubViewport>("SubViewport");
-            _viewportB = _containerB.GetNode<SubViewport>("SubViewport");
-            _rectA = _viewportA.GetNode<ColorRect>("ColorRect");
-            _rectB = _viewportB.GetNode<ColorRect>("ColorRect");
-
-            foreach (var viewport in new[] { _viewportA, _viewportB })
-            {
-                viewport.RenderTargetClearMode = SubViewport.ClearMode.Never;
-                viewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
-                viewport.GetNode<ColorRect>("Background").Color = Colors.Black;
-            }
-
-            _shaderMaterialA = (ShaderMaterial)_rectA.Material;
-            _shaderMaterialB = (ShaderMaterial)_rectB.Material;
-
-            _containerA.Visible = true;
-            _containerB.Visible = true;
-        }
-
         private void InitializeFeedbackTexture()
         {
+            _feedbackTexture?.Dispose();
+            _feedbackImage?.Dispose();
             _feedbackImage = Image.CreateEmpty((int)GetViewportWidth(), (int)GetViewportHeight(), false, Image.Format.Rgba8);
             _feedbackTexture = ImageTexture.CreateFromImage(_feedbackImage);
 
@@ -166,7 +146,7 @@ namespace GodAmp.Visualizer
             {
                 RenderingServer.ForceSync();
 
-                var viewportImage = texture.GetImage();
+                using var viewportImage = texture.GetImage();
                 if (viewportImage.GetFormat() != feedbackImg.GetFormat())
                     viewportImage.Convert(feedbackImg.GetFormat());
 
@@ -184,15 +164,24 @@ namespace GodAmp.Visualizer
 
         private void OnResized()
         {
-            if (_viewportA is not { } vpA || _viewportB is not { } vpB)
+            if (!_initialized || _viewportA is not { } vpA || _viewportB is not { } vpB)
                 return;
 
-            var newSize = new Vector2I((int)Size.X, (int)Size.Y);
+            var newSize = new Vector2I(Math.Max(1, (int)Size.X), Math.Max(1, (int)Size.Y));
             vpA.Size = newSize;
             vpB.Size = newSize;
 
             InitializeFeedbackTexture();
             RefreshStrategy(newSize);
+        }
+
+        /// <inheritdoc />
+        public override void _ExitTree()
+        {
+            _shaderMaterialA?.SetShaderParameter("previous_frame", default);
+            _shaderMaterialB?.SetShaderParameter("previous_frame", default);
+            _feedbackTexture?.Dispose();
+            _feedbackImage?.Dispose();
         }
 
         /// <summary>Discovers strategy resources using paths that resolve in both the editor and exported packs.</summary>

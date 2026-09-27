@@ -54,7 +54,7 @@ focus_mode = 1
 texture_normal = ExtResource("9_400d4")
 texture_pressed = ExtResource("10_g5q4n")
 
-[connection signal="focus_exited" from="FocusButtonContainer" to="." method="OnFocusButtonContainerFocusExited"]
+[connection signal="FocusReleased" from="FocusButtonContainer" to="." method="Disable"]
 [connection signal="pressed" from="FocusButtonContainer/RemoveMiscButton" to="." method="OnRemoveMiscButtonPressed"]
 [connection signal="pressed" from="FocusButtonContainer/RemoveAllButton" to="." method="OnRemoveAllButtonPressed"]
 [connection signal="pressed" from="FocusButtonContainer/CropButton" to="." method="OnCropButtonPressed"]

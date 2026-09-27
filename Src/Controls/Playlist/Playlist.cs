@@ -17,6 +17,10 @@ public partial class Playlist : WindowPanelContainer
     [Signal] public delegate void RemoveEntriesRequestedEventHandler(long[] entryIds);
     [Signal] public delegate void RetainEntriesRequestedEventHandler(long[] entryIds);
     [Signal] public delegate void ClearRequestedEventHandler();
+    [Signal] public delegate void FilesRequestedEventHandler(bool replace);
+    [Signal] public delegate void FolderRequestedEventHandler(bool replace);
+    [Signal] public delegate void LoadPlaylistRequestedEventHandler();
+    [Signal] public delegate void SavePlaylistRequestedEventHandler();
     [Signal] public delegate void MoveEntriesRequestedEventHandler(long[] entryIds, long targetId, bool insertAfter);
 
     [ExportGroup("Config")]
@@ -51,9 +55,6 @@ public partial class Playlist : WindowPanelContainer
     public override void _Ready()
     {
         base._Ready();
-        SignalBus.Instance.InverseSelectionRequested += OnInverseSelectionRequested;
-        SignalBus.Instance.SelectZeroRequested += OnSelectZeroRequested;
-        SignalBus.Instance.SelectAllRequested += OnSelectAllRequested;
         SignalBus.Instance.SkinChanged += OnSkinChanged;
         OnSkinChanged();
     }
@@ -61,9 +62,6 @@ public partial class Playlist : WindowPanelContainer
     /// <inheritdoc />
     public override void _ExitTree()
     {
-        SignalBus.Instance.InverseSelectionRequested -= OnInverseSelectionRequested;
-        SignalBus.Instance.SelectZeroRequested -= OnSelectZeroRequested;
-        SignalBus.Instance.SelectAllRequested -= OnSelectAllRequested;
         SignalBus.Instance.SkinChanged -= OnSkinChanged;
         DisconnectRows();
         base._ExitTree();
@@ -181,6 +179,10 @@ public partial class Playlist : WindowPanelContainer
     private void OnRemoveSelectionRequested() => EmitSignal(SignalName.RemoveEntriesRequested, _selectedEntries.ToArray());
     private void OnCropRequested() => EmitSignal(SignalName.RetainEntriesRequested, _selectedEntries.ToArray());
     private void OnClearRequested() => EmitSignal(SignalName.ClearRequested);
+    private void OnFilesRequested() => EmitSignal(SignalName.FilesRequested, false);
+    private void OnFolderRequested() => EmitSignal(SignalName.FolderRequested, false);
+    private void OnLoadPlaylistRequested() => EmitSignal(SignalName.LoadPlaylistRequested);
+    private void OnSavePlaylistRequested() => EmitSignal(SignalName.SavePlaylistRequested);
 
     private void OnAddButtonPressed() => AddButtonDropdown.Activate(AddButton.GetGlobalRect());
     private void OnRemoveButtonPressed() => RemoveButtonDropdown.Activate(RemoveButton.GetGlobalRect());

@@ -1,3 +1,4 @@
+using System;
 using GodAmp.Autoload;
 using GodAmp.Components;
 using GodAmp.Audio.Playback;
@@ -18,6 +19,7 @@ public partial class MasterPanel : WindowPanelContainer
     [Signal] public delegate void SeekRequestedEventHandler(float position);
     [Signal] public delegate void ShuffleRequestedEventHandler(bool enabled);
     [Signal] public delegate void RepeatRequestedEventHandler(bool enabled);
+    [Signal] public delegate void FilesRequestedEventHandler(bool replace);
 
     [ExportGroup("Config")]
     [Export] public double ClockBlinkEverySeconds = 1.0f;
@@ -47,12 +49,15 @@ public partial class MasterPanel : WindowPanelContainer
     private bool _dragging = false;
     private double _clockBlinkTimer = 1.0f;
     private bool _clockBlinking = false;
+    private enum LabelDisplay { Track, Slider, Seek }
+    private LabelDisplay _labelDisplay;
 
     /// <inheritdoc />
     public override void _Ready()
     {
         base._Ready();
         _positionSeekerSlider.Value = 0.0f;
+        RefreshTrackTitle();
     }
 
     /// <inheritdoc />
@@ -146,12 +151,23 @@ public partial class MasterPanel : WindowPanelContainer
     }
 
     private void OnPlayTrackButtonPressed() => EmitSignal(SignalName.PlayRequested);
+
+    /// <summary>Reflects the selected entry unless a slider temporarily owns the marquee.</summary>
+    public void RefreshTrackTitle()
+    {
+        if (_labelDisplay != LabelDisplay.Track)
+            return;
+        var entry = _playbackController.CurrentEntry;
+        SetMasterLabelText(entry == null ? "" : AudioUtils.GetFullTrackTitle(entry.Track, _playbackController.CurrentIndex + 1));
+    }
     private void OnPauseTrackButtonPressed() => EmitSignal(SignalName.PauseRequested);
     private void OnStopTrackButtonPressed() => EmitSignal(SignalName.StopRequested);
 
-    private static void OnPositionSeekerValueChanged(float value)
+    private void OnPositionSeekerValueChanged(float value)
     {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.PositionSeekerChanged, value);
+        float duration = _playbackController.CurrentDuration;
+        if (_labelDisplay == LabelDisplay.Seek && _playbackController.CanSeek && duration > 0)
+            SetMasterLabelText($"SEEK TO: {TimeUtils.FormatAsTrackTime(value)}/{TimeUtils.FormatAsTrackTime(duration)} ({value / duration * 100:F0}%)");
     }
 
     /// <summary>Routes compact seeking through the expanded slider's existing playback handlers.</summary>
@@ -169,7 +185,7 @@ public partial class MasterPanel : WindowPanelContainer
     private void OnPositionSeekerDragStarted()
     {
         _dragging = true;
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, true);
+        _labelDisplay = LabelDisplay.Seek;
     }
 
     /// <summary>Seeks after the pointer or keyboard interaction and unlocks the marquee.</summary>
@@ -186,32 +202,36 @@ public partial class MasterPanel : WindowPanelContainer
     private void OnVolumeSliderValueChanged(float value)
     {
         _trackPlayerRef.VolumeLinear = value;
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.VolumeChanged, value);
+        if (_labelDisplay == LabelDisplay.Slider)
+            SetMasterLabelText($"VOLUME: {Convert.ToInt64(value * 100)}%");
         SettingsManager.Instance.SetVolume(value);
     }
 
-    private static void OnSliderDragStarted()
+    private void OnSliderDragStarted()
     {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.LockMasterLabel, false);
+        _labelDisplay = LabelDisplay.Slider;
     }
 
     /// <summary>Restores the track title after a slider interaction.</summary>
     /// <param name="_">Optional change flag supplied by slider signals.</param>
-    private static void OnSliderDragEnded(bool _ = false)
+    private void OnSliderDragEnded(bool _ = false)
     {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.UnlockMasterLabel);
+        _labelDisplay = LabelDisplay.Track;
+        RefreshTrackTitle();
     }
 
     /// <summary>Updates the master bus balance and its display notification.</summary>
     /// <param name="value">Balance from minus one (left) to one (right).</param>
-    private static void OnPannerAudioSliderValueChanged(float value)
+    private void OnPannerAudioSliderValueChanged(float value)
     {
         var busIndex = AudioServer.GetBusIndex("Master");
         if (AudioServer.GetBusEffect(busIndex, AudioUtils.PannerAudioEffectIndex) is AudioEffectPanner effect)
         {
             effect.Pan = value;
         }
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.PannerBalanceChanged, value);
+        if (_labelDisplay == LabelDisplay.Slider)
+            SetMasterLabelText(Mathf.IsZeroApprox(value) ? "BALANCE: CENTER"
+                : $"BALANCE: {Convert.ToInt64(float.Abs(value) * 100)}% " + (value < 0 ? "LEFT" : "RIGHT"));
     }
 
     public void SetVolumeValue(float volume)
@@ -242,8 +262,5 @@ public partial class MasterPanel : WindowPanelContainer
     /// <summary>Minimizes the main native window using Godot's desktop window state.</summary>
     private void OnIconifyButtonPressed() => WindowRef.Mode = Window.ModeEnum.Minimized;
 
-    private static void OnLoadTracksButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, true);
-    }
+    private void OnLoadTracksButtonPressed() => EmitSignal(SignalName.FilesRequested, true);
 }

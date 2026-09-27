@@ -1,21 +1,17 @@
-using GodAmp.Autoload;
+using Godot;
 
 namespace GodAmp.Controls.Playlist.ButtonDropdowns;
 
 public partial class AddButtonDropdown : ButtonDropdown
 {
+    [Signal] public delegate void FilesRequestedEventHandler();
+    [Signal] public delegate void FolderRequestedEventHandler();
     private static void OnAddUrlButtonPressed()
     {
         // TODO Implement OnAddUrlButtonPressed
     }
 
-    private static void OnAddDirButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksFromDirRequested, false);
-    }
+    private void OnAddDirButtonPressed() => EmitSignal(SignalName.FolderRequested);
 
-    private static void OnAddFileButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.LoadTracksRequested, false);
-    }
+    private void OnAddFileButtonPressed() => EmitSignal(SignalName.FilesRequested);
 }

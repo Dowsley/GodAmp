@@ -3,6 +3,7 @@
 [ext_resource type="Shader" uid="uid://bgc8tyjhjowar" path="res://Data/Shaders/AudioVisualizer.gdshader" id="1_renju"]
 
 [resource]
+resource_local_to_scene = true
 shader = ExtResource("1_renju")
 shader_parameter/line_color = Color(0, 0, 0, 1)
 shader_parameter/glow_intensity = 1.0

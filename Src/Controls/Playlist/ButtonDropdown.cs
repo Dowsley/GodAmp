@@ -6,11 +6,6 @@ public partial class ButtonDropdown : Node2D
 {
     [Export] private FocusManagedVBoxContainer _container = null!;
 
-    public override void _Ready()
-    {
-        _container.FocusReleased += Disable;
-    }
-
     public void Activate(Rect2 buttonRect)
     {
         var buttonBottomY = buttonRect.Position.Y + buttonRect.Size.Y;

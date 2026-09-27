@@ -7,10 +7,15 @@ friction = 0.0
 bounce = 0.9
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q5r2e"]
+resource_local_to_scene = true
 size = Vector2(50, 50)
 
-[node name="SquareStrategy" type="Node2D"]
+[node name="SquareStrategy" type="Node2D" node_paths=PackedStringArray("_body", "_square", "_collisionShape", "_walls")]
 script = ExtResource("1_wrrfh")
+_body = NodePath("RigidBody2D")
+_square = NodePath("RigidBody2D/Square")
+_collisionShape = NodePath("RigidBody2D/CollisionShape2D")
+_walls = NodePath("Walls")
 BaseSize = 60.0
 SizeMultiplier = 300.0
 MinSize = 50.0

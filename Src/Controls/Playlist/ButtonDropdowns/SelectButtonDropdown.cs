@@ -1,21 +1,16 @@
-using GodAmp.Autoload;
+using Godot;
 
 namespace GodAmp.Controls.Playlist.ButtonDropdowns;
 
 public partial class SelectButtonDropdown : ButtonDropdown
 {
-    private static void OnInverseSelectionButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.InverseSelectionRequested);
-    }
+    [Signal] public delegate void InverseSelectionRequestedEventHandler();
+    [Signal] public delegate void SelectZeroRequestedEventHandler();
+    [Signal] public delegate void SelectAllRequestedEventHandler();
 
-    private static void OnSelectZeroButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectZeroRequested);
-    }
+    private void OnInverseSelectionButtonPressed() => EmitSignal(SignalName.InverseSelectionRequested);
 
-    private static void OnSelectAllButtonPressed()
-    {
-        SignalBus.Instance.EmitSignal(SignalBus.SignalName.SelectAllRequested);
-    }
+    private void OnSelectZeroButtonPressed() => EmitSignal(SignalName.SelectZeroRequested);
+
+    private void OnSelectAllButtonPressed() => EmitSignal(SignalName.SelectAllRequested);
 }

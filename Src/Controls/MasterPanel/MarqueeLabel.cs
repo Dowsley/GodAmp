@@ -9,17 +9,10 @@ public partial class MarqueeLabel : BitmapLabel
 {
     [Export] public int MaxLength = 30;
 
-    private Timer _timer = null!;
+    [Export] private Timer _timer = null!;
     private string _value = "";
     private int _offset = 0;
     private bool _rotate = false;
-
-    /// <inheritdoc />
-    public override void _Ready()
-    {
-        base._Ready();
-        _timer = GetNode<Timer>("Timer");
-    }
 
     public void SetValue(string value)
     {

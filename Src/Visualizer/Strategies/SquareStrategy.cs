@@ -17,22 +17,14 @@ public partial class SquareStrategy : VisualizerStrategy
     [Export] public float MidFrequencyMax = 2000.0f;
     [Export] public float SizeReactivity = 3.0f;
 
-    private RigidBody2D _body = null!;
-    private ColorRect _square = null!;
+    [ExportGroup("References")]
+    [Export] private RigidBody2D _body = null!;
+    [Export] private ColorRect _square = null!;
+    [Export] private CollisionShape2D _collisionShape = null!;
+    [Export] private Node2D _walls = null!;
     private float _currentSize = 0.0f;
     private float _timeAccumulator = 0.0f;
-    private readonly Vector2[] _forceDirections = new Vector2[4];
-
-    public override void _Ready()
-    {
-        _body = GetNode<RigidBody2D>("RigidBody2D");
-        _square = _body.GetNode<ColorRect>("Square");
-
-        _forceDirections[0] = Vector2.Right;
-        _forceDirections[1] = Vector2.Down;
-        _forceDirections[2] = Vector2.Left;
-        _forceDirections[3] = Vector2.Up;
-    }
+    private static readonly Vector2[] ForceDirections = [Vector2.Right, Vector2.Down, Vector2.Left, Vector2.Up];
 
     public override void Initialize(Vector2 viewportSize)
     {
@@ -69,9 +61,7 @@ public partial class SquareStrategy : VisualizerStrategy
 
     private void InitializePhysicsBoundaries(Vector2 viewportSize)
     {
-        var walls = GetNode<Node2D>("Walls");
-
-        foreach (var child in walls.GetChildren())
+        foreach (var child in _walls.GetChildren())
         {
             child.QueueFree();
         }
@@ -100,7 +90,7 @@ public partial class SquareStrategy : VisualizerStrategy
 
             wall.AddChild(collision);
             collision.Shape = shape;
-            walls.AddChild(wall);
+            _walls.AddChild(wall);
 
             shape.Size = wallSizes[i];
             wall.Position = wallPositions[i];
@@ -148,8 +138,7 @@ public partial class SquareStrategy : VisualizerStrategy
         _square.Size = new Vector2(_currentSize, _currentSize);
         _square.Position = new Vector2(-_currentSize / 2, -_currentSize / 2);
 
-        var collisionShape = _body.GetNode<CollisionShape2D>("CollisionShape2D");
-        var shape = (RectangleShape2D)collisionShape.Shape;
+        var shape = (RectangleShape2D)_collisionShape.Shape;
         shape.Size = new Vector2(_currentSize, _currentSize);
     }
 
@@ -161,7 +150,7 @@ public partial class SquareStrategy : VisualizerStrategy
 
         // Always apply some force based on any audio, not just bass
         float forceMagnitude = BaseForce + (ForceMultiplier * (bassFreq + midFreq * 0.5f));
-        var forceDir = _forceDirections[FrameCount % 4].Rotated((float)GD.RandRange(-0.5, 0.5));
+        var forceDir = ForceDirections[FrameCount % ForceDirections.Length].Rotated((float)GD.RandRange(-0.5, 0.5));
         _body.ApplyCentralForce(forceDir * forceMagnitude * (float)delta);
 
         if (bassFreq > MinimumBassForForce && FrameCount % 10 == 0)
