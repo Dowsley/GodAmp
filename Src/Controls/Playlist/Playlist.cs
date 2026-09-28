@@ -15,6 +15,8 @@ public partial class Playlist : WindowPanelContainer
 {
     [Signal] public delegate void EntryActivatedEventHandler(long entryId);
     [Signal] public delegate void RemoveEntriesRequestedEventHandler(long[] entryIds);
+    [Signal] public delegate void OrderRequestedEventHandler(PlaylistOrder order);
+    [Signal] public delegate void RemoveMissingRequestedEventHandler();
     [Signal] public delegate void RetainEntriesRequestedEventHandler(long[] entryIds);
     [Signal] public delegate void ClearRequestedEventHandler();
     [Signal] public delegate void FilesRequestedEventHandler(bool replace);
@@ -223,6 +225,8 @@ public partial class Playlist : WindowPanelContainer
     }
 
     private void OnRemoveSelectionRequested() => EmitSignal(SignalName.RemoveEntriesRequested, _selectedEntries.ToArray());
+    private void OnOrderRequested(PlaylistOrder order) => EmitSignal(SignalName.OrderRequested, (int)order);
+    private void OnRemoveMissingRequested() => EmitSignal(SignalName.RemoveMissingRequested);
     private void OnCropRequested() => EmitSignal(SignalName.RetainEntriesRequested, _selectedEntries.ToArray());
     private void OnClearRequested() => EmitSignal(SignalName.ClearRequested);
     private void OnFilesRequested() => EmitSignal(SignalName.FilesRequested, false);

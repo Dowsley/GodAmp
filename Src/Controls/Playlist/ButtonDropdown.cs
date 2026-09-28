@@ -22,4 +22,14 @@ public partial class ButtonDropdown : Node2D
     {
         Hide();
     }
+
+    /// <summary>Opens a command menu at the pointer within the owning window, then closes the artwork dropdown.</summary>
+    /// <param name="menu">Scene-authored popup containing the available commands.</param>
+    protected void OpenMenu(PopupMenu menu)
+    {
+        Viewport viewport = GetViewport();
+        Vector2 position = viewport.GetFinalTransform() * viewport.GetMousePosition();
+        menu.PopupOnParent(new Rect2I((Vector2I)position, Vector2I.Zero));
+        Disable();
+    }
 }

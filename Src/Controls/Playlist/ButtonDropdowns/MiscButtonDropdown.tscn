@@ -9,9 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://53w65ynu26db" path="res://Data/SkinResources/MiscOptionsButtonNormal.tres" id="7_syc13"]
 [ext_resource type="Texture2D" uid="uid://d3yiu5g14air5" path="res://Data/SkinResources/MiscOptionsButtonPressed.tres" id="8_6x2fh"]
 
-[node name="MiscButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
+[node name="MiscButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container", "_sortMenu")]
 script = ExtResource("1_v6fbn")
 _container = NodePath("FocusButtonContainer")
+_sortMenu = NodePath("SortMenu")
 
 [node name="FocusButtonContainer" type="VBoxContainer" parent="."]
 focus_mode = 1
@@ -27,6 +28,7 @@ texture_normal = ExtResource("3_lfl6i")
 texture_pressed = ExtResource("4_ufnfu")
 
 [node name="FileInfoButton" type="TextureButton" parent="FocusButtonContainer"]
+disabled = true
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
@@ -35,6 +37,7 @@ texture_normal = ExtResource("5_ufnfu")
 texture_pressed = ExtResource("6_44cwk")
 
 [node name="MiscOptionsButton" type="TextureButton" parent="FocusButtonContainer"]
+disabled = true
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
@@ -42,7 +45,19 @@ focus_mode = 1
 texture_normal = ExtResource("7_syc13")
 texture_pressed = ExtResource("8_6x2fh")
 
+[node name="SortMenu" type="PopupMenu" parent="."]
+item_count = 5
+item_0/text = "Sort by title"
+item_0/id = 0
+item_1/text = "Sort by filename"
+item_1/id = 1
+item_2/text = "Sort by path and filename"
+item_2/id = 2
+item_3/text = "Reverse list"
+item_3/id = 3
+item_4/text = "Randomize list"
+item_4/id = 4
+
+[connection signal="id_pressed" from="SortMenu" to="." method="OnSortItemPressed"]
 [connection signal="FocusReleased" from="FocusButtonContainer" to="." method="Disable"]
 [connection signal="pressed" from="FocusButtonContainer/SortListButton" to="." method="OnSortListButtonPressed"]
-[connection signal="pressed" from="FocusButtonContainer/FileInfoButton" to="." method="OnFileInfoButtonPressed"]
-[connection signal="pressed" from="FocusButtonContainer/MiscOptionsButton" to="." method="OnMiscOptsButtonPressed"]

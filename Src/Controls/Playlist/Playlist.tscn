@@ -474,6 +474,8 @@ Panel = NodePath("../..")
 
 [connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
 [connection signal="RemoveSelectionRequested" from="RemoveButtonDropdown" to="." method="OnRemoveSelectionRequested"]
+[connection signal="RemoveMissingRequested" from="RemoveButtonDropdown" to="." method="OnRemoveMissingRequested"]
+[connection signal="OrderRequested" from="MiscButtonDropdown" to="." method="OnOrderRequested"]
 [connection signal="CropRequested" from="RemoveButtonDropdown" to="." method="OnCropRequested"]
 [connection signal="ClearRequested" from="RemoveButtonDropdown" to="." method="OnClearRequested"]
 [connection signal="ClearRequested" from="ListOptionsButtonDropdown" to="." method="OnClearRequested"]

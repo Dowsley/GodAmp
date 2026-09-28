@@ -191,6 +191,8 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="LoadPlaylistRequested" from="PlaylistWindow/Playlist" to="." method="OnLoadPlaylistRequested"]
 [connection signal="MoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Move"]
 [connection signal="RemoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Remove"]
+[connection signal="OrderRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Reorder"]
+[connection signal="RemoveMissingRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="RemoveMissingFiles"]
 [connection signal="RetainEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Retain"]
 [connection signal="SavePlaylistRequested" from="PlaylistWindow/Playlist" to="." method="OnSavePlaylistRequested"]
 [connection signal="WindowshadeRequested" from="PlaylistWindow/Playlist" to="WindowManager" method="SetWindowShaded"]

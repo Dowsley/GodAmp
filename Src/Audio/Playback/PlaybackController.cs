@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GodAmp.Data;
+using GodAmp.Utils;
 using Godot;
 
 namespace GodAmp.Audio.Playback;
@@ -123,6 +124,38 @@ public partial class PlaybackController : Node
         List<QueueEntry> reordered = [.. _entries.Where(e => !selected.Contains(e.Id))];
         int targetIndex = reordered.FindIndex(e => e.Id == targetId);
         reordered.InsertRange(targetIndex + (insertAfter ? 1 : 0), moved);
+        ApplyOrder(reordered);
+    }
+
+    /// <summary>Reorders existing occurrences without changing transport, identity or shuffle navigation.</summary>
+    /// <param name="order">Ordering command; text keys use case-insensitive ordinal comparison.</param>
+    public void Reorder(PlaylistOrder order)
+    {
+        var comparer = StringComparer.OrdinalIgnoreCase;
+        IEnumerable<QueueEntry> ordered = order switch
+        {
+            PlaylistOrder.Title => _entries.OrderBy(e => AudioUtils.GetTrackTitle(e.Track), comparer),
+            PlaylistOrder.FileName => _entries.OrderBy(e => System.IO.Path.GetFileName(e.Track.SourcePath), comparer),
+            PlaylistOrder.Path => _entries.OrderBy(e => System.IO.Path.GetDirectoryName(e.Track.SourcePath), comparer)
+                .ThenBy(e => System.IO.Path.GetFileName(e.Track.SourcePath), comparer),
+            PlaylistOrder.Reverse => Enumerable.Reverse(_entries),
+            PlaylistOrder.Randomize => _entries,
+            _ => throw new ArgumentOutOfRangeException(nameof(order), order, null)
+        };
+        QueueEntry[] reordered = [.. ordered];
+        if (order == PlaylistOrder.Randomize)
+            Random.Shared.Shuffle(reordered);
+        ApplyOrder(reordered);
+    }
+
+    /// <summary>Removes unavailable local sources using the normal current-entry removal policy.</summary>
+    public void RemoveMissingFiles() => RemoveMatching([.. _entries
+        .Where(e => !Godot.FileAccess.FileExists(e.Track.SourcePath))
+        .Select(e => e.Id)]);
+
+    /// <summary>Publishes a materialized permutation only when the visible order changes.</summary>
+    private void ApplyOrder(IReadOnlyCollection<QueueEntry> reordered)
+    {
         if (_entries.SequenceEqual(reordered))
             return;
         _entries.Clear();

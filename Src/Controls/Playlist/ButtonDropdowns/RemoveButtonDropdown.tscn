@@ -11,9 +11,10 @@
 [ext_resource type="Texture2D" uid="uid://bsptsjeub0r1n" path="res://Data/SkinResources/RemoveSelectionButtonNormal.tres" id="9_400d4"]
 [ext_resource type="Texture2D" uid="uid://jj6s4qsr3px5" path="res://Data/SkinResources/RemoveSelectionButtonPressed.tres" id="10_g5q4n"]
 
-[node name="RemoveButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
+[node name="RemoveButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container", "_miscMenu")]
 script = ExtResource("1_yp7ol")
 _container = NodePath("FocusButtonContainer")
+_miscMenu = NodePath("MiscMenu")
 
 [node name="FocusButtonContainer" type="VBoxContainer" parent="."]
 offset_right = 22.0
@@ -54,6 +55,12 @@ focus_mode = 1
 texture_normal = ExtResource("9_400d4")
 texture_pressed = ExtResource("10_g5q4n")
 
+[node name="MiscMenu" type="PopupMenu" parent="."]
+item_count = 1
+item_0/text = "Remove missing files"
+item_0/id = 0
+
+[connection signal="id_pressed" from="MiscMenu" to="." method="OnMiscItemPressed"]
 [connection signal="FocusReleased" from="FocusButtonContainer" to="." method="Disable"]
 [connection signal="pressed" from="FocusButtonContainer/RemoveMiscButton" to="." method="OnRemoveMiscButtonPressed"]
 [connection signal="pressed" from="FocusButtonContainer/RemoveAllButton" to="." method="OnRemoveAllButtonPressed"]
