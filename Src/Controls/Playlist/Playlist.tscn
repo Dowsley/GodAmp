@@ -33,6 +33,8 @@
 [ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadePlaylistSheet.tres" id="shade_sheet"]
 [ext_resource type="Script" path="res://Src/Components/BitmapLabel.cs" id="bitmap_label"]
 [ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="bitmap_theme"]
+[ext_resource type="PackedScene" path="res://Src/Controls/Playlist/PlaylistFooter.tscn" id="footer"]
+[ext_resource type="PackedScene" path="res://Src/Controls/Playlist/FileInfo/FileInfoDialog.tscn" id="file_info"]
 
 [sub_resource type="AtlasTexture" id="shade_left"]
 atlas = ExtResource("shade_sheet")
@@ -102,7 +104,7 @@ ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/AllContent/ContentCon
 Role = 15
 UseVerticalScrollBar = true
 
-[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration")]
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration", "_footer", "_fileInfo", "_contextMenu")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -122,6 +124,9 @@ WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_right")])
 WindowshadeInactiveOffset = 15
 _windowshadeTitle = NodePath("Windowshade/Title")
 _windowshadeDuration = NodePath("Windowshade/Duration")
+_footer = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer")
+_fileInfo = NodePath("FileInfoDialog")
+_contextMenu = NodePath("ContextMenu")
 TrackLabelScene = ExtResource("2_ecqcu")
 _trackEntryContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer/PlaylistTrackEntryContainer")
 _scrollContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")
@@ -362,6 +367,9 @@ texture_normal = ExtResource("22_kvkyn")
 texture_pressed = ExtResource("22_kvkyn")
 stretch_mode = 5
 
+[node name="Footer" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea" instance=ExtResource("footer")]
+layout_mode = 0
+
 [node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
@@ -472,6 +480,32 @@ offset_left = -2.0
 mouse_default_cursor_shape = 10
 Panel = NodePath("../..")
 
+[node name="FileInfoDialog" parent="." instance=ExtResource("file_info")]
+
+[node name="ContextMenu" type="PopupMenu" parent="."]
+item_count = 6
+item_0/text = "Play"
+item_0/id = 0
+item_1/text = "File information"
+item_1/id = 1
+item_2/text = "Refresh metadata"
+item_2/id = 2
+item_3/text = "Remove selected"
+item_3/id = 3
+item_4/text = "Crop to selection"
+item_4/id = 4
+item_5/text = "Select all"
+item_5/id = 5
+
+[connection signal="FileInfoRequested" from="MiscButtonDropdown" to="." method="OnFileInfoRequested"]
+[connection signal="RefreshMetadataRequested" from="MiscButtonDropdown" to="." method="OnRefreshMetadataRequested"]
+[connection signal="id_pressed" from="ContextMenu" to="." method="OnContextCommand"]
+[connection signal="PreviousRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPreviousRequested"]
+[connection signal="PlayRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPlayRequested"]
+[connection signal="PauseRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPauseRequested"]
+[connection signal="StopRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnStopRequested"]
+[connection signal="NextRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnNextRequested"]
+[connection signal="FilesRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnOpenFilesRequested"]
 [connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
 [connection signal="RemoveSelectionRequested" from="RemoveButtonDropdown" to="." method="OnRemoveSelectionRequested"]
 [connection signal="RemoveMissingRequested" from="RemoveButtonDropdown" to="." method="OnRemoveMissingRequested"]

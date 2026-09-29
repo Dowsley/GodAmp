@@ -153,6 +153,23 @@ public partial class PlaybackController : Node
         .Where(e => !Godot.FileAccess.FileExists(e.Track.SourcePath))
         .Select(e => e.Id)]);
 
+    /// <summary>Applies completed metadata reads to surviving targets without changing transport or queue order.</summary>
+    /// <param name="entryIds">Occurrences captured when the refresh was requested.</param>
+    /// <param name="tracks">Successfully read source metadata; failed sources retain their existing metadata.</param>
+    public void UpdateMetadata(long[] entryIds, IEnumerable<Track> tracks)
+    {
+        var byPath = tracks.ToDictionary(track => track.SourcePath, StringComparer.Ordinal);
+        HashSet<long> targets = [.. entryIds];
+        HashSet<Track> updated = [];
+        foreach (QueueEntry entry in _entries.Where(entry => targets.Contains(entry.Id)))
+        {
+            if (byPath.TryGetValue(entry.Track.SourcePath, out Track? metadata) && updated.Add(entry.Track))
+                entry.Track.UpdateMetadata(metadata);
+        }
+        if (updated.Count > 0)
+            EmitSignal(SignalName.MetadataChanged, _entries.Where(entry => updated.Contains(entry.Track)).Select(entry => entry.Id).ToArray());
+    }
+
     /// <summary>Publishes a materialized permutation only when the visible order changes.</summary>
     private void ApplyOrder(IReadOnlyCollection<QueueEntry> reordered)
     {

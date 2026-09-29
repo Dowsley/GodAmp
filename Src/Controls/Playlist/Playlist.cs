@@ -6,6 +6,7 @@ using GodAmp.Components;
 using GodAmp.Audio.Playback;
 using GodAmp.Data;
 using GodAmp.Utils;
+using GodAmp.Controls.Playlist.FileInfo;
 using Godot;
 
 namespace GodAmp.Controls.Playlist;
@@ -24,6 +25,12 @@ public partial class Playlist : WindowPanelContainer
     [Signal] public delegate void LoadPlaylistRequestedEventHandler();
     [Signal] public delegate void SavePlaylistRequestedEventHandler();
     [Signal] public delegate void MoveEntriesRequestedEventHandler(long[] entryIds, long targetId, bool insertAfter);
+    [Signal] public delegate void MetadataRefreshRequestedEventHandler(long[] entryIds);
+    [Signal] public delegate void PlayRequestedEventHandler();
+    [Signal] public delegate void PauseRequestedEventHandler();
+    [Signal] public delegate void StopRequestedEventHandler();
+    [Signal] public delegate void PreviousRequestedEventHandler();
+    [Signal] public delegate void NextRequestedEventHandler();
 
     [ExportGroup("Config")]
     [Export] public PackedScene TrackLabelScene = null!;
@@ -35,6 +42,9 @@ public partial class Playlist : WindowPanelContainer
     [Export] private ScrollContainer _scrollContainer = null!;
     [Export] private Label _windowshadeTitle = null!;
     [Export] private Label _windowshadeDuration = null!;
+    [Export] private PlaylistFooter _footer = null!;
+    [Export] private FileInfoDialog _fileInfo = null!;
+    [Export] private PopupMenu _contextMenu = null!;
 
     [ExportSubgroup("Button dropdowns")]
     [Export] public ButtonDropdown AddButtonDropdown = null!;
@@ -55,6 +65,8 @@ public partial class Playlist : WindowPanelContainer
     private readonly Dictionary<long, PlaylistTrackEntry> _rows = [];
     private long? _selectionAnchorId;
     private long? _currentRowId;
+    private long? _focusedEntryId;
+    private long? _inspectedEntryId;
 
     /// <inheritdoc />
     public override void _Ready()
@@ -75,6 +87,8 @@ public partial class Playlist : WindowPanelContainer
     /// <summary>Reconciles queue order while retaining surviving rows, selection anchors, and scroll state.</summary>
     public void Refresh()
     {
+        int focusedIndex = _focusedEntryId is { } focused && _rows.TryGetValue(focused, out var focusedRow) ? focusedRow.GetIndex() : 0;
+        bool restoreFocus = _focusedEntryId is { } focusedId && _rows.TryGetValue(focusedId, out var activeRow) && activeRow.HasFocus();
         HashSet<long> surviving = [.. _playbackController.Entries.Select(e => e.Id)];
         _selectedEntries.IntersectWith(surviving);
         _presentedSelection.IntersectWith(surviving);
@@ -98,7 +112,9 @@ public partial class Playlist : WindowPanelContainer
                 row = TrackLabelScene.Instantiate<PlaylistTrackEntry>();
                 _rows.Add(entry.Id, row);
                 _trackEntryContainer.AddChild(row);
-                row.Selected += OnEntrySelected;
+                row.SelectionRequested += SelectEntry;
+                row.ContextRequested += OnContextRequested;
+                row.KeyboardRequested += OnKeyboardRequested;
                 row.Activated += OnEntryActivated;
                 row.MoveRequested += OnMoveRequested;
                 row.Setup(title, entry.Track.Duration, entry.Id, false);
@@ -110,6 +126,14 @@ public partial class Playlist : WindowPanelContainer
         }
         RefreshSelection();
         RefreshCurrentEntry();
+        if (_focusedEntryId is { } previousFocus && !surviving.Contains(previousFocus))
+        {
+            _focusedEntryId = _playbackController.Entries.Count > 0
+                ? _playbackController.Entries[Math.Min(focusedIndex, _playbackController.Entries.Count - 1)].Id : null;
+            if (restoreFocus && _focusedEntryId is { } nextFocus)
+                FocusEntry(nextFocus);
+        }
+        RefreshFileInfo();
     }
 
     /// <summary>Updates the previous and current occurrence without changing UI selection.</summary>
@@ -142,6 +166,8 @@ public partial class Playlist : WindowPanelContainer
         }
         if (_currentRowId is { } current && entryIds.Contains(current))
             RefreshCurrentEntry();
+        RefreshDuration();
+        RefreshFileInfo();
     }
 
     /// <summary>Disconnects subscriptions owned by dynamically instantiated rows.</summary>
@@ -153,7 +179,9 @@ public partial class Playlist : WindowPanelContainer
 
     private void DisconnectRow(PlaylistTrackEntry row)
     {
-        row.Selected -= OnEntrySelected;
+        row.SelectionRequested -= SelectEntry;
+        row.ContextRequested -= OnContextRequested;
+        row.KeyboardRequested -= OnKeyboardRequested;
         row.Activated -= OnEntryActivated;
         row.MoveRequested -= OnMoveRequested;
     }
@@ -168,13 +196,17 @@ public partial class Playlist : WindowPanelContainer
         return -1;
     }
 
-    /// <summary>Selects an occurrence or an anchored range in the current visual order.</summary>
-    private void OnEntrySelected(long entryId)
+    /// <summary>Applies range or additive selection using stable occurrence identities.</summary>
+    /// <param name="entryId">Occurrence receiving selection.</param>
+    /// <param name="range">Whether to extend from the selection anchor.</param>
+    /// <param name="toggle">Whether to toggle an occurrence or add a range to the existing selection.</param>
+    private void SelectEntry(long entryId, bool range, bool toggle)
     {
         int index = EntryIndex(entryId);
         if (index < 0)
             return;
-        if (Input.IsActionPressed("MultipleSelection"))
+        _focusedEntryId = entryId;
+        if (range)
         {
             _selectionAnchorId ??= _playbackController.Entries.FirstOrDefault(e => _selectedEntries.Contains(e.Id))?.Id ?? entryId;
             int anchor = EntryIndex(_selectionAnchorId.Value);
@@ -183,9 +215,16 @@ public partial class Playlist : WindowPanelContainer
                 _selectionAnchorId = entryId;
                 anchor = index;
             }
-            _selectedEntries.Clear();
+            if (!toggle)
+                _selectedEntries.Clear();
             for (int i = Math.Min(anchor, index); i <= Math.Max(anchor, index); i++)
                 _selectedEntries.Add(_playbackController.Entries[i].Id);
+        }
+        else if (toggle)
+        {
+            if (!_selectedEntries.Remove(entryId))
+                _selectedEntries.Add(entryId);
+            _selectionAnchorId = entryId;
         }
         else
         {
@@ -205,7 +244,123 @@ public partial class Playlist : WindowPanelContainer
                 row.IsSelected = _selectedEntries.Contains(id);
         _presentedSelection.Clear();
         _presentedSelection.UnionWith(_selectedEntries);
+        RefreshDuration();
     }
+
+    private void RefreshDuration() => _footer.UpdateDuration(
+        _playbackController.Entries.Where(entry => _selectedEntries.Contains(entry.Id)).Sum(entry => entry.Track.Duration),
+        _playbackController.Entries.Sum(entry => entry.Track.Duration));
+
+    private void RefreshFileInfo()
+    {
+        QueueEntry? entry = _playbackController.Entries.FirstOrDefault(entry => entry.Id == _inspectedEntryId);
+        if (entry == null)
+        {
+            _fileInfo.Hide();
+            _inspectedEntryId = null;
+        }
+        else
+            _fileInfo.Display(entry.Track);
+    }
+
+    private long? SelectedEntryId() => _focusedEntryId is { } focused && _selectedEntries.Contains(focused)
+        ? focused : _playbackController.Entries.FirstOrDefault(entry => _selectedEntries.Contains(entry.Id))?.Id;
+
+    private void OnFileInfoRequested()
+    {
+        _inspectedEntryId = SelectedEntryId();
+        RefreshFileInfo();
+        if (_inspectedEntryId != null)
+            _fileInfo.PopupCentered();
+    }
+
+    private void OnRefreshMetadataRequested() => EmitSignal(SignalName.MetadataRefreshRequested, _selectedEntries.ToArray());
+
+    private void OnContextRequested(long entryId)
+    {
+        Viewport viewport = GetViewport();
+        ShowContextMenu(entryId, viewport.GetFinalTransform() * viewport.GetMousePosition());
+    }
+
+    private void ShowContextMenu(long entryId, Vector2 position)
+    {
+        if (!_selectedEntries.Contains(entryId))
+            SelectEntry(entryId, false, false);
+        _focusedEntryId = entryId;
+        _contextMenu.PopupOnParent(new Rect2I((Vector2I)position, Vector2I.Zero));
+    }
+
+    private void OnContextCommand(long id)
+    {
+        switch ((PlaylistCommand)id)
+        {
+            case PlaylistCommand.Play:
+                if (SelectedEntryId() is { } selected) OnEntryActivated(selected);
+                break;
+            case PlaylistCommand.FileInfo: OnFileInfoRequested(); break;
+            case PlaylistCommand.RefreshMetadata: OnRefreshMetadataRequested(); break;
+            case PlaylistCommand.Remove: OnRemoveSelectionRequested(); break;
+            case PlaylistCommand.Crop: OnCropRequested(); break;
+            case PlaylistCommand.SelectAll: OnSelectAllRequested(); break;
+        }
+    }
+
+    private void FocusEntry(long id)
+    {
+        _focusedEntryId = id;
+        if (_rows.TryGetValue(id, out var row))
+        {
+            row.GrabFocus();
+            _scrollContainer.EnsureControlVisible(row);
+        }
+    }
+
+    /// <summary>Handles row-local keyboard commands without intercepting dialogs or other windows.</summary>
+    private void OnKeyboardRequested(long entryId, InputEventKey key)
+    {
+        int index = EntryIndex(entryId);
+        if (index < 0)
+            return;
+        bool command = key.IsCommandOrControlPressed();
+        int page = Math.Max(1, (int)(_scrollContainer.Size.Y / Math.Max(1, _rows[entryId].Size.Y)));
+        int destination = key.Keycode switch
+        {
+            Key.Up => index - 1, Key.Down => index + 1,
+            Key.Home => 0, Key.End => _playbackController.Entries.Count - 1,
+            Key.Pageup => index - page, Key.Pagedown => index + page,
+            _ => index
+        };
+        if (key.Keycode is Key.Up or Key.Down or Key.Home or Key.End or Key.Pageup or Key.Pagedown)
+        {
+            long target = _playbackController.Entries[Math.Clamp(destination, 0, _playbackController.Entries.Count - 1)].Id;
+            if (!command || key.ShiftPressed)
+                SelectEntry(target, key.ShiftPressed, command);
+            FocusEntry(target);
+            return;
+        }
+        _focusedEntryId = entryId;
+        switch (key.Keycode)
+        {
+            case Key.Enter: case Key.KpEnter: OnEntryActivated(entryId); break;
+            case Key.Space: SelectEntry(entryId, key.ShiftPressed, command); break;
+            case Key.A when command: OnSelectAllRequested(); break;
+            case Key.I when command: OnInverseSelectionRequested(); break;
+            case Key.Delete when command && key.ShiftPressed: OnClearRequested(); break;
+            case Key.Delete when command: OnCropRequested(); break;
+            case Key.Delete: OnRemoveSelectionRequested(); break;
+            case Key.Key3 when key.AltPressed: OnFileInfoRequested(); break;
+            case Key.F5: OnRefreshMetadataRequested(); break;
+            case Key.Menu: case Key.F10 when key.ShiftPressed:
+                ShowContextMenu(entryId, GetViewport().GetFinalTransform() * _rows[entryId].GetGlobalTransformWithCanvas().Origin);
+                break;
+        }
+    }
+
+    private void OnPlayRequested() => EmitSignal(SignalName.PlayRequested);
+    private void OnPauseRequested() => EmitSignal(SignalName.PauseRequested);
+    private void OnStopRequested() => EmitSignal(SignalName.StopRequested);
+    private void OnPreviousRequested() => EmitSignal(SignalName.PreviousRequested);
+    private void OnNextRequested() => EmitSignal(SignalName.NextRequested);
 
     private void OnEntryActivated(long entryId) => EmitSignal(SignalName.EntryActivated, entryId);
 
@@ -230,6 +385,7 @@ public partial class Playlist : WindowPanelContainer
     private void OnCropRequested() => EmitSignal(SignalName.RetainEntriesRequested, _selectedEntries.ToArray());
     private void OnClearRequested() => EmitSignal(SignalName.ClearRequested);
     private void OnFilesRequested() => EmitSignal(SignalName.FilesRequested, false);
+    private void OnOpenFilesRequested() => EmitSignal(SignalName.FilesRequested, true);
     private void OnFolderRequested() => EmitSignal(SignalName.FolderRequested, false);
     private void OnLoadPlaylistRequested() => EmitSignal(SignalName.LoadPlaylistRequested);
     private void OnSavePlaylistRequested() => EmitSignal(SignalName.SavePlaylistRequested);

@@ -8,7 +8,9 @@ namespace GodAmp.Controls.Playlist;
 public partial class PlaylistTrackEntry : PanelContainer
 {
     private const int PlaylistFontSize = 10;
-    [Signal] public delegate void SelectedEventHandler(long entryId);
+    [Signal] public delegate void SelectionRequestedEventHandler(long entryId, bool range, bool toggle);
+    [Signal] public delegate void ContextRequestedEventHandler(long entryId);
+    [Signal] public delegate void KeyboardRequestedEventHandler(long entryId, InputEventKey key);
     [Signal] public delegate void ActivatedEventHandler(long entryId);
     [Signal] public delegate void MoveRequestedEventHandler(long[] entryIds, long targetId, bool insertAfter);
 
@@ -36,7 +38,6 @@ public partial class PlaylistTrackEntry : PanelContainer
     /// <inheritdoc />
     public override void _Ready()
     {
-        MouseFilter = MouseFilterEnum.Stop;
         SignalBus.Instance.SkinChanged += ApplySkin;
         ApplySkin();
     }
@@ -109,29 +110,52 @@ public partial class PlaylistTrackEntry : PanelContainer
 
     public override void _GuiInput(InputEvent @event)
     {
+        if (@event is InputEventKey { Pressed: true } key && IsPlaylistKey(key))
+        {
+            EmitSignal(SignalName.KeyboardRequested, EntryId, key);
+            AcceptEvent();
+            return;
+        }
         if (@event is InputEventMouseButton eventMouseButton)
         {
+            if (eventMouseButton.ButtonIndex == MouseButton.Right && eventMouseButton.Pressed)
+            {
+                GrabFocus();
+                EmitSignal(SignalName.ContextRequested, EntryId);
+                AcceptEvent();
+                return;
+            }
             if (eventMouseButton.ButtonIndex != MouseButton.Left)
                 return;
 
             if (eventMouseButton.Pressed)
             {
+                GrabFocus();
                 _isPointerDown = true;
                 _dragStarted = false;
 
                 if (eventMouseButton.DoubleClick)
+                {
+                    EmitSignal(SignalName.SelectionRequested, EntryId, false, false);
                     EmitSignal(SignalName.Activated, EntryId);
+                }
             }
             else
             {
                 if (_isPointerDown && !_dragStarted)
-                    EmitSignal(SignalName.Selected, EntryId);
+                    EmitSignal(SignalName.SelectionRequested, EntryId, eventMouseButton.ShiftPressed, eventMouseButton.IsCommandOrControlPressed());
 
                 _isPointerDown = false;
                 _dragStarted = false;
             }
         }
     }
+
+    private static bool IsPlaylistKey(InputEventKey key) => key.Keycode is
+        Key.Up or Key.Down or Key.Home or Key.End or Key.Pageup or Key.Pagedown or
+        Key.Enter or Key.KpEnter or Key.Delete or Key.Space or Key.Menu or Key.F5 ||
+        key.Keycode == Key.F10 && key.ShiftPressed || key.Keycode == Key.Key3 && key.AltPressed ||
+        key.IsCommandOrControlPressed() && key.Keycode is Key.A or Key.I;
 
     public override Variant _GetDragData(Vector2 atPosition)
     {

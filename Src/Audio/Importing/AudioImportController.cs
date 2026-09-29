@@ -43,7 +43,7 @@ public partial class AudioImportController : Node
             return;
         if (_startup)
             CancelImports();
-        _waiting.Enqueue(request with { Paths = (string[])request.Paths.Clone() });
+        _waiting.Enqueue(request with { Paths = (string[])request.Paths.Clone(), EntryIds = (long[])request.EntryIds.Clone() });
         EmitSignal(SignalName.StatusChanged);
     }
 
@@ -73,6 +73,18 @@ public partial class AudioImportController : Node
     {
         _issues.Clear();
         EmitSignal(SignalName.StatusChanged);
+    }
+
+    /// <summary>Queues fresh metadata for selected occurrences without replacing their audio streams.</summary>
+    /// <param name="entryIds">Stable queue identities; removed entries are ignored when results arrive.</param>
+    public void RefreshMetadata(long[] entryIds)
+    {
+        HashSet<long> selected = [.. entryIds];
+        var entries = _playbackController.Entries.Where(entry => selected.Contains(entry.Id)).ToArray();
+        Enqueue(new ImportRequest(ImportSource.Files, [.. entries.Select(entry => entry.Track.SourcePath).Distinct()], ImportMode.RefreshMetadata)
+        {
+            EntryIds = [.. entries.Select(entry => entry.Id)]
+        });
     }
 
     /// <summary>Collects playback failures in the same scene-owned diagnostic presentation.</summary>
@@ -130,6 +142,13 @@ public partial class AudioImportController : Node
     private void Apply(ImportResult result, ImportRequest request)
     {
         _issues.AddRange(result.Issues);
+        if (request.Mode == ImportMode.RefreshMetadata)
+        {
+            var failed = result.Issues.Select(issue => issue.Path).ToHashSet(StringComparer.Ordinal);
+            _playbackController.UpdateMetadata(request.EntryIds,
+                result.Tracks.Where(track => !failed.Contains(track.Path)).Select(track => track.CreateTrack()));
+            return;
+        }
         bool applicable = result.Tracks.Count > 0 || result.EmptyPlaylist;
         if (applicable)
         {

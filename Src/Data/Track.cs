@@ -17,4 +17,19 @@ public partial class Track : Resource
     public int Channels;
     /// <summary>Whether presentation uses the filename because the source has no title tag.</summary>
     public bool UseFileName;
+
+    /// <summary>Copies display and audio metadata while retaining this resource and its source path.</summary>
+    /// <param name="source">Fresh metadata read from the same source.</param>
+    public void UpdateMetadata(Track source)
+    {
+        Name = source.Name;
+        Artist = source.Artist;
+        Album = source.Album;
+        Duration = source.Duration;
+        TrackNumber = source.TrackNumber;
+        BitrateKbps = source.BitrateKbps;
+        SampleRateHz = source.SampleRateHz;
+        Channels = source.Channels;
+        UseFileName = source.UseFileName;
+    }
 }
