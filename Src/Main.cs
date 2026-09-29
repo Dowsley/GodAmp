@@ -11,6 +11,7 @@ using GodAmp.Data;
 using GodAmp.Audio;
 using GodAmp.Audio.Importing;
 using GodAmp.Audio.Playback;
+using GodAmp.Audio.Playlists;
 using GodAmp.Utils;
 using Godot;
 
@@ -34,6 +35,8 @@ public partial class Main : HBoxContainer
 
     public override void _Ready()
     {
+        /* The engine creates the root window outside Main.tscn. */
+        GetWindow().FilesDropped += OnFilesDropped;
         _audioImportController.Restore(SettingsManager.Instance.GetLastPlaylistPath(), DefaultSongsPath);
         _masterPanel.RefreshModes();
         _visualizer.Pause();
@@ -43,6 +46,7 @@ public partial class Main : HBoxContainer
 
     public override void _ExitTree()
     {
+        GetWindow().FilesDropped -= OnFilesDropped;
         _windowManager.SaveWindowStates();
         SettingsManager.Instance.SaveAllSettings();
     }
@@ -101,7 +105,7 @@ public partial class Main : HBoxContainer
     private void OnLoadTracksRequested(bool overridePlaylist = false)
     {
         FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenFiles);
-        dialog.SetFilters(AudioFormats.FileFilters);
+        dialog.SetFilters([.. AudioFormats.FileFilters, .. PlaylistFile.FileFilters]);
         var filesSelectedCallback = Callable.From((string[] paths) => LoadTracks(paths, overridePlaylist));
         dialog.Connect(FileDialog.SignalName.FilesSelected, filesSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -116,7 +120,7 @@ public partial class Main : HBoxContainer
     private void OnLoadPlaylistRequested()
     {
         FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.OpenFile);
-        dialog.SetFilters(["*.m3u; M3U Playlist", "*.m3u8; M3U8 Playlist"]);
+        dialog.SetFilters(PlaylistFile.FileFilters);
         var fileSelectedCallback = Callable.From((string path) => LoadPlaylist(path));
         dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -131,7 +135,7 @@ public partial class Main : HBoxContainer
     private void OnSavePlaylistRequested()
     {
         FileDialog dialog = CreateMusicDialog(FileDialog.FileModeEnum.SaveFile);
-        dialog.SetFilters(["*.m3u; M3U Playlist", "*.m3u8; M3U8 Playlist"]);
+        dialog.SetFilters(PlaylistFile.FileFilters);
         var fileSelectedCallback = Callable.From((string path) => SavePlaylist(path));
         dialog.Connect(FileDialog.SignalName.FileSelected, fileSelectedCallback);
         dialog.Connect(AcceptDialog.SignalName.Canceled, new Callable(this, nameof(OnFileDialogClosed)));
@@ -142,22 +146,28 @@ public partial class Main : HBoxContainer
         _lastUsedFileDialog = dialog;
     }
 
-    /// <summary>Writes queue source paths in visual order, including duplicate occurrences.</summary>
-    /// <param name="path">Destination playlist path, with an optional M3U extension.</param>
+    /// <summary>Saves queue order and display metadata, retaining duplicate occurrences.</summary>
+    /// <param name="path">Playlist destination; a missing extension defaults to M3U8.</param>
     private void SavePlaylist(string path)
     {
         var ext = Path.GetExtension(path);
         if (string.IsNullOrWhiteSpace(ext))
-            path += ".m3u";
-        var absolutePaths = _playbackController.Entries
-            .Select(entry => entry.Track.SourcePath)
-            .Where(p => !string.IsNullOrWhiteSpace(p));
-        M3UParser.Write(path, absolutePaths, relativePaths: false);
+            path += ".m3u8";
+        var entries = _playbackController.Entries.Select(entry => new PlaylistEntry(entry.Track.SourcePath,
+            AudioUtils.GetTrackTitle(entry.Track), entry.Track.Duration > 0 ? entry.Track.Duration : null));
+        try
+        {
+            PlaylistFile.Write(path, entries);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
+        {
+            _audioImportController.ReportFileFailure(path, AudioIssueKind.Access, exception.Message);
+        }
         OnFileDialogClosed();
     }
 
     /// <summary>Replaces playback only after importing a readable playlist or an intentionally empty list.</summary>
-    /// <param name="path">Filesystem path to an M3U playlist.</param>
+    /// <param name="path">Filesystem path to an M3U, M3U8 or PLS playlist.</param>
     private void LoadPlaylist(string path)
     {
         OnFileDialogClosed();
@@ -179,6 +189,20 @@ public partial class Main : HBoxContainer
         OnFileDialogClosed();
         _audioImportController.Enqueue(new ImportRequest(ImportSource.Files, paths,
             overridePlaylist ? ImportMode.Replace : ImportMode.Append));
+    }
+
+    /// <summary>Appends a mixed OS drop without interrupting the current track.</summary>
+    /// <param name="paths">Files, playlists and directories provided by the native window.</param>
+    private void OnFilesDropped(string[] paths) =>
+        _audioImportController.Enqueue(new ImportRequest(ImportSource.Files, paths, ImportMode.Append));
+
+    /// <inheritdoc />
+    public override void _UnhandledKeyInput(InputEvent @event)
+    {
+        if (_playlist.HandleJumpShortcut(@event))
+        {
+            GetViewport().SetInputAsHandled();
+        }
     }
 
     public void OnFileDialogClosed()

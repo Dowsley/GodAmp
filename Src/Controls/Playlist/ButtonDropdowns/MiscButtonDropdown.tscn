@@ -58,9 +58,11 @@ item_4/text = "Randomize list"
 item_4/id = 4
 
 [node name="OptionsMenu" type="PopupMenu" parent="."]
-item_count = 1
+item_count = 2
 item_0/text = "Refresh selected metadata"
 item_0/id = 0
+item_1/text = "Jump to track (J)"
+item_1/id = 1
 
 [connection signal="id_pressed" from="OptionsMenu" to="." method="OnOptionsItemPressed"]
 [connection signal="pressed" from="FocusButtonContainer/FileInfoButton" to="." method="OnFileInfoButtonPressed"]

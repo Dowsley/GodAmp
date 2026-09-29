@@ -8,5 +8,6 @@ public enum PlaylistCommand
     RefreshMetadata = 2,
     Remove = 3,
     Crop = 4,
-    SelectAll = 5
+    SelectAll = 5,
+    JumpToTrack = 6
 }

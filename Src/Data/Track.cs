@@ -17,6 +17,8 @@ public partial class Track : Resource
     public int Channels;
     /// <summary>Whether presentation uses the filename because the source has no title tag.</summary>
     public bool UseFileName;
+    /// <summary>Optional display title supplied by a playlist, independent of the source's metadata tags.</summary>
+    public string PlaylistTitle = "";
 
     /// <summary>Copies display and audio metadata while retaining this resource and its source path.</summary>
     /// <param name="source">Fresh metadata read from the same source.</param>

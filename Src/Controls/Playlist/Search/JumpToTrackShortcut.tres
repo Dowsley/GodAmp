@@ -1,0 +1,7 @@
+[gd_resource type="Shortcut" load_steps=2 format=3]
+
+[sub_resource type="InputEventKey" id="key"]
+keycode = 74
+
+[resource]
+events = Array[InputEvent]([SubResource("key")])

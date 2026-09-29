@@ -35,6 +35,8 @@
 [ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="bitmap_theme"]
 [ext_resource type="PackedScene" path="res://Src/Controls/Playlist/PlaylistFooter.tscn" id="footer"]
 [ext_resource type="PackedScene" path="res://Src/Controls/Playlist/FileInfo/FileInfoDialog.tscn" id="file_info"]
+[ext_resource type="PackedScene" path="res://Src/Controls/Playlist/Search/JumpToTrackDialog.tscn" id="search"]
+[ext_resource type="Shortcut" path="res://Src/Controls/Playlist/Search/JumpToTrackShortcut.tres" id="search_shortcut"]
 
 [sub_resource type="AtlasTexture" id="shade_left"]
 atlas = ExtResource("shade_sheet")
@@ -104,7 +106,7 @@ ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/AllContent/ContentCon
 Role = 15
 UseVerticalScrollBar = true
 
-[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration", "_footer", "_fileInfo", "_contextMenu")]
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration", "_footer", "_fileInfo", "_contextMenu", "_search")]
 custom_minimum_size = Vector2(275, 116)
 anchors_preset = 15
 anchor_right = 1.0
@@ -127,6 +129,8 @@ _windowshadeDuration = NodePath("Windowshade/Duration")
 _footer = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer")
 _fileInfo = NodePath("FileInfoDialog")
 _contextMenu = NodePath("ContextMenu")
+_search = NodePath("JumpToTrackDialog")
+_jumpShortcut = ExtResource("search_shortcut")
 TrackLabelScene = ExtResource("2_ecqcu")
 _trackEntryContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer/PlaylistTrackEntryContainer")
 _scrollContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")
@@ -482,8 +486,10 @@ Panel = NodePath("../..")
 
 [node name="FileInfoDialog" parent="." instance=ExtResource("file_info")]
 
+[node name="JumpToTrackDialog" parent="." instance=ExtResource("search")]
+
 [node name="ContextMenu" type="PopupMenu" parent="."]
-item_count = 6
+item_count = 7
 item_0/text = "Play"
 item_0/id = 0
 item_1/text = "File information"
@@ -496,8 +502,12 @@ item_4/text = "Crop to selection"
 item_4/id = 4
 item_5/text = "Select all"
 item_5/id = 5
+item_6/text = "Jump to track (J)"
+item_6/id = 6
 
 [connection signal="FileInfoRequested" from="MiscButtonDropdown" to="." method="OnFileInfoRequested"]
+[connection signal="JumpToTrackRequested" from="MiscButtonDropdown" to="." method="OpenSearch"]
+[connection signal="EntryChosen" from="JumpToTrackDialog" to="." method="OnEntryActivated"]
 [connection signal="RefreshMetadataRequested" from="MiscButtonDropdown" to="." method="OnRefreshMetadataRequested"]
 [connection signal="id_pressed" from="ContextMenu" to="." method="OnContextCommand"]
 [connection signal="PreviousRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPreviousRequested"]

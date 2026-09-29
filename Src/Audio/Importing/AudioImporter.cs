@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using GodAmp.Utils;
-using Godot;
 
 namespace GodAmp.Audio.Importing;
 
@@ -20,29 +19,14 @@ internal static class AudioImporter
     {
         var tracks = new List<ImportedTrack>();
         var issues = new List<AudioIssue>();
-        string[] paths;
-        try
-        {
-            cancellation.ThrowIfCancellationRequested();
-            paths = request.Source switch
-            {
-                ImportSource.Files => request.Paths,
-                ImportSource.Folder => Discover(request.Paths[0], cancellation),
-                ImportSource.Playlist => M3UParser.Parse(request.Paths[0], cancellation),
-                _ => throw new ArgumentOutOfRangeException(nameof(request))
-            };
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
-        {
-            issues.Add(new AudioIssue(request.Paths.FirstOrDefault() ?? "", AudioIssueKind.Discovery, exception.Message));
-            return new ImportResult(tracks, issues, false);
-        }
+        DiscoveryResult discovered = ImportDiscovery.Discover(request, issues, cancellation);
 
-        for (int index = 0; index < paths.Length; index++)
+        for (int index = 0; index < discovered.Entries.Count; index++)
         {
             cancellation.ThrowIfCancellationRequested();
-            string path = paths[index];
-            progress(new ImportProgress(index, paths.Length, path));
+            var entry = discovered.Entries[index];
+            string path = entry.Path;
+            progress(new ImportProgress(index, discovered.Entries.Count, path));
             if (!AudioFormats.Supports(path))
             {
                 issues.Add(new AudioIssue(path, AudioIssueKind.UnsupportedFormat, "Supported audio formats are MP3, WAV, and OGG."));
@@ -50,7 +34,12 @@ internal static class AudioImporter
             }
             try
             {
-                tracks.Add(TrackMetadataReader.Read(path, cancellation, out AudioIssue? warning));
+                ImportedTrack track = TrackMetadataReader.Read(path, cancellation, out AudioIssue? warning);
+                tracks.Add(track with
+                {
+                    PlaylistTitle = entry.Title ?? "",
+                    Duration = track.Duration > 0 ? track.Duration : entry.Duration ?? 0
+                });
                 if (warning != null)
                     issues.Add(warning);
             }
@@ -60,22 +49,9 @@ internal static class AudioImporter
             }
         }
         cancellation.ThrowIfCancellationRequested();
-        progress(new ImportProgress(paths.Length, paths.Length, ""));
-        if (request.Source != ImportSource.Playlist)
+        progress(new ImportProgress(discovered.Entries.Count, discovered.Entries.Count, ""));
+        if (!discovered.PreserveOrder)
             tracks = [.. tracks.OrderBy(track => track.TrackNumber)];
-        return new ImportResult(tracks, issues, request.Source == ImportSource.Playlist && paths.Length == 0);
-    }
-
-    private static string[] Discover(string directory, CancellationToken cancellation)
-    {
-        using var access = DirAccess.Open(directory) ?? throw new IOException("Cannot open the audio folder.");
-        var paths = new List<string>();
-        foreach (string name in access.GetFiles())
-        {
-            cancellation.ThrowIfCancellationRequested();
-            if (AudioFormats.Supports(name))
-                paths.Add(directory.TrimEnd('/', '\\') + "/" + name);
-        }
-        return [.. paths.Order(StringComparer.Ordinal)];
+        return new ImportResult(tracks, issues, discovered.EmptyPlaylist);
     }
 }

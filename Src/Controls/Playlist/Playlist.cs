@@ -7,6 +7,7 @@ using GodAmp.Audio.Playback;
 using GodAmp.Data;
 using GodAmp.Utils;
 using GodAmp.Controls.Playlist.FileInfo;
+using GodAmp.Controls.Playlist.Search;
 using Godot;
 
 namespace GodAmp.Controls.Playlist;
@@ -45,6 +46,8 @@ public partial class Playlist : WindowPanelContainer
     [Export] private PlaylistFooter _footer = null!;
     [Export] private FileInfoDialog _fileInfo = null!;
     [Export] private PopupMenu _contextMenu = null!;
+    [Export] private JumpToTrackDialog _search = null!;
+    [Export] private Shortcut _jumpShortcut = null!;
 
     [ExportSubgroup("Button dropdowns")]
     [Export] public ButtonDropdown AddButtonDropdown = null!;
@@ -134,6 +137,8 @@ public partial class Playlist : WindowPanelContainer
                 FocusEntry(nextFocus);
         }
         RefreshFileInfo();
+        if (_search.Visible)
+            _search.Refresh();
     }
 
     /// <summary>Updates the previous and current occurrence without changing UI selection.</summary>
@@ -168,6 +173,8 @@ public partial class Playlist : WindowPanelContainer
             RefreshCurrentEntry();
         RefreshDuration();
         RefreshFileInfo();
+        if (_search.Visible)
+            _search.Refresh();
     }
 
     /// <summary>Disconnects subscriptions owned by dynamically instantiated rows.</summary>
@@ -302,6 +309,7 @@ public partial class Playlist : WindowPanelContainer
             case PlaylistCommand.Remove: OnRemoveSelectionRequested(); break;
             case PlaylistCommand.Crop: OnCropRequested(); break;
             case PlaylistCommand.SelectAll: OnSelectAllRequested(); break;
+            case PlaylistCommand.JumpToTrack: OpenSearch(); break;
         }
     }
 
@@ -313,6 +321,27 @@ public partial class Playlist : WindowPanelContainer
             row.GrabFocus();
             _scrollContainer.EnsureControlVisible(row);
         }
+    }
+
+    /// <summary>Opens a search over the shared queue without changing its order or selection.</summary>
+    public void OpenSearch() => _search.Open(_playbackController.Entries);
+
+    /// <summary>Handles the scene-configured search shortcut after focused controls have processed input.</summary>
+    /// <param name="input">An unhandled event from a player window.</param>
+    /// <returns>Whether the search dialog was opened.</returns>
+    public bool HandleJumpShortcut(InputEvent input)
+    {
+        if (input is not InputEventKey { Pressed: true, Echo: false } || !_jumpShortcut.MatchesEvent(input))
+            return false;
+        OpenSearch();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public override void _UnhandledKeyInput(InputEvent @event)
+    {
+        if (HandleJumpShortcut(@event))
+            GetViewport().SetInputAsHandled();
     }
 
     /// <summary>Handles row-local keyboard commands without intercepting dialogs or other windows.</summary>

@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Src/Controls/Playlist/Search/JumpToTrackDialog.cs" id="script"]
+
+[node name="JumpToTrackDialog" type="ConfirmationDialog" node_paths=PackedStringArray("_query", "_results", "_status")]
+title = "Jump to track"
+size = Vector2i(560, 400)
+min_size = Vector2i(420, 280)
+visible = false
+transient = true
+exclusive = true
+dialog_hide_on_ok = false
+ok_button_text = "Play"
+script = ExtResource("script")
+_query = NodePath("Contents/Query")
+_results = NodePath("Contents/Results")
+_status = NodePath("Contents/Status")
+
+[node name="Contents" type="VBoxContainer" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 548.0
+offset_bottom = 350.0
+theme_override_constants/separation = 8
+
+[node name="Query" type="LineEdit" parent="Contents"]
+layout_mode = 2
+placeholder_text = "Search title, artist, album or filename"
+clear_button_enabled = true
+
+[node name="Results" type="ItemList" parent="Contents"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 180)
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="Status" type="Label" parent="Contents"]
+layout_mode = 2
+text = "0 of 0 tracks"
+
+[connection signal="text_changed" from="Contents/Query" to="." method="OnQueryChanged"]
+[connection signal="text_submitted" from="Contents/Query" to="." method="OnQuerySubmitted"]
+[connection signal="gui_input" from="Contents/Query" to="." method="OnQueryInput"]
+[connection signal="item_activated" from="Contents/Results" to="." method="OnItemActivated"]
+[connection signal="confirmed" from="." to="." method="ActivateSelected"]

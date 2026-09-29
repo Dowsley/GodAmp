@@ -9,6 +9,7 @@ public partial class MiscButtonDropdown : ButtonDropdown
     [Signal] public delegate void OrderRequestedEventHandler(PlaylistOrder order);
     [Signal] public delegate void FileInfoRequestedEventHandler();
     [Signal] public delegate void RefreshMetadataRequestedEventHandler();
+    [Signal] public delegate void JumpToTrackRequestedEventHandler();
     [Export] private PopupMenu _sortMenu = null!;
     [Export] private PopupMenu _optionsMenu = null!;
 
@@ -21,5 +22,14 @@ public partial class MiscButtonDropdown : ButtonDropdown
         EmitSignal(SignalName.FileInfoRequested);
     }
     private void OnMiscOptsButtonPressed() => OpenMenu(_optionsMenu);
-    private void OnOptionsItemPressed(long _) => EmitSignal(SignalName.RefreshMetadataRequested);
+    private enum OptionsCommand { RefreshMetadata = 0, JumpToTrack = 1 }
+
+    private void OnOptionsItemPressed(long id)
+    {
+        switch ((OptionsCommand)id)
+        {
+            case OptionsCommand.RefreshMetadata: EmitSignal(SignalName.RefreshMetadataRequested); break;
+            case OptionsCommand.JumpToTrack: EmitSignal(SignalName.JumpToTrackRequested); break;
+        }
+    }
 }

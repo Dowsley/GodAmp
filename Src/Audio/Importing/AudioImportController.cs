@@ -87,11 +87,11 @@ public partial class AudioImportController : Node
         });
     }
 
-    /// <summary>Collects playback failures in the same scene-owned diagnostic presentation.</summary>
-    /// <param name="path">Source that could not be played.</param>
+    /// <summary>Collects audio and playlist file failures for the scene-owned diagnostic presentation.</summary>
+    /// <param name="path">Source or destination associated with the failure.</param>
     /// <param name="kind">Stage at which the source failed.</param>
     /// <param name="message">Readable reason for the failure.</param>
-    public void ReportPlaybackFailure(string path, AudioIssueKind kind, string message)
+    public void ReportFileFailure(string path, AudioIssueKind kind, string message)
     {
         _issues.Add(new AudioIssue(path, kind, message));
         EmitSignal(SignalName.StatusChanged);
