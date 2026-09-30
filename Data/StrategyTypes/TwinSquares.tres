@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="VisualizerStrategy" load_steps=3 format=3 uid="uid://tfaki26h2hqa"]
 
-[ext_resource type="Script" uid="uid://n417alhj3k8k" path="res://Src/Data/VisualizerStrategyType.cs" id="1_548p3"]
-[ext_resource type="PackedScene" uid="uid://y1umuvpvge6i" path="res://Src/Visualizer/Strategies/SquareStrategy.tscn" id="1_rmoqe"]
+[ext_resource type="Script" uid="uid://n417alhj3k8k" path="res://Src/Presentation/Visualizer/VisualizerStrategyType.cs" id="1_548p3"]
+[ext_resource type="PackedScene" uid="uid://y1umuvpvge6i" path="res://Src/Presentation/Visualizer/Strategies/SquareStrategy.tscn" id="1_rmoqe"]
 
 [resource]
 script = ExtResource("1_548p3")

@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="OpenFiles" type="FileDialog"]
+title = "Open files"
+file_mode = 1
+access = 2
+use_native_dialog = true

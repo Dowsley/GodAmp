@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://d1a7boxdoa0lt" path="res://Src/Presentation/FileDialogs/FilePickers.cs" id="script"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/FileDialogs/OpenFiles.tscn" id="files"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/FileDialogs/OpenFolder.tscn" id="folder"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/FileDialogs/OpenPlaylist.tscn" id="playlist"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/FileDialogs/SavePlaylist.tscn" id="save"]
+
+[node name="FilePickers" type="Node"]
+script = ExtResource("script")
+_files = ExtResource("files")
+_folder = ExtResource("folder")
+_playlist = ExtResource("playlist")
+_savePlaylist = ExtResource("save")

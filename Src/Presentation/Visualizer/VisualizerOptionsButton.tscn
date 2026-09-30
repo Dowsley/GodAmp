@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://chcdhios5qef2"]
+
+[ext_resource type="Script" uid="uid://cnwdem45iw0yi" path="res://Src/Presentation/Visualizer/VisualizerOptionsButton.cs" id="1_7ubp3"]
+
+[node name="VisualizerOptionsButton" type="MenuButton" node_paths=PackedStringArray("_vizSubmenu")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7ubp3")
+_vizSubmenu = NodePath("VizSubmenu")
+item_count = 1
+popup/item_0/text = "Visualizations"
+popup/item_0/id = 0
+
+[node name="VizSubmenu" type="PopupMenu" parent="."]
+hide_on_checkable_item_selection = false
+
+[connection signal="index_pressed" from="VizSubmenu" to="." method="OnVizMenuItemPressed"]

@@ -1,0 +1,100 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Src/Presentation/Playlist/PlaylistFooter.cs" id="script"]
+[ext_resource type="Script" path="res://Src/Presentation/Components/BitmapLabel.cs" id="bitmap"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="font"]
+
+[sub_resource type="StyleBoxEmpty" id="empty"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+[sub_resource type="StyleBoxFlat" id="hover"]
+bg_color = Color(1, 1, 1, 0.15)
+[sub_resource type="StyleBoxFlat" id="pressed"]
+bg_color = Color(0, 0, 0, 0.35)
+[sub_resource type="Theme" id="buttons"]
+Button/styles/normal = SubResource("empty")
+Button/styles/focus = SubResource("hover")
+Button/styles/hover = SubResource("hover")
+Button/styles/pressed = SubResource("pressed")
+Button/styles/disabled = SubResource("empty")
+Button/styles/hover_pressed = SubResource("pressed")
+
+[node name="PlaylistFooter" type="Control" node_paths=PackedStringArray("_duration")]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 38.0
+mouse_filter = 2
+script = ExtResource("script")
+_duration = NodePath("Duration")
+
+[node name="Duration" type="Label" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 8.0
+offset_right = 96.0
+offset_bottom = 19.0
+theme = ExtResource("font")
+text = "0:00/0:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+mouse_filter = 1
+script = ExtResource("bitmap")
+
+[node name="Previous" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 5.0
+offset_top = 23.0
+offset_right = 12.0
+offset_bottom = 30.0
+tooltip_text = "Previous track"
+[node name="Play" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 12.0
+offset_top = 23.0
+offset_right = 22.0
+offset_bottom = 30.0
+tooltip_text = "Play"
+[node name="Pause" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 22.0
+offset_top = 23.0
+offset_right = 32.0
+offset_bottom = 30.0
+tooltip_text = "Pause"
+[node name="Stop" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 32.0
+offset_top = 23.0
+offset_right = 41.0
+offset_bottom = 30.0
+tooltip_text = "Stop"
+[node name="Next" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 41.0
+offset_top = 23.0
+offset_right = 50.0
+offset_bottom = 30.0
+tooltip_text = "Next track"
+[node name="Files" type="Button" parent="."]
+theme = SubResource("buttons")
+layout_mode = 0
+offset_left = 50.0
+offset_top = 23.0
+offset_right = 58.0
+offset_bottom = 30.0
+tooltip_text = "Open files"
+
+[connection signal="pressed" from="Previous" to="." method="OnPreviousPressed"]
+[connection signal="pressed" from="Play" to="." method="OnPlayPressed"]
+[connection signal="pressed" from="Pause" to="." method="OnPausePressed"]
+[connection signal="pressed" from="Stop" to="." method="OnStopPressed"]
+[connection signal="pressed" from="Next" to="." method="OnNextPressed"]
+[connection signal="pressed" from="Files" to="." method="OnFilesPressed"]

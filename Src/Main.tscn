@@ -1,18 +1,21 @@
 [gd_scene format=3 uid="uid://db6b3hi4hou7w"]
 
 [ext_resource type="Script" uid="uid://bmff2loty0s32" path="res://Src/Main.cs" id="1_gh0ne"]
-[ext_resource type="Script" uid="uid://oykoef1pbjhy" path="res://Src/Audio/Playback/TrackPlayer.cs" id="3_4ajm2"]
-[ext_resource type="PackedScene" uid="uid://6yi01spga8fj" path="res://Src/Visualizer/Visualizer.tscn" id="3_5q4o7"]
-[ext_resource type="PackedScene" uid="uid://cpme6jm30nl1o" path="res://Src/Controls/MasterPanel/MasterPanel.tscn" id="3_rlaii"]
-[ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Controls/Equalizer/Equalizer.tscn" id="4_5mrjc"]
-[ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Controls/Playlist/Playlist.tscn" id="5_kf8lf"]
-[ext_resource type="Script" uid="uid://bk43amrt51gfy" path="res://Src/Core/WindowManager.cs" id="7_4ajm2"]
+[ext_resource type="Script" uid="uid://oykoef1pbjhy" path="res://Src/Audio/TrackPlayer.cs" id="3_4ajm2"]
+[ext_resource type="PackedScene" uid="uid://6yi01spga8fj" path="res://Src/Presentation/Visualizer/Visualizer.tscn" id="3_5q4o7"]
+[ext_resource type="PackedScene" uid="uid://cpme6jm30nl1o" path="res://Src/Presentation/MainPanel/MasterPanel.tscn" id="3_rlaii"]
+[ext_resource type="PackedScene" uid="uid://durg0gl1tadts" path="res://Src/Presentation/Equalizer/Equalizer.tscn" id="4_5mrjc"]
+[ext_resource type="PackedScene" uid="uid://diw508vd3gr8k" path="res://Src/Presentation/Playlist/Playlist.tscn" id="5_kf8lf"]
+[ext_resource type="Script" uid="uid://bk43amrt51gfy" path="res://Src/Desktop/WindowManager.cs" id="7_4ajm2"]
 [ext_resource type="Script" uid="uid://bngi3j1x7brkl" path="res://Src/Audio/Processing/AudioController.cs" id="audio_controller"]
-[ext_resource type="Script" uid="uid://6xxw7e5jduhe" path="res://Src/Audio/Importing/AudioImportController.cs" id="audio_imports"]
-[ext_resource type="PackedScene" path="res://Src/Components/ImportStatus/ImportStatus.tscn" id="import_status"]
-[ext_resource type="Script" uid="uid://d1topflgp5yi1" path="res://Src/Audio/Playback/PlaybackController.cs" id="playback_controller"]
+[ext_resource type="Script" uid="uid://6xxw7e5jduhe" path="res://Src/Media/Importing/AudioImportController.cs" id="audio_imports"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/FileDialogs/FilePickers.tscn" id="file_pickers"]
+[ext_resource type="Script" uid="uid://b8a6w87bil017" path="res://Src/Operations/OperationIssues.cs" id="operation_issues"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/OperationStatus/OperationStatus.tscn" id="operation_status"]
+[ext_resource type="Script" uid="uid://d1topflgp5yi1" path="res://Src/Playback/PlaybackController.cs" id="playback_controller"]
+[ext_resource type="Script" uid="uid://5s8o3jwpx6yl" path="res://Src/Playlists/PlaylistController.cs" id="playlist_controller"]
 
-[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_masterPanel", "_equalizer", "_playlist", "_visualizer", "_playbackController", "_audioImportController", "_windowManager")]
+[node name="Main" type="HBoxContainer" unique_id=1520139233 node_paths=PackedStringArray("_playlist", "_audioImportController", "_windowManager")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,13 +24,20 @@ grow_vertical = 2
 theme_override_constants/separation = 0
 script = ExtResource("1_gh0ne")
 DefaultSongsPath = "res://Data/SampleSongs"
-_masterPanel = NodePath("MasterPanel")
-_equalizer = NodePath("EqualizerWindow/Equalizer")
 _playlist = NodePath("PlaylistWindow/Playlist")
-_visualizer = NodePath("VisualizerWindow/Visualizer")
-_playbackController = NodePath("PlaybackController")
 _audioImportController = NodePath("AudioImportController")
 _windowManager = NodePath("WindowManager")
+
+[node name="OperationIssues" type="Node" parent="." unique_id=786637074]
+script = ExtResource("operation_issues")
+
+[node name="PlaylistController" type="Node" parent="." unique_id=934908929 node_paths=PackedStringArray("_playback", "_imports", "_issues")]
+script = ExtResource("playlist_controller")
+_playback = NodePath("../PlaybackController")
+_imports = NodePath("../AudioImportController")
+_issues = NodePath("../OperationIssues")
+
+[node name="FilePickers" parent="." unique_id=580737995 instance=ExtResource("file_pickers")]
 
 [node name="AudioController" type="Node" parent="." unique_id=1678524397 node_paths=PackedStringArray("_player")]
 script = ExtResource("audio_controller")
@@ -45,12 +55,14 @@ Playback = NodePath("../../../PlaybackController")
 Player = NodePath("../../../TrackPlayer")
 _audio = NodePath("../../../AudioController")
 
-[node name="AudioImportController" type="Node" parent="." unique_id=1533595608 node_paths=PackedStringArray("_playbackController")]
+[node name="AudioImportController" type="Node" parent="." unique_id=1533595608 node_paths=PackedStringArray("_playbackController", "_operationIssues")]
 script = ExtResource("audio_imports")
 _playbackController = NodePath("../PlaybackController")
+_operationIssues = NodePath("../OperationIssues")
 
-[node name="ImportStatus" parent="." unique_id=2115290543 node_paths=PackedStringArray("_imports") instance=ExtResource("import_status")]
+[node name="OperationStatus" parent="." unique_id=2115290543 node_paths=PackedStringArray("_imports", "_operationIssues") instance=ExtResource("operation_status")]
 _imports = NodePath("../AudioImportController")
+_operationIssues = NodePath("../OperationIssues")
 
 [node name="TrackPlayer" type="AudioStreamPlayer" parent="." unique_id=1411099585]
 script = ExtResource("3_4ajm2")
@@ -71,13 +83,6 @@ content_scale_size = Vector2i(275, 116)
 content_scale_mode = 1
 
 [node name="Equalizer" parent="EqualizerWindow" unique_id=737211488 node_paths=PackedStringArray("_audio") instance=ExtResource("4_5mrjc")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_right = 275.0
-offset_bottom = 116.0
-grow_horizontal = 1
-grow_vertical = 1
 _audio = NodePath("../../AudioController")
 
 [node name="Graph" parent="EqualizerWindow/Equalizer/Controls" index="1" node_paths=PackedStringArray("_audio")]
@@ -93,13 +98,6 @@ content_scale_size = Vector2i(275, 116)
 content_scale_mode = 1
 
 [node name="Playlist" parent="PlaylistWindow" unique_id=2110127996 node_paths=PackedStringArray("_playbackController") instance=ExtResource("5_kf8lf")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_right = 275.0
-offset_bottom = 116.0
-grow_horizontal = 1
-grow_vertical = 1
 _playbackController = NodePath("../../PlaybackController")
 
 [node name="VisualizerWindow" type="Window" parent="." unique_id=845261805]
@@ -112,14 +110,8 @@ borderless = true
 content_scale_size = Vector2i(350, 348)
 content_scale_mode = 1
 
-[node name="Visualizer" parent="VisualizerWindow" unique_id=513834570 instance=ExtResource("3_5q4o7")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_right = 333.0
-offset_bottom = 87.0
-grow_horizontal = 1
-grow_vertical = 1
+[node name="Visualizer" parent="VisualizerWindow" unique_id=513834570 node_paths=PackedStringArray("_playback") instance=ExtResource("3_5q4o7")]
+_playback = NodePath("../../PlaybackController")
 
 [node name="AudioVisualizer" parent="VisualizerWindow/Visualizer/VBoxContainer/AllContent/Middle/MiddleTexture" index="0" node_paths=PackedStringArray("_audio")]
 _audio = NodePath("../../../../../../../AudioController")
@@ -131,13 +123,18 @@ _equalizer = NodePath("../EqualizerWindow/Equalizer")
 _playlist = NodePath("../PlaylistWindow/Playlist")
 _visualizer = NodePath("../VisualizerWindow/Visualizer")
 
+[connection signal="Changed" from="OperationIssues" to="OperationStatus" method="Refresh"]
+[connection signal="FilesSelected" from="FilePickers" to="AudioImportController" method="ImportFiles"]
+[connection signal="FolderSelected" from="FilePickers" to="AudioImportController" method="ImportFolder"]
+[connection signal="PlaylistDestinationSelected" from="FilePickers" to="PlaylistController" method="Save"]
+[connection signal="PlaylistSelected" from="FilePickers" to="PlaylistController" method="Open"]
 [connection signal="StateChanged" from="AudioController" to="MasterPanel" method="RefreshAudioState"]
 [connection signal="StateChanged" from="AudioController" to="EqualizerWindow/Equalizer" method="RefreshAudioState"]
 [connection signal="BalanceRequested" from="MasterPanel" to="AudioController" method="SetBalance"]
 [connection signal="DragEnded" from="MasterPanel" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="MasterPanel" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="MasterPanel" to="WindowManager" method="OnWindowDragStart"]
-[connection signal="FilesRequested" from="MasterPanel" to="." method="OnLoadTracksRequested"]
+[connection signal="FilesRequested" from="MasterPanel" to="FilePickers" method="OpenFiles"]
 [connection signal="NextRequested" from="MasterPanel" to="PlaybackController" method="Next"]
 [connection signal="PauseRequested" from="MasterPanel" to="PlaybackController" method="TogglePause"]
 [connection signal="PlayRequested" from="MasterPanel" to="PlaybackController" method="Play"]
@@ -146,15 +143,15 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="SeekRequested" from="MasterPanel" to="PlaybackController" method="Seek"]
 [connection signal="ShuffleRequested" from="MasterPanel" to="PlaybackController" method="SetShuffle"]
 [connection signal="StopRequested" from="MasterPanel" to="PlaybackController" method="Stop"]
-[connection signal="ToggleEqualizerRequested" from="MasterPanel" to="." method="OnToggleEqualizerRequested"]
-[connection signal="TogglePlaylistRequested" from="MasterPanel" to="." method="OnTogglePlaylistRequested"]
+[connection signal="ToggleEqualizerRequested" from="MasterPanel" to="WindowManager" method="ToggleEqualizer"]
+[connection signal="TogglePlaylistRequested" from="MasterPanel" to="WindowManager" method="TogglePlaylist"]
 [connection signal="VolumeRequested" from="MasterPanel" to="AudioController" method="SetVolume"]
 [connection signal="WindowshadeRequested" from="MasterPanel" to="WindowManager" method="SetWindowShaded"]
-[connection signal="ToggleEqualizerRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnToggleEqualizerRequested"]
-[connection signal="TogglePlaylistRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnTogglePlaylistRequested"]
-[connection signal="ToggleVisualizerRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnToggleVisualizerRequested"]
-[connection signal="ZoomModeRequested" from="MasterPanel/Controls/WinampMenuButton" to="." method="OnZoomModeRequested"]
-[connection signal="StatusChanged" from="AudioImportController" to="ImportStatus" method="Refresh"]
+[connection signal="ToggleEqualizerRequested" from="MasterPanel/Controls/WinampMenuButton" to="WindowManager" method="ToggleEqualizer"]
+[connection signal="TogglePlaylistRequested" from="MasterPanel/Controls/WinampMenuButton" to="WindowManager" method="TogglePlaylist"]
+[connection signal="ToggleVisualizerRequested" from="MasterPanel/Controls/WinampMenuButton" to="WindowManager" method="ToggleVisualizer"]
+[connection signal="ZoomModeRequested" from="MasterPanel/Controls/WinampMenuButton" to="WindowManager" method="SetZoomMode"]
+[connection signal="StatusChanged" from="AudioImportController" to="OperationStatus" method="Refresh"]
 [connection signal="finished" from="TrackPlayer" to="PlaybackController" method="OnTrackFinished"]
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackTitle"]
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackPresentation"]
@@ -163,17 +160,17 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel" method="RefreshMetadata"]
 [connection signal="MetadataChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshMetadata"]
 [connection signal="ModesChanged" from="PlaybackController" to="MasterPanel" method="RefreshModes"]
-[connection signal="OpenTracksRequested" from="PlaybackController" to="." method="OnOpenTracksRequested"]
-[connection signal="PlaybackFailed" from="PlaybackController" to="AudioImportController" method="ReportFileFailure"]
-[connection signal="PlaybackStateChanged" from="PlaybackController" to="." method="OnPlaybackStateChanged"]
+[connection signal="OpenTracksRequested" from="PlaybackController" to="FilePickers" method="OpenReplacementTracks"]
+[connection signal="PlaybackFailed" from="PlaybackController" to="OperationIssues" method="ReportPlaybackFailure"]
 [connection signal="PlaybackStateChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackPresentation"]
 [connection signal="PlaybackStateChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh"]
+[connection signal="PlaybackStateChanged" from="PlaybackController" to="VisualizerWindow/Visualizer" method="RefreshPlaybackState"]
 [connection signal="QueueChanged" from="PlaybackController" to="MasterPanel" method="RefreshTrackTitle"]
 [connection signal="QueueChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="Refresh"]
-[connection signal="files_dropped" from="EqualizerWindow" to="." method="OnFilesDropped"]
+[connection signal="files_dropped" from="EqualizerWindow" to="AudioImportController" method="ImportDrop"]
 [connection signal="BalanceRequested" from="EqualizerWindow/Equalizer" to="AudioController" method="SetBalance"]
 [connection signal="BandGainRequested" from="EqualizerWindow/Equalizer" to="AudioController" method="SetBandGain"]
-[connection signal="CloseButtonClicked" from="EqualizerWindow/Equalizer" to="." method="OnEqualizerCloseButtonClicked"]
+[connection signal="CloseButtonClicked" from="EqualizerWindow/Equalizer" to="WindowManager" method="HideEqualizer"]
 [connection signal="DragEnded" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="EqualizerWindow/Equalizer" to="WindowManager" method="OnWindowDragStart"]
@@ -181,16 +178,16 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="PreampRequested" from="EqualizerWindow/Equalizer" to="AudioController" method="SetPreamp"]
 [connection signal="VolumeRequested" from="EqualizerWindow/Equalizer" to="AudioController" method="SetVolume"]
 [connection signal="WindowshadeRequested" from="EqualizerWindow/Equalizer" to="WindowManager" method="SetWindowShaded"]
-[connection signal="files_dropped" from="PlaylistWindow" to="." method="OnFilesDropped"]
+[connection signal="files_dropped" from="PlaylistWindow" to="AudioImportController" method="ImportDrop"]
 [connection signal="ClearRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Clear"]
-[connection signal="CloseButtonClicked" from="PlaylistWindow/Playlist" to="." method="OnPlaylistCloseButtonClicked"]
+[connection signal="CloseButtonClicked" from="PlaylistWindow/Playlist" to="WindowManager" method="HidePlaylist"]
 [connection signal="DragEnded" from="PlaylistWindow/Playlist" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="PlaylistWindow/Playlist" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="PlaylistWindow/Playlist" to="WindowManager" method="OnWindowDragStart"]
 [connection signal="EntryActivated" from="PlaylistWindow/Playlist" to="PlaybackController" method="Activate"]
-[connection signal="FilesRequested" from="PlaylistWindow/Playlist" to="." method="OnLoadTracksRequested"]
-[connection signal="FolderRequested" from="PlaylistWindow/Playlist" to="." method="OnLoadTracksFromDirRequested"]
-[connection signal="LoadPlaylistRequested" from="PlaylistWindow/Playlist" to="." method="OnLoadPlaylistRequested"]
+[connection signal="FilesRequested" from="PlaylistWindow/Playlist" to="FilePickers" method="OpenFiles"]
+[connection signal="FolderRequested" from="PlaylistWindow/Playlist" to="FilePickers" method="OpenFolder"]
+[connection signal="LoadPlaylistRequested" from="PlaylistWindow/Playlist" to="FilePickers" method="OpenPlaylist"]
 [connection signal="MetadataRefreshRequested" from="PlaylistWindow/Playlist" to="AudioImportController" method="RefreshMetadata"]
 [connection signal="MoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Move"]
 [connection signal="NextRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Next"]
@@ -201,15 +198,23 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="RemoveEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Remove"]
 [connection signal="RemoveMissingRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="RemoveMissingFiles"]
 [connection signal="RetainEntriesRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Retain"]
-[connection signal="SavePlaylistRequested" from="PlaylistWindow/Playlist" to="." method="OnSavePlaylistRequested"]
+[connection signal="SavePlaylistRequested" from="PlaylistWindow/Playlist" to="FilePickers" method="SavePlaylist"]
 [connection signal="StopRequested" from="PlaylistWindow/Playlist" to="PlaybackController" method="Stop"]
 [connection signal="WindowshadeRequested" from="PlaylistWindow/Playlist" to="WindowManager" method="SetWindowShaded"]
-[connection signal="files_dropped" from="VisualizerWindow" to="." method="OnFilesDropped"]
-[connection signal="CloseButtonClicked" from="VisualizerWindow/Visualizer" to="." method="OnVisualizerCloseButtonClicked"]
+[connection signal="ResizeFinished" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeFinished"]
+[connection signal="ResizeStarted" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeStarted"]
+[connection signal="SizeRequested" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="SetLogicalSize"]
+[connection signal="files_dropped" from="VisualizerWindow" to="AudioImportController" method="ImportDrop"]
+[connection signal="CloseButtonClicked" from="VisualizerWindow/Visualizer" to="WindowManager" method="HideVisualizer"]
 [connection signal="DragEnded" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragEnd"]
 [connection signal="DragMoved" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragMoved"]
 [connection signal="DragStarted" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragStart"]
+[connection signal="ResizeFinished" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeFinished"]
+[connection signal="ResizeStarted" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeStarted"]
+[connection signal="SizeRequested" from="VisualizerWindow/Visualizer/ResizeLayer/ResizeHandle" to="WindowManager" method="SetLogicalSize"]
+[connection signal="VisibilityChanged" from="WindowManager" to="MasterPanel" method="RefreshWindowVisibility"]
 
 [editable path="MasterPanel"]
 [editable path="EqualizerWindow/Equalizer"]
+[editable path="PlaylistWindow/Playlist"]
 [editable path="VisualizerWindow/Visualizer"]

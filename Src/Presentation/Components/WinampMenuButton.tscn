@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://i0q31hsu8ojj"]
+
+[ext_resource type="Script" uid="uid://bolhoxd1h4jeq" path="res://Src/Presentation/Components/WinampMenuButton.cs" id="1_10mdb"]
+
+[node name="WinampMenuButton" type="MenuButton" node_paths=PackedStringArray("_scaleSubmenu", "_skinSubmenu")]
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 15.0
+offset_bottom = 12.0
+script = ExtResource("1_10mdb")
+_scaleSubmenu = NodePath("ScaleSubmenu")
+_skinSubmenu = NodePath("SkinSubmenu")
+item_count = 6
+popup/item_0/text = "Scale UI"
+popup/item_0/id = 0
+popup/item_1/text = "Skins"
+popup/item_1/id = 1
+popup/item_2/separator = true
+popup/item_2/id = 2
+popup/item_3/text = "Equalizer"
+popup/item_3/id = 100
+popup/item_3/checkable = 1
+popup/item_3/checked = true
+popup/item_4/text = "Playlist"
+popup/item_4/id = 101
+popup/item_4/checkable = 1
+popup/item_4/checked = true
+popup/item_5/text = "Visualizer"
+popup/item_5/id = 102
+popup/item_5/checkable = 1
+popup/item_5/checked = true
+
+[node name="ScaleSubmenu" type="PopupMenu" parent="."]
+hide_on_checkable_item_selection = false
+item_count = 4
+item_0/text = "1x"
+item_0/id = 1
+item_1/text = "2x"
+item_1/id = 2
+item_2/text = "3x"
+item_2/id = 3
+item_3/text = "4x"
+item_3/id = 4
+
+[node name="SkinSubmenu" type="PopupMenu" parent="."]
+
+[connection signal="id_pressed" from="ScaleSubmenu" to="." method="OnScaleMenuItemPressed"]
+[connection signal="about_to_popup" from="SkinSubmenu" to="." method="RefreshSkinList"]
+[connection signal="index_pressed" from="SkinSubmenu" to="." method="OnSkinMenuItemPressed"]

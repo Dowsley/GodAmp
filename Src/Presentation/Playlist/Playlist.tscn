@@ -1,0 +1,546 @@
+[gd_scene format=3 uid="uid://diw508vd3gr8k"]
+
+[ext_resource type="Script" uid="uid://35td6b067wck" path="res://Src/Presentation/Playlist/Playlist.cs" id="1_qbsw1"]
+[ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorController.cs" id="cursors"]
+[ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorBinding.cs" id="cursor_binding"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Components/WindowResizeHandle.tscn" id="resize_handle"]
+[ext_resource type="PackedScene" uid="uid://b0lgw7guxv7tw" path="res://Src/Presentation/Playlist/PlaylistTrackEntry.tscn" id="2_ecqcu"]
+[ext_resource type="Texture2D" uid="uid://dspjst6ciuvy0" path="res://Data/SkinResources/PlaylistTopLeftCorner.tres" id="3_bltap"]
+[ext_resource type="Texture2D" uid="uid://duaqnxdcf32o3" path="res://Data/SkinResources/PlaylistTopTilableBar.tres" id="4_ajpn4"]
+[ext_resource type="Texture2D" uid="uid://c8viqgj8uv5yh" path="res://Data/SkinResources/PlaylistMinimizeButtonNormal.tres" id="4_esdbs"]
+[ext_resource type="Texture2D" uid="uid://qg36ardl2ip0" path="res://Data/SkinResources/PlaylistMinimizeButtonPressed.tres" id="5_bltap"]
+[ext_resource type="Texture2D" uid="uid://g1tc2qlhfejw" path="res://Data/SkinResources/PlaylistTitlebar.tres" id="5_njjkq"]
+[ext_resource type="Texture2D" uid="uid://wc57x2wc60q1" path="res://Data/SkinResources/PlaylistCloseButtonNormal.tres" id="6_esdbs"]
+[ext_resource type="Texture2D" uid="uid://d0bojntuwrhck" path="res://Data/SkinResources/PlaylistTopRightCorner.tres" id="6_njjkq"]
+[ext_resource type="Texture2D" uid="uid://cxk0cy7jmrluf" path="res://Data/SkinResources/PlaylistCloseButtonPressed.tres" id="7_bltap"]
+[ext_resource type="PackedScene" uid="uid://c8do4imjy7rnv" path="res://Src/Presentation/Playlist/ButtonDropdowns/AddButtonDropdown.tscn" id="9_bcdvx"]
+[ext_resource type="PackedScene" uid="uid://cvky7cixi5gbr" path="res://Src/Presentation/Playlist/ButtonDropdowns/RemoveButtonDropdown.tscn" id="10_ibn1u"]
+[ext_resource type="PackedScene" uid="uid://ryfqbifwt78y" path="res://Src/Presentation/Playlist/ButtonDropdowns/SelectButtonDropdown.tscn" id="11_esdbs"]
+[ext_resource type="Texture2D" uid="uid://cnt4ydi16ep40" path="res://Data/SkinResources/PlaylistTilableLeftEdge.tres" id="11_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://dstelo754087c" path="res://Data/SkinResources/PlaylistMiddleTexture.tres" id="12_aygep"]
+[ext_resource type="PackedScene" uid="uid://dmmlyylsgb8qx" path="res://Src/Presentation/Playlist/ButtonDropdowns/MiscButtonDropdown.tscn" id="12_bltap"]
+[ext_resource type="Texture2D" uid="uid://wd0l6njpwwa7" path="res://Data/SkinResources/PlaylistTilableBottomEdge.tres" id="13_7604m"]
+[ext_resource type="PackedScene" uid="uid://b2jb8pn7u1pk5" path="res://Src/Presentation/Playlist/ButtonDropdowns/ListOptionsButtonDropdown.tscn" id="13_esdbs"]
+[ext_resource type="Texture2D" uid="uid://c4d6wfd07o5xh" path="res://Data/SkinResources/PlaylistTilableRightEdge.tres" id="13_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://b2gvrucfukmad" path="res://Data/SkinResources/PlaylistButtonsArea.tres" id="14_7604m"]
+[ext_resource type="Texture2D" uid="uid://5fkrqwagf1u0" path="res://Data/SkinResources/PlaylistAddButton.tres" id="16_l1iyi"]
+[ext_resource type="Texture2D" uid="uid://bcd8n3gl33yf0" path="res://Data/SkinResources/PlaylistRemoveButton.tres" id="17_xtgbh"]
+[ext_resource type="Texture2D" uid="uid://ff6fn5glq31w" path="res://Data/SkinResources/PlaylistSelectButton.tres" id="18_28pe4"]
+[ext_resource type="Texture2D" uid="uid://dm8h3chsour0o" path="res://Data/SkinResources/PlaylistMiscButton.tres" id="19_7604m"]
+[ext_resource type="Texture2D" uid="uid://bhlcuq0n0o35r" path="res://Data/SkinResources/PlaylistSecondaryVisualizationArea.tres" id="20_7604m"]
+[ext_resource type="Texture2D" uid="uid://8i6jdrj4bx7d" path="res://Data/SkinResources/PlaylistControlArea.tres" id="20_kvkyn"]
+[ext_resource type="Texture2D" uid="uid://jn8fnj8u2o73" path="res://Data/SkinResources/PlaylistListOptionsButton.tres" id="22_kvkyn"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadePlaylistSheet.tres" id="shade_sheet"]
+[ext_resource type="Script" path="res://Src/Presentation/Components/BitmapLabel.cs" id="bitmap_label"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="bitmap_theme"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/PlaylistFooter.tscn" id="footer"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/FileInfo/FileInfoDialog.tscn" id="file_info"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/Search/JumpToTrackDialog.tscn" id="search"]
+[ext_resource type="Shortcut" path="res://Src/Presentation/Playlist/Search/JumpToTrackShortcut.tres" id="search_shortcut"]
+
+[sub_resource type="AtlasTexture" id="shade_left"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(72, 42, 25, 14)
+
+[sub_resource type="AtlasTexture" id="shade_middle"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(72, 57, 25, 14)
+
+[sub_resource type="AtlasTexture" id="shade_right"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(99, 42, 50, 14)
+
+[sub_resource type="AtlasTexture" id="shade_restore"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(128, 45, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_restore_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(150, 42, 9, 9)
+
+[sub_resource type="Resource" id="cursor_shade"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
+Role = 19
+
+[sub_resource type="Resource" id="cursor_shade_resize"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/ResizeHandle")])
+Role = 18
+
+[sub_resource type="Resource" id="cursor_shade_restore"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Restore")])
+Role = 12
+
+[sub_resource type="Resource" id="cursor_shade_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
+Role = 13
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibn1u"]
+
+[sub_resource type="Resource" id="cursor_title"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../DraggableHitbox")])
+Role = 14
+
+[sub_resource type="Resource" id="cursor_minimize"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton")])
+Role = 12
+
+[sub_resource type="Resource" id="cursor_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton")])
+Role = 13
+
+[sub_resource type="Resource" id="cursor_resize"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../ResizeLayer/ResizeHandle")])
+Role = 16
+
+[sub_resource type="Resource" id="cursor_scroll"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")])
+Role = 15
+UseVerticalScrollBar = true
+
+[node name="Playlist" type="PanelContainer" node_paths=PackedStringArray("_trackEntryContainer", "_scrollContainer", "AddButtonDropdown", "RemoveButtonDropdown", "SelectButtonDropdown", "MiscButtonDropdown", "ListOptionsButtonDropdown", "AddButton", "RemoveButton", "SelectButton", "MiscButton", "ListOptionsButton", "_contents", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeTitle", "_windowshadeDuration", "_footer", "_fileInfo", "_contextMenu", "_search")]
+custom_minimum_size = Vector2(275, 116)
+offset_right = 275.0
+offset_bottom = 116.0
+size_flags_vertical = 3
+script = ExtResource("1_qbsw1")
+TitlebarTextures = Array[AtlasTexture]([ExtResource("3_bltap"), ExtResource("4_ajpn4"), ExtResource("5_njjkq"), ExtResource("6_njjkq")])
+InactiveTitlebarOffset = 21
+ResizeStep = Vector2i(25, 29)
+ExpandedControls = Array[NodePath]([NodePath("VBoxContainer"), NodePath("DraggableHitbox"), NodePath("ResizeLayer")])
+Windowshade = NodePath("Windowshade")
+WindowshadeDragHitbox = NodePath("Windowshade")
+WindowshadeButtons = Array[NodePath]([NodePath("VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton")])
+WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_right")])
+WindowshadeInactiveOffset = 15
+_windowshadeTitle = NodePath("Windowshade/Title")
+_windowshadeDuration = NodePath("Windowshade/Duration")
+_footer = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer")
+_fileInfo = NodePath("FileInfoDialog")
+_contextMenu = NodePath("ContextMenu")
+_search = NodePath("JumpToTrackDialog")
+_jumpShortcut = ExtResource("search_shortcut")
+TrackLabelScene = ExtResource("2_ecqcu")
+_trackEntryContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer/PlaylistTrackEntryContainer")
+_scrollContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")
+AddButtonDropdown = NodePath("AddButtonDropdown")
+RemoveButtonDropdown = NodePath("RemoveButtonDropdown")
+SelectButtonDropdown = NodePath("SelectButtonDropdown")
+MiscButtonDropdown = NodePath("MiscButtonDropdown")
+ListOptionsButtonDropdown = NodePath("ListOptionsButtonDropdown")
+AddButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/AddButton")
+RemoveButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/RemoveButton")
+SelectButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton")
+MiscButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton")
+ListOptionsButton = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton")
+_contents = NodePath("VBoxContainer")
+_draggableHitbox = NodePath("DraggableHitbox")
+
+[node name="SkinCursors" type="Node" parent="."]
+script = ExtResource("cursors")
+DefaultRole = 17
+Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_scroll"), SubResource("cursor_resize"), SubResource("cursor_shade"), SubResource("cursor_shade_restore"), SubResource("cursor_shade_close"), SubResource("cursor_shade_resize")])
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="TopLeftCornerTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("3_bltap")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+axis_stretch_horizontal = 1
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_ajpn4")
+
+[node name="TitleTextureRect" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("5_njjkq")
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="VBoxContainer/HeaderContainer"]
+axis_stretch_horizontal = 1
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_ajpn4")
+
+[node name="TopRightCornerTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+texture = ExtResource("6_njjkq")
+
+[node name="MinimizeButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 3.0
+offset_right = 14.0
+offset_bottom = 12.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("4_esdbs")
+texture_pressed = ExtResource("5_bltap")
+stretch_mode = 3
+
+[node name="CloseButton" type="TextureButton" parent="VBoxContainer/HeaderContainer/TopRightCornerTexture"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 3.0
+offset_right = 23.0
+offset_bottom = 12.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("6_esdbs")
+texture_pressed = ExtResource("7_bltap")
+stretch_mode = 3
+
+[node name="AllContent" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ContentContainer" type="PanelContainer" parent="VBoxContainer/AllContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ibn1u")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="TilableLeftEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
+axis_stretch_vertical = 1
+custom_minimum_size = Vector2(25, 29)
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("11_kvkyn")
+region_rect = Rect2(0, 0, 25, 29)
+
+[node name="MiddleTexture" type="TextureRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("12_aygep")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="TilableRightEdge" type="NinePatchRect" parent="VBoxContainer/AllContent/ContentContainer/HBoxContainer"]
+axis_stretch_vertical = 1
+custom_minimum_size = Vector2(25, 19)
+layout_mode = 2
+texture = ExtResource("13_kvkyn")
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ContentContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 11
+theme_override_constants/margin_right = 7
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 2
+
+[node name="PlaylistTrackEntryContainer" type="VBoxContainer" parent="VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="TilableBottomEdge" type="NinePatchRect" parent="VBoxContainer/AllContent"]
+axis_stretch_horizontal = 1
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+texture = ExtResource("13_7604m")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/AllContent/TilableBottomEdge"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="ButtonsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("14_7604m")
+
+[node name="AddButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 8.0
+offset_right = 36.0
+offset_bottom = 26.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = ExtResource("16_l1iyi")
+texture_pressed = ExtResource("16_l1iyi")
+stretch_mode = 5
+
+[node name="RemoveButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 8.0
+offset_right = 65.0
+offset_bottom = 26.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = ExtResource("17_xtgbh")
+texture_pressed = ExtResource("17_xtgbh")
+stretch_mode = 5
+
+[node name="SelectButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 8.0
+offset_right = 94.0
+offset_bottom = 26.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = ExtResource("18_28pe4")
+texture_pressed = ExtResource("18_28pe4")
+stretch_mode = 5
+
+[node name="MiscButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea"]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 8.0
+offset_right = 123.0
+offset_bottom = 26.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+focus_mode = 1
+texture_normal = ExtResource("19_7604m")
+texture_pressed = ExtResource("19_7604m")
+stretch_mode = 5
+
+[node name="SecondaryVisualizationArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("20_7604m")
+
+[node name="ControlsArea" type="TextureRect" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("20_kvkyn")
+
+[node name="ListOptionsButton" type="TextureButton" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea"]
+layout_mode = 0
+offset_left = 106.0
+offset_top = 8.0
+offset_right = 128.0
+offset_bottom = 26.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture_normal = ExtResource("22_kvkyn")
+texture_pressed = ExtResource("22_kvkyn")
+stretch_mode = 5
+
+[node name="Footer" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea" instance=ExtResource("footer")]
+layout_mode = 0
+anchors_preset = 0
+
+[node name="DraggableHitbox" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="AddButtonDropdown" parent="." instance=ExtResource("9_bcdvx")]
+visible = false
+
+[node name="RemoveButtonDropdown" parent="." instance=ExtResource("10_ibn1u")]
+visible = false
+
+[node name="SelectButtonDropdown" parent="." instance=ExtResource("11_esdbs")]
+visible = false
+
+[node name="MiscButtonDropdown" parent="." instance=ExtResource("12_bltap")]
+visible = false
+
+[node name="ListOptionsButtonDropdown" parent="." instance=ExtResource("13_esdbs")]
+visible = false
+
+[node name="ResizeLayer" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ResizeHandle" parent="ResizeLayer" node_paths=PackedStringArray("Panel") instance=ExtResource("resize_handle")]
+Panel = NodePath("../..")
+
+[node name="Windowshade" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(275, 14)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Left" type="TextureRect" parent="Windowshade"]
+layout_mode = 0
+offset_right = 25.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_left")
+
+[node name="Middle" type="NinePatchRect" parent="Windowshade"]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = -50.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_middle")
+axis_stretch_horizontal = 1
+
+[node name="Right" type="TextureRect" parent="Windowshade"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = SubResource("shade_right")
+
+[node name="Title" type="Label" parent="Windowshade"]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -69.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = ExtResource("bitmap_theme")
+text = "PLAYLIST"
+clip_text = true
+script = ExtResource("bitmap_label")
+
+[node name="Duration" type="Label" parent="Windowshade"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 4.0
+offset_right = -29.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = ExtResource("bitmap_theme")
+text = "0:00"
+horizontal_alignment = 2
+clip_text = true
+script = ExtResource("bitmap_label")
+
+[node name="Restore" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = 3.0
+offset_right = -11.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("shade_restore")
+texture_pressed = SubResource("shade_restore_held")
+
+[node name="Close" type="TextureButton" parent="Windowshade"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -11.0
+offset_top = 3.0
+offset_right = -2.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = ExtResource("6_esdbs")
+texture_pressed = ExtResource("7_bltap")
+
+[node name="ResizeHandle" parent="Windowshade" node_paths=PackedStringArray("Panel") instance=ExtResource("resize_handle")]
+offset_left = -2.0
+mouse_default_cursor_shape = 10
+Panel = NodePath("../..")
+
+[node name="FileInfoDialog" parent="." instance=ExtResource("file_info")]
+
+[node name="JumpToTrackDialog" parent="." instance=ExtResource("search")]
+
+[node name="ContextMenu" type="PopupMenu" parent="."]
+item_count = 7
+item_0/text = "Play"
+item_0/id = 0
+item_1/text = "File information"
+item_1/id = 1
+item_2/text = "Refresh metadata"
+item_2/id = 2
+item_3/text = "Remove selected"
+item_3/id = 3
+item_4/text = "Crop to selection"
+item_4/id = 4
+item_5/text = "Select all"
+item_5/id = 5
+item_6/text = "Jump to track (J)"
+item_6/id = 6
+
+[connection signal="FileInfoRequested" from="MiscButtonDropdown" to="." method="OnFileInfoRequested"]
+[connection signal="JumpToTrackRequested" from="MiscButtonDropdown" to="." method="OpenSearch"]
+[connection signal="EntryChosen" from="JumpToTrackDialog" to="." method="OnEntryActivated"]
+[connection signal="RefreshMetadataRequested" from="MiscButtonDropdown" to="." method="OnRefreshMetadataRequested"]
+[connection signal="id_pressed" from="ContextMenu" to="." method="OnContextCommand"]
+[connection signal="PreviousRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPreviousRequested"]
+[connection signal="PlayRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPlayRequested"]
+[connection signal="PauseRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnPauseRequested"]
+[connection signal="StopRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnStopRequested"]
+[connection signal="NextRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnNextRequested"]
+[connection signal="FilesRequested" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/Footer" to="." method="OnOpenFilesRequested"]
+[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="RemoveSelectionRequested" from="RemoveButtonDropdown" to="." method="OnRemoveSelectionRequested"]
+[connection signal="RemoveMissingRequested" from="RemoveButtonDropdown" to="." method="OnRemoveMissingRequested"]
+[connection signal="OrderRequested" from="MiscButtonDropdown" to="." method="OnOrderRequested"]
+[connection signal="CropRequested" from="RemoveButtonDropdown" to="." method="OnCropRequested"]
+[connection signal="ClearRequested" from="RemoveButtonDropdown" to="." method="OnClearRequested"]
+[connection signal="ClearRequested" from="ListOptionsButtonDropdown" to="." method="OnClearRequested"]
+[connection signal="LoadRequested" from="ListOptionsButtonDropdown" to="." method="OnLoadPlaylistRequested"]
+[connection signal="SaveRequested" from="ListOptionsButtonDropdown" to="." method="OnSavePlaylistRequested"]
+[connection signal="FilesRequested" from="AddButtonDropdown" to="." method="OnFilesRequested"]
+[connection signal="FolderRequested" from="AddButtonDropdown" to="." method="OnFolderRequested"]
+[connection signal="InverseSelectionRequested" from="SelectButtonDropdown" to="." method="OnInverseSelectionRequested"]
+[connection signal="SelectZeroRequested" from="SelectButtonDropdown" to="." method="OnSelectZeroRequested"]
+[connection signal="SelectAllRequested" from="SelectButtonDropdown" to="." method="OnSelectAllRequested"]
+[connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
+[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/AddButton" to="." method="OnAddButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/RemoveButton" to="." method="OnRemoveButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/SelectButton" to="." method="OnSelectButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ButtonsArea/MiscButton" to="." method="OnMiscButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea/ListOptionsButton" to="." method="OnListOptionsButtonPressed"]

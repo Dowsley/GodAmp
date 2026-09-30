@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="OpenPlaylist" type="FileDialog"]
+title = "Open playlist"
+file_mode = 0
+access = 2
+use_native_dialog = true
