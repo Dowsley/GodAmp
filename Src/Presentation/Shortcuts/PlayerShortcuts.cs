@@ -1,3 +1,4 @@
+using GodAmp.Presentation.Commands;
 using Godot;
 
 namespace GodAmp.Presentation.Shortcuts;
@@ -5,18 +6,25 @@ namespace GodAmp.Presentation.Shortcuts;
 /// <summary>Publishes player commands from unhandled keyboard input in its owning viewport.</summary>
 public partial class PlayerShortcuts : Node
 {
-    [Signal] public delegate void JumpToTrackRequestedEventHandler();
+    [Signal] public delegate void CommandRequestedEventHandler(PlayerCommand command);
 
-    [Export] private Shortcut _jumpToTrack = null!;
+    [Export] private Godot.Collections.Array<PlayerShortcutBinding> _bindings = [];
 
-    /// <summary>Requests track search for a matching key press after focused controls process input.</summary>
+    /// <summary>Emits the first matching binding's command after focused controls process input.</summary>
     /// <param name="input">Unhandled keyboard input from this player's viewport.</param>
     public override void _UnhandledKeyInput(InputEvent input)
     {
-        if (input is not InputEventKey { Pressed: true, Echo: false } || !_jumpToTrack.MatchesEvent(input))
+        if (input is not InputEventKey { Pressed: true, Echo: false })
             return;
 
-        GetViewport().SetInputAsHandled();
-        EmitSignal(SignalName.JumpToTrackRequested);
+        foreach (PlayerShortcutBinding binding in _bindings)
+        {
+            if (binding?.Shortcut == null || !binding.Shortcut.MatchesEvent(input))
+                continue;
+
+            GetViewport().SetInputAsHandled();
+            EmitSignal(SignalName.CommandRequested, (int)binding.Command);
+            return;
+        }
     }
 }

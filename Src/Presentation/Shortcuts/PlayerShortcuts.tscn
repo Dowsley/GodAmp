@@ -1,8 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://Src/Presentation/Shortcuts/PlayerShortcuts.cs" id="script"]
 [ext_resource type="Shortcut" path="res://Src/Presentation/Shortcuts/JumpToTrackShortcut.tres" id="jump"]
+[ext_resource type="Script" path="res://Src/Presentation/Shortcuts/PlayerShortcutBinding.cs" id="binding"]
+
+[sub_resource type="Resource" id="jump_binding"]
+script = ExtResource("binding")
+Shortcut = ExtResource("jump")
+Command = 0
 
 [node name="PlayerShortcuts" type="Node"]
 script = ExtResource("script")
-_jumpToTrack = ExtResource("jump")
+_bindings = Array[ExtResource("binding")]([SubResource("jump_binding")])
