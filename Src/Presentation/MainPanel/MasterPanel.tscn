@@ -236,6 +236,10 @@ texture_pressed = ExtResource("close_held")
 
 [node name="WinampMenuButton" parent="Controls" instance=ExtResource("menu")]
 layout_mode = 0
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 15.0
+offset_bottom = 12.0
 
 [node name="VolumeSlider" parent="Controls" instance=ExtResource("slider")]
 layout_mode = 0

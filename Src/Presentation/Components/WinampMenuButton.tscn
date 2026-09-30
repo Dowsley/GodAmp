@@ -13,10 +13,8 @@ texture = ExtResource("menu_pressed")
 [sub_resource type="StyleBoxEmpty" id="empty_style"]
 
 [node name="WinampMenuButton" type="MenuButton" node_paths=PackedStringArray("_scaleSubmenu", "_skinSubmenu")]
-offset_left = 6.0
-offset_top = 3.0
-offset_right = 15.0
-offset_bottom = 12.0
+offset_right = 9.0
+offset_bottom = 9.0
 theme_override_styles/normal = SubResource("menu_normal_style")
 theme_override_styles/hover = SubResource("menu_normal_style")
 theme_override_styles/pressed = SubResource("menu_pressed_style")

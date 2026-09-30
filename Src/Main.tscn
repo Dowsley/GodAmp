@@ -57,12 +57,6 @@ Playback = NodePath("../../../PlaybackController")
 Player = NodePath("../../../TrackPlayer")
 _audio = NodePath("../../../AudioController")
 
-[node name="WinampMenuButton" parent="MasterPanel/Controls" index="5"]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 9.0
-offset_bottom = 9.0
-
 [node name="AudioImportController" type="Node" parent="." unique_id=1533595608 node_paths=PackedStringArray("_playbackController", "_operationIssues")]
 script = ExtResource("audio_imports")
 _playbackController = NodePath("../PlaybackController")
