@@ -47,6 +47,7 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private SkinSlider _windowshadeSeek = null!;
     [Export] private Label _windowshadeTime = null!;
     [ExportSubgroup("Time display")]
+    [Export] private Control _clock = null!;
     [Export] private Label _timeMinutesTensLabel = null!;
     [Export] private Label _timeMinutesOnesLabel = null!;
     [Export] private Label _timeSecondsTensLabel = null!;
@@ -58,7 +59,6 @@ public partial class MasterPanel : WindowPanelContainer
     private enum LabelDisplay { Track, Slider, Seek }
     private LabelDisplay _labelDisplay;
     private int _displayedSecond = -1;
-    private float _clockAlpha = float.NaN;
 
     /// <summary>Reflects the window owner's visibility state in the panel's controls.</summary>
     /// <param name="window">Window whose visibility was published.</param>
@@ -141,7 +141,7 @@ public partial class MasterPanel : WindowPanelContainer
     private void UpdateTimeDisplay()
     {
         var playbackPosition = _playbackController.Position;
-        var time = System.TimeSpan.FromSeconds(playbackPosition);
+        var time = TimeSpan.FromSeconds(playbackPosition);
 
         int totalMinutes = (int)time.TotalMinutes;
         int seconds = time.Seconds;
@@ -174,15 +174,13 @@ public partial class MasterPanel : WindowPanelContainer
         }
     }
 
+    /// <summary>Sets shared opacity for all expanded clock digits.</summary>
+    /// <param name="alpha">Opacity from zero (transparent) to one (opaque).</param>
     private void SetClockAlpha(float alpha)
     {
-        if (_clockAlpha == alpha)
+        if (_clock.Modulate.A == alpha)
             return;
-        _clockAlpha = alpha;
-        _timeMinutesTensLabel.Modulate = new Color(_timeMinutesTensLabel.Modulate, alpha);
-        _timeMinutesOnesLabel.Modulate = new Color(_timeMinutesOnesLabel.Modulate, alpha);
-        _timeSecondsTensLabel.Modulate = new Color(_timeSecondsTensLabel.Modulate, alpha);
-        _timeSecondsOnesLabel.Modulate = new Color(_timeSecondsOnesLabel.Modulate, alpha);
+        _clock.Modulate = new Color(_clock.Modulate, alpha);
     }
 
     /// <summary>Reflects navigation policy without emitting another toggle request.</summary>
