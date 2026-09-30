@@ -5,6 +5,9 @@
 [ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorController.cs" id="cursors"]
 [ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorBinding.cs" id="cursor_binding"]
 [ext_resource type="Script" path="res://Src/Presentation/Equalizer/EqualizerGraph.cs" id="graph"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerGraphBackground.tres" id="graph_background"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerPreampLine.tres" id="preamp_line"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerCurvePalette.tres" id="curve_palette"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerBackground.tres" id="background"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerTitleBar.tres" id="titlebar"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/EqualizerCloseButtonNormal.tres" id="close"]
@@ -121,7 +124,7 @@ offset_bottom = 14.0
 mouse_filter = 2
 texture = ExtResource("titlebar")
 
-[node name="Graph" type="Control" parent="Controls"]
+[node name="Graph" type="Control" parent="Controls" node_paths=PackedStringArray("_preampLine")]
 layout_mode = 0
 anchors_preset = 0
 offset_left = 86.0
@@ -130,6 +133,23 @@ offset_right = 199.0
 offset_bottom = 36.0
 mouse_filter = 2
 script = ExtResource("graph")
+_preampLine = NodePath("PreampLine")
+_curvePalette = ExtResource("curve_palette")
+
+[node name="Background" type="TextureRect" parent="Controls/Graph"]
+show_behind_parent = true
+offset_right = 113.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("graph_background")
+
+[node name="PreampLine" type="TextureRect" parent="Controls/Graph"]
+show_behind_parent = true
+offset_top = 9.0
+offset_right = 113.0
+offset_bottom = 10.0
+mouse_filter = 2
+texture = ExtResource("preamp_line")
 
 [node name="CloseButton" type="TextureButton" parent="Controls"]
 layout_mode = 0

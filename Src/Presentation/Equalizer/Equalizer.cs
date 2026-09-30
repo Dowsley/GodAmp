@@ -39,7 +39,7 @@ public partial class Equalizer : WindowPanelContainer
         _balanceSlider.SetValueNoSignal(_audio.Balance);
         for (int band = 0; band < _bandSliders.Count; band++)
             _bandSliders[band].SetValueNoSignal(_audio.BandGains[band]);
-        _graph.QueueRedraw();
+        _graph.Refresh();
     }
 
     private void OnEqualizerToggleButtonPressed() => EmitSignal(SignalName.EnabledRequested, _equalizerToggleButton.ButtonPressed);

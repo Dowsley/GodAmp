@@ -120,12 +120,6 @@ public partial class SkinLoader : Node
                 _defaultImages[name] = atlas.Atlas.GetImage();
         }
 
-        foreach (string name in new[] { "PLAYPAUS", "MONOSTER" })
-        {
-            Texture2D texture = GD.Load<Texture2D>(DefaultArtworkPath + name + ".png");
-            textures[name] = texture;
-            _defaultImages[name] = texture.GetImage();
-        }
         Image text = GD.Load<FontFile>(BitmapFontPath).GetTextureImage(0, Vector2I.Zero, 0);
         Image numbers = GD.Load<FontFile>(BitmapNumbersFontPath).GetTextureImage(0, Vector2I.Zero, 0);
         _defaultImages["TEXT"] = text;

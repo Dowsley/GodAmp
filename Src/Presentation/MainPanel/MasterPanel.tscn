@@ -1,102 +1,56 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
-[ext_resource type="Script" path="res://Src/Presentation/MainPanel/MasterPanel.cs" id="panel"]
-[ext_resource type="Script" path="res://Src/Presentation/MainPanel/PlaybackClock.cs" id="clock"]
-[ext_resource type="Script" path="res://Src/Presentation/MainPanel/CompactPlaybackClock.cs" id="compact_clock"]
-[ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinWindowShape.tscn" id="shape"]
-[ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorController.cs" id="cursors"]
-[ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorBinding.cs" id="cursor_binding"]
-[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
-[ext_resource type="Theme" path="res://Data/Others/BitmapNumberTheme.tres" id="number_theme"]
-[ext_resource type="Script" path="res://Src/Presentation/MainPanel/PlaybackIndicators.cs" id="indicators"]
-[ext_resource type="Script" path="res://Src/Presentation/MainPanel/ClassicVisualization.cs" id="visualization"]
-[ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinSlider.tscn" id="slider"]
-[ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinToggleButton.tscn" id="toggle"]
-[ext_resource type="Script" path="res://Src/Presentation/Components/BitmapLabel.cs" id="label"]
-[ext_resource type="PackedScene" path="res://Src/Presentation/MainPanel/MarqueeLabel.tscn" id="marquee"]
-[ext_resource type="PackedScene" path="res://Src/Presentation/Components/WinampMenuButton.tscn" id="menu"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelBackground.tres" id="background"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelTitlebar.tres" id="titlebar"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelMinimizeButtonNormal.tres" id="minimize"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelMinimizeButtonPressed.tres" id="minimize_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelCloseButtonNormal.tres" id="close"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/MasterPanelCloseButtonPressed.tres" id="close_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/VolumeSlider.tres" id="volume"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PannerAudioSlider.tres" id="balance"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="seek"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="eq_off"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="eq_on"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="pl_off"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="pl_on"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="previous"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="previous_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="play"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="play_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="pause"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="pause_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="stop"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="stop_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/NextTrackButtonNormal.tres" id="next"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/NextTrackButtonPressed.tres" id="next_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/LoadTracksButtonNormal.tres" id="eject"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/LoadTracksButtonPressed.tres" id="eject_held"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="shuffle_off"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/ShuffleModeButtonPressed.tres" id="shuffle_on"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="repeat_off"]
-[ext_resource type="Texture2D" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="repeat_on"]
+[ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="background"]
+[ext_resource type="Texture2D" uid="uid://08clhe1icnca" path="res://Data/SkinResources/PannerAudioSlider.tres" id="balance"]
+[ext_resource type="Script" uid="uid://bt8gtk7ckm4u3" path="res://Src/Presentation/MainPanel/PlaybackClock.cs" id="clock"]
+[ext_resource type="Texture2D" uid="uid://dwhqep2pu0u1m" path="res://Data/SkinResources/MasterPanelCloseButtonNormal.tres" id="close"]
+[ext_resource type="Texture2D" uid="uid://ultq8stxfd80" path="res://Data/SkinResources/MasterPanelCloseButtonPressed.tres" id="close_held"]
+[ext_resource type="Script" uid="uid://74sinxcer7qy" path="res://Src/Presentation/MainPanel/CompactPlaybackClock.cs" id="compact_clock"]
+[ext_resource type="Script" uid="uid://da01jrtvxvvgj" path="res://Src/Presentation/Components/SkinCursorController.cs" id="cursors"]
+[ext_resource type="Script" uid="uid://cbli2ldp76goe" path="res://Src/Presentation/Components/SkinCursorBinding.cs" id="cursor_binding"]
+[ext_resource type="Texture2D" uid="uid://d0i6n4f48l8aa" path="res://Data/SkinResources/LoadTracksButtonNormal.tres" id="eject"]
+[ext_resource type="Texture2D" uid="uid://pyyuse41v3wi" path="res://Data/SkinResources/LoadTracksButtonPressed.tres" id="eject_held"]
+[ext_resource type="Texture2D" uid="uid://c36trldiqrjwr" path="res://Data/SkinResources/ToggleEqualizerButtonNormal.tres" id="eq_off"]
+[ext_resource type="Texture2D" uid="uid://7jj1x5twau4e" path="res://Data/SkinResources/ToggleEqualizerButtonPressed.tres" id="eq_on"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/MainPanel/PlaybackIndicators.tscn" id="indicators"]
+[ext_resource type="Script" uid="uid://u7v1n5jeyhwj" path="res://Src/Presentation/Components/BitmapLabel.cs" id="label"]
+[ext_resource type="PackedScene" uid="uid://chry3b6bcrbpm" path="res://Src/Presentation/MainPanel/MarqueeLabel.tscn" id="marquee"]
+[ext_resource type="PackedScene" uid="uid://i0q31hsu8ojj" path="res://Src/Presentation/Components/WinampMenuButton.tscn" id="menu"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonNormal.tres" id="menu_normal"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonPressed.tres" id="menu_pressed"]
+[ext_resource type="Texture2D" uid="uid://6i4yfo3524ke" path="res://Data/SkinResources/MasterPanelMinimizeButtonNormal.tres" id="minimize"]
+[ext_resource type="Texture2D" uid="uid://712irenrpqqc" path="res://Data/SkinResources/MasterPanelMinimizeButtonPressed.tres" id="minimize_held"]
+[ext_resource type="Texture2D" uid="uid://ii0nd3mxsvyq" path="res://Data/SkinResources/NextTrackButtonNormal.tres" id="next"]
+[ext_resource type="Texture2D" uid="uid://clxfppa4qfq43" path="res://Data/SkinResources/NextTrackButtonPressed.tres" id="next_held"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapNumberTheme.tres" id="number_theme"]
+[ext_resource type="Script" uid="uid://ds2ai13uhptmy" path="res://Src/Presentation/MainPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="Texture2D" uid="uid://cejh2ucgorivr" path="res://Data/SkinResources/PauseTrackButtonNormal.tres" id="pause"]
+[ext_resource type="Texture2D" uid="uid://767yrevn2quh" path="res://Data/SkinResources/PauseTrackButtonPressed.tres" id="pause_held"]
+[ext_resource type="Texture2D" uid="uid://dsp2hooqm7hu1" path="res://Data/SkinResources/PlayTrackButtonNormal.tres" id="play"]
+[ext_resource type="Texture2D" uid="uid://o1n3pn051fgy" path="res://Data/SkinResources/PlayTrackButtonPressed.tres" id="play_held"]
+[ext_resource type="Texture2D" uid="uid://ck2phyu241jwi" path="res://Data/SkinResources/TogglePlaylistButtonNormal.tres" id="pl_off"]
+[ext_resource type="Texture2D" uid="uid://bujh07cr8mncs" path="res://Data/SkinResources/TogglePlaylistButtonPressed.tres" id="pl_on"]
+[ext_resource type="Texture2D" uid="uid://dw2hupkgvxcj5" path="res://Data/SkinResources/PreviousTrackButtonNormal.tres" id="previous"]
+[ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="previous_held"]
+[ext_resource type="Texture2D" uid="uid://iqkq0rtuvb6y" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="repeat_off"]
+[ext_resource type="Texture2D" uid="uid://bdebbq0y5t8kf" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="repeat_on"]
+[ext_resource type="Texture2D" uid="uid://b2t1kuia68x2n" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="seek"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadeMainSheet.tres" id="shade_sheet"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinWindowShape.tscn" id="shape"]
+[ext_resource type="Texture2D" uid="uid://ggl7b471cdw5" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="shuffle_off"]
+[ext_resource type="Texture2D" uid="uid://cvqxeibujqu01" path="res://Data/SkinResources/ShuffleModeButtonPressed.tres" id="shuffle_on"]
+[ext_resource type="PackedScene" uid="uid://b6gs6lt2h7a3r" path="res://Src/Presentation/Components/SkinSlider.tscn" id="slider"]
+[ext_resource type="Texture2D" uid="uid://cgcywfbr7bmo6" path="res://Data/SkinResources/StopTrackButtonNormal.tres" id="stop"]
+[ext_resource type="Texture2D" uid="uid://cou0jaj38whh" path="res://Data/SkinResources/StopTrackButtonPressed.tres" id="stop_held"]
+[ext_resource type="Theme" path="res://Data/Others/BitmapTextTheme.tres" id="text_theme"]
+[ext_resource type="Texture2D" uid="uid://yjpimygmljwp" path="res://Data/SkinResources/MasterPanelTitlebar.tres" id="titlebar"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinToggleButton.tscn" id="toggle"]
+[ext_resource type="Script" uid="uid://cawkidse85sph" path="res://Src/Presentation/MainPanel/ClassicVisualization.cs" id="visualization"]
+[ext_resource type="Texture2D" uid="uid://b4ro2wogdqcf8" path="res://Data/SkinResources/VolumeSlider.tres" id="volume"]
 
 [sub_resource type="AtlasTexture" id="shade_background"]
 atlas = ExtResource("shade_sheet")
 region = Rect2(27, 29, 275, 14)
-
-[sub_resource type="AtlasTexture" id="shade_restore"]
-atlas = ExtResource("shade_sheet")
-region = Rect2(0, 27, 9, 9)
-
-[sub_resource type="AtlasTexture" id="shade_restore_held"]
-atlas = ExtResource("shade_sheet")
-region = Rect2(9, 27, 9, 9)
-
-[sub_resource type="AtlasTexture" id="iconify"]
-atlas = ExtResource("shade_sheet")
-region = Rect2(9, 0, 9, 9)
-
-[sub_resource type="AtlasTexture" id="iconify_held"]
-atlas = ExtResource("shade_sheet")
-region = Rect2(9, 9, 9, 9)
-
-[sub_resource type="Resource" id="cursor_iconify"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Controls/Iconify"), NodePath("../Windowshade/Iconify")])
-Role = 4
-
-[sub_resource type="Resource" id="cursor_shade"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
-Role = 11
-
-[sub_resource type="Resource" id="cursor_shade_seek"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Windowshade/Seek")])
-Role = 9
-
-[sub_resource type="Resource" id="cursor_shade_menu"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Windowshade/Menu")])
-Role = 10
-
-[sub_resource type="Resource" id="cursor_shade_restore"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Windowshade/Restore")])
-Role = 3
-
-[sub_resource type="Resource" id="cursor_shade_close"]
-script = ExtResource("cursor_binding")
-ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
-Role = 5
 
 [sub_resource type="Resource" id="cursor_title"]
 script = ExtResource("cursor_binding")
@@ -133,28 +87,67 @@ script = ExtResource("cursor_binding")
 ControlPaths = Array[NodePath]([NodePath("../TextDisplay/MasterLabel")])
 Role = 8
 
+[sub_resource type="Resource" id="cursor_shade"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade")])
+Role = 11
+
+[sub_resource type="Resource" id="cursor_shade_seek"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Seek")])
+Role = 9
+
+[sub_resource type="Resource" id="cursor_shade_menu"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Menu")])
+Role = 10
+
+[sub_resource type="Resource" id="cursor_shade_restore"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Restore")])
+Role = 3
+
+[sub_resource type="Resource" id="cursor_shade_close"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Windowshade/Close")])
+Role = 5
+
+[sub_resource type="Resource" id="cursor_iconify"]
+script = ExtResource("cursor_binding")
+ControlPaths = Array[NodePath]([NodePath("../Controls/Iconify"), NodePath("../Windowshade/Iconify")])
+Role = 4
+
+[sub_resource type="AtlasTexture" id="iconify"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="iconify_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 9, 9, 9)
+
 [sub_resource type="StyleBoxEmpty" id="empty_style"]
 
 [sub_resource type="Theme" id="shade_controls_theme"]
-Button/styles/normal = SubResource("empty_style")
-Button/styles/hover = SubResource("empty_style")
-Button/styles/pressed = SubResource("empty_style")
 Button/styles/focus = SubResource("empty_style")
+Button/styles/hover = SubResource("empty_style")
+Button/styles/normal = SubResource("empty_style")
+Button/styles/pressed = SubResource("empty_style")
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_shuffleButton", "_repeatButton", "_playbackClock", "_compactClock", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek")]
+[sub_resource type="AtlasTexture" id="shade_restore"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(0, 27, 9, 9)
+
+[sub_resource type="AtlasTexture" id="shade_restore_held"]
+atlas = ExtResource("shade_sheet")
+region = Rect2(9, 27, 9, 9)
+
+[node name="MasterPanel" type="PanelContainer" unique_id=737027829 node_paths=PackedStringArray("_shuffleButton", "_repeatButton", "WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_windowshadeSeek", "_playbackClock", "_compactClock", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_draggableHitbox")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
 script = ExtResource("panel")
-TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
-ExpandedControls = Array[NodePath]([NodePath("Background"), NodePath("Controls"), NodePath("TextDisplay"), NodePath("DraggableHitbox")])
-Windowshade = NodePath("Windowshade")
-WindowshadeDragHitbox = NodePath("Windowshade")
-WindowshadeButtons = Array[NodePath]([NodePath("Controls/MinimizeButton")])
-WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_background")])
-WindowshadeInactiveOffset = 13
-_windowshadeSeek = NodePath("Windowshade/Seek")
-_compactClock = NodePath("Windowshade/Time")
+_shuffleButton = NodePath("Controls/ShuffleModeButton")
+_repeatButton = NodePath("Controls/RepeatModeButton")
 WinampMenuButton = NodePath("Controls/WinampMenuButton")
 ToggleEqualizerButton = NodePath("Controls/ToggleEqualizerButton")
 TogglePlaylistButton = NodePath("Controls/TogglePlaylistButton")
@@ -164,56 +157,56 @@ _volumeSlider = NodePath("Controls/VolumeSlider")
 _pannerAudioSlider = NodePath("Controls/PannerAudioSlider")
 _bitrateLabel = NodePath("TextDisplay/BitrateLabel")
 _sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
-_shuffleButton = NodePath("Controls/ShuffleModeButton")
-_repeatButton = NodePath("Controls/RepeatModeButton")
+_windowshadeSeek = NodePath("Windowshade/Seek")
 _playbackClock = NodePath("TextDisplay/PlaybackClock")
+_compactClock = NodePath("Windowshade/Time")
+ExpandedControls = [NodePath("Background"), NodePath("Controls"), NodePath("TextDisplay"), NodePath("DraggableHitbox")]
+Windowshade = NodePath("Windowshade")
+WindowshadeDragHitbox = NodePath("Windowshade")
+WindowshadeButtons = [NodePath("Controls/MinimizeButton")]
+WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_background")])
+WindowshadeInactiveOffset = 13
 _draggableHitbox = NodePath("DraggableHitbox")
+TitlebarTextures = Array[AtlasTexture]([ExtResource("titlebar")])
 
-[node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
+[node name="SkinWindowShape" parent="." unique_id=1710304838 node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
 Panel = NodePath("..")
 WindowshadeMode = 1
 
-[node name="SkinCursors" type="Node" parent="."]
+[node name="SkinCursors" type="Node" parent="." unique_id=920109449]
 script = ExtResource("cursors")
 Bindings = Array[ExtResource("cursor_binding")]([SubResource("cursor_title"), SubResource("cursor_volume"), SubResource("cursor_seek"), SubResource("cursor_minimize"), SubResource("cursor_close"), SubResource("cursor_menu"), SubResource("cursor_song"), SubResource("cursor_shade"), SubResource("cursor_shade_seek"), SubResource("cursor_shade_menu"), SubResource("cursor_shade_restore"), SubResource("cursor_shade_close"), SubResource("cursor_iconify")])
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1563995158]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("background")
 
-[node name="Controls" type="Control" parent="."]
+[node name="Controls" type="Control" parent="." unique_id=1060938245]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="PlaybackIndicators" type="Control" parent="Controls"]
-layout_mode = 0
+[node name="PlaybackIndicators" parent="Controls" unique_id=636464533 instance=ExtResource("indicators")]
 anchors_preset = 0
-offset_right = 275.0
-offset_bottom = 116.0
-mouse_filter = 2
-script = ExtResource("indicators")
 
-[node name="Visualization" type="Control" parent="Controls" node_paths=PackedStringArray("WindowshadeDisplay")]
-layout_mode = 0
+[node name="Visualization" type="Control" parent="Controls" unique_id=132093246 node_paths=PackedStringArray("WindowshadeDisplay")]
 anchors_preset = 0
 offset_left = 24.0
 offset_top = 43.0
 offset_right = 100.0
 offset_bottom = 59.0
-mouse_filter = 0
 tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
 script = ExtResource("visualization")
 WindowshadeDisplay = NodePath("../../Windowshade/Visualization")
 
-[node name="TopBar" type="TextureRect" parent="Controls"]
+[node name="TopBar" type="TextureRect" parent="Controls" unique_id=1397961957]
 layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = ExtResource("titlebar")
 
-[node name="MinimizeButton" type="TextureButton" parent="Controls"]
+[node name="MinimizeButton" type="TextureButton" parent="Controls" unique_id=2116253846]
 layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
@@ -223,7 +216,7 @@ focus_mode = 0
 texture_normal = ExtResource("minimize")
 texture_pressed = ExtResource("minimize_held")
 
-[node name="CloseButton" type="TextureButton" parent="Controls"]
+[node name="CloseButton" type="TextureButton" parent="Controls" unique_id=1994670434]
 layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
@@ -233,14 +226,14 @@ focus_mode = 0
 texture_normal = ExtResource("close")
 texture_pressed = ExtResource("close_held")
 
-[node name="WinampMenuButton" parent="Controls" instance=ExtResource("menu")]
+[node name="WinampMenuButton" parent="Controls" unique_id=1229981738 instance=ExtResource("menu")]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 3.0
 offset_right = 15.0
 offset_bottom = 12.0
 
-[node name="VolumeSlider" parent="Controls" instance=ExtResource("slider")]
+[node name="VolumeSlider" parent="Controls" unique_id=94932598 instance=ExtResource("slider")]
 layout_mode = 0
 offset_left = 107.0
 offset_top = 57.0
@@ -250,7 +243,7 @@ max_value = 1.0
 step = 0.01
 Sheet = ExtResource("volume")
 
-[node name="PannerAudioSlider" parent="Controls" instance=ExtResource("slider")]
+[node name="PannerAudioSlider" parent="Controls" unique_id=1016402517 instance=ExtResource("slider")]
 layout_mode = 0
 offset_left = 177.0
 offset_top = 57.0
@@ -262,7 +255,7 @@ step = 0.01
 Layout = 1
 Sheet = ExtResource("balance")
 
-[node name="PositionSeeker" parent="Controls" instance=ExtResource("slider")]
+[node name="PositionSeeker" parent="Controls" unique_id=217633064 instance=ExtResource("slider")]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 72.0
@@ -272,31 +265,29 @@ step = 0.01
 Layout = 2
 Sheet = ExtResource("seek")
 
-[node name="ToggleEqualizerButton" parent="Controls" instance=ExtResource("toggle")]
+[node name="ToggleEqualizerButton" parent="Controls" unique_id=587565053 instance=ExtResource("toggle")]
 layout_mode = 0
 offset_left = 219.0
 offset_top = 58.0
 offset_right = 242.0
 offset_bottom = 70.0
-toggle_mode = true
 button_pressed = true
 texture_normal = ExtResource("eq_off")
 texture_pressed = ExtResource("eq_on")
 HeldOffset = Vector2(46, 0)
 
-[node name="TogglePlaylistButton" parent="Controls" instance=ExtResource("toggle")]
+[node name="TogglePlaylistButton" parent="Controls" unique_id=1531795208 instance=ExtResource("toggle")]
 layout_mode = 0
 offset_left = 242.0
 offset_top = 58.0
 offset_right = 265.0
 offset_bottom = 70.0
-toggle_mode = true
 button_pressed = true
 texture_normal = ExtResource("pl_off")
 texture_pressed = ExtResource("pl_on")
 HeldOffset = Vector2(46, 0)
 
-[node name="PreviousTrackButton" type="TextureButton" parent="Controls"]
+[node name="PreviousTrackButton" type="TextureButton" parent="Controls" unique_id=272229989]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 88.0
@@ -306,7 +297,7 @@ focus_mode = 0
 texture_normal = ExtResource("previous")
 texture_pressed = ExtResource("previous_held")
 
-[node name="PlayTrackButton" type="TextureButton" parent="Controls"]
+[node name="PlayTrackButton" type="TextureButton" parent="Controls" unique_id=120729586]
 layout_mode = 0
 offset_left = 39.0
 offset_top = 88.0
@@ -316,7 +307,7 @@ focus_mode = 0
 texture_normal = ExtResource("play")
 texture_pressed = ExtResource("play_held")
 
-[node name="PauseTrackButton" type="TextureButton" parent="Controls"]
+[node name="PauseTrackButton" type="TextureButton" parent="Controls" unique_id=2065221827]
 layout_mode = 0
 offset_left = 62.0
 offset_top = 88.0
@@ -326,7 +317,7 @@ focus_mode = 0
 texture_normal = ExtResource("pause")
 texture_pressed = ExtResource("pause_held")
 
-[node name="StopTrackButton" type="TextureButton" parent="Controls"]
+[node name="StopTrackButton" type="TextureButton" parent="Controls" unique_id=822026]
 layout_mode = 0
 offset_left = 85.0
 offset_top = 88.0
@@ -336,7 +327,7 @@ focus_mode = 0
 texture_normal = ExtResource("stop")
 texture_pressed = ExtResource("stop_held")
 
-[node name="NextTrackButton" type="TextureButton" parent="Controls"]
+[node name="NextTrackButton" type="TextureButton" parent="Controls" unique_id=1189017499]
 layout_mode = 0
 offset_left = 108.0
 offset_top = 88.0
@@ -346,7 +337,7 @@ focus_mode = 0
 texture_normal = ExtResource("next")
 texture_pressed = ExtResource("next_held")
 
-[node name="LoadTracksButton" type="TextureButton" parent="Controls"]
+[node name="LoadTracksButton" type="TextureButton" parent="Controls" unique_id=203704436]
 layout_mode = 0
 offset_left = 136.0
 offset_top = 89.0
@@ -356,41 +347,49 @@ focus_mode = 0
 texture_normal = ExtResource("eject")
 texture_pressed = ExtResource("eject_held")
 
-[node name="ShuffleModeButton" parent="Controls" instance=ExtResource("toggle")]
+[node name="ShuffleModeButton" parent="Controls" unique_id=456475235 instance=ExtResource("toggle")]
 layout_mode = 0
 offset_left = 164.0
 offset_top = 89.0
 offset_right = 211.0
 offset_bottom = 104.0
-toggle_mode = true
 texture_normal = ExtResource("shuffle_off")
 texture_pressed = ExtResource("shuffle_on")
 HeldOffset = Vector2(0, 15)
 
-[node name="RepeatModeButton" parent="Controls" instance=ExtResource("toggle")]
+[node name="RepeatModeButton" parent="Controls" unique_id=758503439 instance=ExtResource("toggle")]
 layout_mode = 0
 offset_left = 210.0
 offset_top = 89.0
 offset_right = 238.0
 offset_bottom = 104.0
-toggle_mode = true
 texture_normal = ExtResource("repeat_off")
 texture_pressed = ExtResource("repeat_on")
 HeldOffset = Vector2(0, 15)
 
-[node name="TextDisplay" type="Control" parent="."]
+[node name="Iconify" type="TextureButton" parent="Controls" unique_id=699748522]
+layout_mode = 0
+offset_left = 244.0
+offset_top = 3.0
+offset_right = 253.0
+offset_bottom = 12.0
+focus_mode = 0
+texture_normal = SubResource("iconify")
+texture_pressed = SubResource("iconify_held")
+
+[node name="TextDisplay" type="Control" parent="." unique_id=529514979]
 layout_mode = 2
 mouse_filter = 2
 theme = ExtResource("text_theme")
 
-[node name="MasterLabel" parent="TextDisplay" instance=ExtResource("marquee")]
+[node name="MasterLabel" parent="TextDisplay" unique_id=1822475328 instance=ExtResource("marquee")]
 layout_mode = 0
 offset_left = 111.0
 offset_top = 27.0
 offset_right = 265.0
 offset_bottom = 33.0
 
-[node name="BitrateLabel" type="Label" parent="TextDisplay"]
+[node name="BitrateLabel" type="Label" parent="TextDisplay" unique_id=242887708]
 layout_mode = 0
 offset_left = 111.0
 offset_top = 43.0
@@ -400,7 +399,7 @@ text = "000"
 horizontal_alignment = 2
 script = ExtResource("label")
 
-[node name="SampleRateLabel" type="Label" parent="TextDisplay"]
+[node name="SampleRateLabel" type="Label" parent="TextDisplay" unique_id=130441712]
 layout_mode = 0
 offset_left = 156.0
 offset_top = 43.0
@@ -410,7 +409,7 @@ text = "00"
 horizontal_alignment = 2
 script = ExtResource("label")
 
-[node name="PlaybackClock" type="Control" parent="TextDisplay" node_paths=PackedStringArray("_minutesTens", "_minutesOnes", "_secondsTens", "_secondsOnes")]
+[node name="PlaybackClock" type="Control" parent="TextDisplay" unique_id=1041564536 node_paths=PackedStringArray("_minutesTens", "_minutesOnes", "_secondsTens", "_secondsOnes")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -418,88 +417,77 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
 script = ExtResource("clock")
 _minutesTens = NodePath("TimeMinutesTensLabel")
 _minutesOnes = NodePath("TimeMinutesOnesLabel")
 _secondsTens = NodePath("TimeSecondsTensLabel")
 _secondsOnes = NodePath("TimeSecondsOnesLabel")
 
-[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay/PlaybackClock"]
+[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay/PlaybackClock" unique_id=71262191]
 layout_mode = 0
-theme = ExtResource("number_theme")
 offset_left = 48.0
 offset_top = 26.0
 offset_right = 57.0
 offset_bottom = 39.0
+theme = ExtResource("number_theme")
 text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay/PlaybackClock"]
+[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay/PlaybackClock" unique_id=107328212]
 layout_mode = 0
-theme = ExtResource("number_theme")
 offset_left = 60.0
 offset_top = 26.0
 offset_right = 69.0
 offset_bottom = 39.0
+theme = ExtResource("number_theme")
 text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay/PlaybackClock"]
+[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay/PlaybackClock" unique_id=1668579343]
 layout_mode = 0
-theme = ExtResource("number_theme")
 offset_left = 78.0
 offset_top = 26.0
 offset_right = 87.0
 offset_bottom = 39.0
+theme = ExtResource("number_theme")
 text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay/PlaybackClock"]
+[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay/PlaybackClock" unique_id=1155906]
 layout_mode = 0
-theme = ExtResource("number_theme")
 offset_left = 90.0
 offset_top = 26.0
 offset_right = 99.0
 offset_bottom = 39.0
+theme = ExtResource("number_theme")
 text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="DraggableHitbox" type="Control" parent="."]
+[node name="DraggableHitbox" type="Control" parent="." unique_id=1360830228]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
-[node name="Windowshade" type="Control" parent="."]
+[node name="Windowshade" type="Control" parent="." unique_id=36201066]
 visible = false
 custom_minimum_size = Vector2(275, 14)
 layout_mode = 2
 mouse_filter = 2
 theme = SubResource("shade_controls_theme")
 
-[node name="Iconify" type="TextureButton" parent="Controls"]
-layout_mode = 0
-offset_left = 244.0
-offset_top = 3.0
-offset_right = 253.0
-offset_bottom = 12.0
-focus_mode = 0
-texture_normal = SubResource("iconify")
-texture_pressed = SubResource("iconify_held")
-
-[node name="Background" type="TextureRect" parent="Windowshade"]
+[node name="Background" type="TextureRect" parent="Windowshade" unique_id=107918995]
 layout_mode = 0
 offset_right = 275.0
 offset_bottom = 14.0
 mouse_filter = 2
 texture = SubResource("shade_background")
 
-[node name="Menu" type="TextureButton" parent="Windowshade"]
+[node name="Menu" type="TextureButton" parent="Windowshade" unique_id=1107016788]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 3.0
@@ -509,29 +497,27 @@ focus_mode = 0
 texture_normal = ExtResource("menu_normal")
 texture_pressed = ExtResource("menu_pressed")
 
-[node name="Time" type="Label" parent="Windowshade"]
+[node name="Time" type="Label" parent="Windowshade" unique_id=1764835659]
 layout_mode = 0
 offset_left = 129.0
 offset_top = 4.0
 offset_right = 159.0
 offset_bottom = 10.0
-mouse_filter = 2
 theme = ExtResource("text_theme")
 text = " 00:00"
 script = ExtResource("compact_clock")
 
-[node name="Visualization" type="TextureRect" parent="Windowshade"]
+[node name="Visualization" type="TextureRect" parent="Windowshade" unique_id=642643625]
 layout_mode = 0
 offset_left = 79.0
 offset_top = 5.0
 offset_right = 117.0
 offset_bottom = 10.0
+tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
 mouse_filter = 0
 expand_mode = 1
-stretch_mode = 0
-tooltip_text = "Click to cycle spectrum, oscilloscope, and off"
 
-[node name="Previous" type="Button" parent="Windowshade"]
+[node name="Previous" type="Button" parent="Windowshade" unique_id=2109291809]
 layout_mode = 0
 offset_left = 167.0
 offset_top = 3.0
@@ -540,7 +526,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Play" type="Button" parent="Windowshade"]
+[node name="Play" type="Button" parent="Windowshade" unique_id=1364445697]
 layout_mode = 0
 offset_left = 176.0
 offset_top = 3.0
@@ -549,7 +535,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Pause" type="Button" parent="Windowshade"]
+[node name="Pause" type="Button" parent="Windowshade" unique_id=2125670000]
 layout_mode = 0
 offset_left = 186.0
 offset_top = 3.0
@@ -558,7 +544,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Stop" type="Button" parent="Windowshade"]
+[node name="Stop" type="Button" parent="Windowshade" unique_id=308283172]
 layout_mode = 0
 offset_left = 196.0
 offset_top = 3.0
@@ -567,7 +553,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Next" type="Button" parent="Windowshade"]
+[node name="Next" type="Button" parent="Windowshade" unique_id=1692292066]
 layout_mode = 0
 offset_left = 206.0
 offset_top = 3.0
@@ -576,7 +562,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Eject" type="Button" parent="Windowshade"]
+[node name="Eject" type="Button" parent="Windowshade" unique_id=2082223123]
 layout_mode = 0
 offset_left = 216.0
 offset_top = 3.0
@@ -585,7 +571,7 @@ offset_bottom = 12.0
 focus_mode = 0
 flat = true
 
-[node name="Seek" parent="Windowshade" instance=ExtResource("slider")]
+[node name="Seek" parent="Windowshade" unique_id=93032735 instance=ExtResource("slider")]
 layout_mode = 0
 offset_left = 226.0
 offset_top = 4.0
@@ -595,7 +581,7 @@ step = 0.01
 Layout = 4
 Sheet = ExtResource("shade_sheet")
 
-[node name="Restore" type="TextureButton" parent="Windowshade"]
+[node name="Restore" type="TextureButton" parent="Windowshade" unique_id=413086488]
 layout_mode = 0
 offset_left = 254.0
 offset_top = 3.0
@@ -605,7 +591,7 @@ focus_mode = 0
 texture_normal = SubResource("shade_restore")
 texture_pressed = SubResource("shade_restore_held")
 
-[node name="Iconify" type="TextureButton" parent="Windowshade"]
+[node name="Iconify" type="TextureButton" parent="Windowshade" unique_id=133673862]
 layout_mode = 0
 offset_left = 244.0
 offset_top = 3.0
@@ -615,7 +601,7 @@ focus_mode = 0
 texture_normal = SubResource("iconify")
 texture_pressed = SubResource("iconify_held")
 
-[node name="Close" type="TextureButton" parent="Windowshade"]
+[node name="Close" type="TextureButton" parent="Windowshade" unique_id=2116226704]
 layout_mode = 0
 offset_left = 264.0
 offset_top = 3.0
@@ -626,22 +612,8 @@ texture_normal = ExtResource("close")
 texture_pressed = ExtResource("close_held")
 
 [connection signal="WindowshadeChanged" from="." to="SkinWindowShape" method="OnWindowshadeChanged"]
-[connection signal="pressed" from="Controls/Iconify" to="." method="OnIconifyButtonPressed"]
-[connection signal="pressed" from="Windowshade/Iconify" to="." method="OnIconifyButtonPressed"]
 [connection signal="WindowshadeChanged" from="." to="SkinCursors" method="OnWindowshadeChanged"]
-[connection signal="gui_input" from="Windowshade/Visualization" to="Controls/Visualization" method="OnGuiInput"]
-[connection signal="pressed" from="Windowshade/Menu" to="Controls/WinampMenuButton" method="show_popup"]
-[connection signal="pressed" from="Windowshade/Previous" to="." method="OnPreviousTrackButtonPressed"]
-[connection signal="pressed" from="Windowshade/Play" to="." method="OnPlayTrackButtonPressed"]
-[connection signal="pressed" from="Windowshade/Pause" to="." method="OnPauseTrackButtonPressed"]
-[connection signal="pressed" from="Windowshade/Stop" to="." method="OnStopTrackButtonPressed"]
-[connection signal="pressed" from="Windowshade/Next" to="." method="OnNextTrackButtonPressed"]
-[connection signal="pressed" from="Windowshade/Eject" to="." method="OnLoadTracksButtonPressed"]
-[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
-[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]
-[connection signal="value_changed" from="Windowshade/Seek" to="." method="OnWindowshadeSeekValueChanged"]
-[connection signal="DragStarted" from="Windowshade/Seek" to="." method="OnPositionSeekerDragStarted"]
-[connection signal="DragEnded" from="Windowshade/Seek" to="." method="OnPositionSeekerDragEnded"]
+[connection signal="gui_input" from="Controls/Visualization" to="Controls/Visualization" method="OnGuiInput"]
 [connection signal="pressed" from="Controls/MinimizeButton" to="." method="OnMinimizeButtonPressed"]
 [connection signal="pressed" from="Controls/CloseButton" to="." method="OnCloseButtonPressed"]
 [connection signal="DragEnded" from="Controls/VolumeSlider" to="." method="OnSliderDragEnded"]
@@ -650,11 +622,11 @@ texture_pressed = ExtResource("close_held")
 [connection signal="DragEnded" from="Controls/PannerAudioSlider" to="." method="OnSliderDragEnded"]
 [connection signal="DragStarted" from="Controls/PannerAudioSlider" to="." method="OnSliderDragStarted"]
 [connection signal="value_changed" from="Controls/PannerAudioSlider" to="." method="OnPannerAudioSliderValueChanged"]
-[connection signal="pressed" from="Controls/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
-[connection signal="pressed" from="Controls/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
 [connection signal="DragEnded" from="Controls/PositionSeeker" to="." method="OnPositionSeekerDragEnded"]
 [connection signal="DragStarted" from="Controls/PositionSeeker" to="." method="OnPositionSeekerDragStarted"]
 [connection signal="value_changed" from="Controls/PositionSeeker" to="." method="OnPositionSeekerValueChanged"]
+[connection signal="pressed" from="Controls/ToggleEqualizerButton" to="." method="OnToggleEqualizerButton"]
+[connection signal="pressed" from="Controls/TogglePlaylistButton" to="." method="OnTogglePlaylistButton"]
 [connection signal="pressed" from="Controls/PreviousTrackButton" to="." method="OnPreviousTrackButtonPressed"]
 [connection signal="pressed" from="Controls/PlayTrackButton" to="." method="OnPlayTrackButtonPressed"]
 [connection signal="pressed" from="Controls/PauseTrackButton" to="." method="OnPauseTrackButtonPressed"]
@@ -663,4 +635,18 @@ texture_pressed = ExtResource("close_held")
 [connection signal="pressed" from="Controls/LoadTracksButton" to="." method="OnLoadTracksButtonPressed"]
 [connection signal="toggled" from="Controls/ShuffleModeButton" to="." method="OnShuffleModeToggled"]
 [connection signal="toggled" from="Controls/RepeatModeButton" to="." method="OnRepeatModeToggled"]
-[connection signal="gui_input" from="Controls/Visualization" to="Controls/Visualization" method="OnGuiInput"]
+[connection signal="pressed" from="Controls/Iconify" to="." method="OnIconifyButtonPressed"]
+[connection signal="pressed" from="Windowshade/Menu" to="Controls/WinampMenuButton" method="show_popup"]
+[connection signal="gui_input" from="Windowshade/Visualization" to="Controls/Visualization" method="OnGuiInput"]
+[connection signal="pressed" from="Windowshade/Previous" to="." method="OnPreviousTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Play" to="." method="OnPlayTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Pause" to="." method="OnPauseTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Stop" to="." method="OnStopTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Next" to="." method="OnNextTrackButtonPressed"]
+[connection signal="pressed" from="Windowshade/Eject" to="." method="OnLoadTracksButtonPressed"]
+[connection signal="DragEnded" from="Windowshade/Seek" to="." method="OnPositionSeekerDragEnded"]
+[connection signal="DragStarted" from="Windowshade/Seek" to="." method="OnPositionSeekerDragStarted"]
+[connection signal="value_changed" from="Windowshade/Seek" to="." method="OnWindowshadeSeekValueChanged"]
+[connection signal="pressed" from="Windowshade/Restore" to="." method="OnMinimizeButtonPressed"]
+[connection signal="pressed" from="Windowshade/Iconify" to="." method="OnIconifyButtonPressed"]
+[connection signal="pressed" from="Windowshade/Close" to="." method="OnCloseButtonPressed"]

@@ -13,15 +13,28 @@ public partial class EqualizerGraph : Control
     private const float GainRangeDb = 24;
     private const float SplineBias = 0.1f;
     [Export] private AudioController _audio = null!;
+    [Export] private TextureRect _preampLine = null!;
+    [Export] private AtlasTexture _curvePalette = null!;
 
     /// <inheritdoc />
     public override void _Ready()
     {
         SkinLoader.Instance.SkinChanged += QueueRedraw;
+        Refresh();
     }
 
     /// <inheritdoc />
     public override void _ExitTree() => SkinLoader.Instance.SkinChanged -= QueueRedraw;
+
+    /// <summary>Positions the preamp line and redraws the curve from the current audio gains.</summary>
+    public void Refresh()
+    {
+        if (_audio == null)
+            return;
+        int preampY = Mathf.Clamp(GraphHeight - 1 - (int)((0.5f + _audio.PreampDb / GainRangeDb) * GraphHeight), 0, GraphHeight - 1);
+        _preampLine.Position = new Vector2(_preampLine.Position.X, preampY);
+        QueueRedraw();
+    }
 
     /// <summary>Maps band gain to the classic graph coordinate, extending endpoint bands for interpolation.</summary>
     /// <param name="band">Band index; adjacent out-of-range indices repeat the nearest endpoint.</param>
@@ -33,10 +46,6 @@ public partial class EqualizerGraph : Control
     {
         if (_audio == null)
             return;
-        Texture2D sheet = SkinLoader.Instance.GetSheet("EQMAIN");
-        DrawTextureRectRegion(sheet, new Rect2(0, 0, 113, GraphHeight), new Rect2(0, 294, 113, GraphHeight));
-        int preampY = Mathf.Clamp(GraphHeight - 1 - (int)((0.5f + _audio.PreampDb / GainRangeDb) * GraphHeight), 0, GraphHeight - 1);
-        DrawTextureRectRegion(sheet, new Rect2(0, preampY, 113, 1), new Rect2(0, 314, 113, 1));
         int previous = -1;
         for (int x = 0; x < CurveWidth; x++)
         {
@@ -52,7 +61,8 @@ public partial class EqualizerGraph : Control
             int y = Mathf.Clamp((int)point, 0, GraphHeight - 1);
             int top = previous < 0 ? y : Mathf.Min(y, previous);
             int height = previous < 0 ? 1 : Mathf.Abs(y - previous) + 1;
-            DrawTextureRectRegion(sheet, new Rect2(x + 2, top, 1, height), new Rect2(115, 294 + top, 1, height));
+            DrawTextureRectRegion(_curvePalette.Atlas, new Rect2(x + 2, top, 1, height),
+                new Rect2(_curvePalette.Region.Position + new Vector2(0, top), new Vector2(1, height)));
             previous = y;
         }
     }

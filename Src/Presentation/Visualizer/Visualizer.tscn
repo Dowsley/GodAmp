@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://Src/Presentation/Components/GenericWindowTitle.cs" id="title_font"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/WindowResizeHandle.tscn" id="resize_handle"]
 [ext_resource type="Texture2D" path="res://Assets/Winamp/Raw/GEN.png" id="title_sheet"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/GenericTitleBackgroundActive.tres" id="title_active"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/GenericTitleBackgroundInactive.tres" id="title_inactive"]
 [ext_resource type="PackedScene" uid="uid://c6bj7p04vlkle" path="res://Src/Presentation/Visualizer/AudioVisualizer.tscn" id="2_2g1mo"]
 [ext_resource type="Texture2D" uid="uid://6qyxmjpsp5gu" path="res://Data/SkinResources/VisualizerTopLeftCorner.tres" id="2_7wv81"]
 [ext_resource type="Texture2D" uid="uid://bkibrg5xs5inl" path="res://Data/SkinResources/VisualizerTopTilableBar.tres" id="3_cwlo7"]
@@ -76,6 +78,8 @@ mouse_filter = 2
 script = ExtResource("title_font")
 Title = "VISUALIZER"
 DefaultSheet = ExtResource("title_sheet")
+_activeBackground = ExtResource("title_active")
+_inactiveBackground = ExtResource("title_inactive")
 
 [node name="TopRightCornerStartTexture" type="TextureRect" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2

@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Src/Presentation/MainPanel/PlaybackIndicators.cs" id="script"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackPlaying.tres" id="playing"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackPaused.tres" id="paused"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackStopped.tres" id="stopped"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackEmpty.tres" id="empty"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackActivityActive.tres" id="activity_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PlaybackActivityInactive.tres" id="activity_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MonoActive.tres" id="mono_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MonoInactive.tres" id="mono_off"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/StereoActive.tres" id="stereo_on"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/StereoInactive.tres" id="stereo_off"]
+
+[node name="PlaybackIndicators" type="Control" node_paths=PackedStringArray("_transport", "_activity", "_mono", "_stereo")]
+offset_right = 275.0
+offset_bottom = 116.0
+mouse_filter = 2
+script = ExtResource("script")
+_transport = NodePath("Transport")
+_activity = NodePath("Activity")
+_mono = NodePath("Mono")
+_stereo = NodePath("Stereo")
+_playing = ExtResource("playing")
+_paused = ExtResource("paused")
+_stopped = ExtResource("stopped")
+_empty = ExtResource("empty")
+_activityActive = ExtResource("activity_on")
+_activityInactive = ExtResource("activity_off")
+_monoActive = ExtResource("mono_on")
+_monoInactive = ExtResource("mono_off")
+_stereoActive = ExtResource("stereo_on")
+_stereoInactive = ExtResource("stereo_off")
+
+[node name="Transport" type="TextureRect" parent="."]
+offset_left = 26.0
+offset_top = 28.0
+offset_right = 35.0
+offset_bottom = 37.0
+mouse_filter = 2
+texture = ExtResource("empty")
+
+[node name="Activity" type="TextureRect" parent="."]
+offset_left = 24.0
+offset_top = 28.0
+offset_right = 27.0
+offset_bottom = 37.0
+mouse_filter = 2
+texture = ExtResource("activity_off")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Mono" type="TextureRect" parent="."]
+offset_left = 212.0
+offset_top = 41.0
+offset_right = 240.0
+offset_bottom = 53.0
+mouse_filter = 2
+texture = ExtResource("mono_off")
+
+[node name="Stereo" type="TextureRect" parent="."]
+offset_left = 239.0
+offset_top = 41.0
+offset_right = 268.0
+offset_bottom = 53.0
+mouse_filter = 2
+texture = ExtResource("stereo_off")

@@ -10,6 +10,8 @@ public partial class GenericWindowTitle : Control
 {
     private const int TileWidth = 25;
     private const int TitleHeight = 20;
+    [Export] private AtlasTexture _activeBackground = null!;
+    [Export] private AtlasTexture _inactiveBackground = null!;
     /// <summary>Title rendered with the generic sheet's supported uppercase glyphs.</summary>
     [Export] public string Title
     {
@@ -93,10 +95,12 @@ public partial class GenericWindowTitle : Control
         if (_sheet == null || _font == null)
             return;
         bool active = Engine.IsEditorHint() || (_window?.HasFocus() ?? false);
+        AtlasTexture background = active ? _activeBackground : _inactiveBackground;
         for (int x = 0; x < (int)Size.X; x += TileWidth)
         {
             int width = Mathf.Min(TileWidth, (int)Size.X - x);
-            DrawTextureRectRegion(_sheet, new Rect2(x, 0, width, TitleHeight), new Rect2(52, active ? 0 : 21, width, TitleHeight));
+            DrawTextureRectRegion(background.Atlas, new Rect2(x, 0, width, TitleHeight),
+                new Rect2(background.Region.Position, new Vector2(width, TitleHeight)));
         }
         int textWidth = _font.Measure(Title);
         int position = Mathf.Max(0, ((int)Size.X - textWidth) / 2 + (Size.X == textWidth ? 0 : 1));

@@ -175,6 +175,7 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh"]
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshCurrentEntry"]
 [connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel" method="RefreshMetadata"]
+[connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh" unbinds=1]
 [connection signal="MetadataChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshMetadata"]
 [connection signal="ModesChanged" from="PlaybackController" to="MasterPanel" method="RefreshModes"]
 [connection signal="OpenTracksRequested" from="PlaybackController" to="FilePickerController" method="OpenReplacementTracks"]
