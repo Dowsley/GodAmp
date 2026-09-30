@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Script" path="res://Src/Presentation/MainPanel/MasterPanel.cs" id="panel"]
+[ext_resource type="Script" path="res://Src/Presentation/MainPanel/PlaybackClock.cs" id="clock"]
+[ext_resource type="Script" path="res://Src/Presentation/MainPanel/CompactPlaybackClock.cs" id="compact_clock"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinWindowShape.tscn" id="shape"]
 [ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorController.cs" id="cursors"]
 [ext_resource type="Script" path="res://Src/Presentation/Components/SkinCursorBinding.cs" id="cursor_binding"]
@@ -139,7 +141,7 @@ Button/styles/hover = SubResource("empty_style")
 Button/styles/pressed = SubResource("empty_style")
 Button/styles/focus = SubResource("empty_style")
 
-[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_shuffleButton", "_repeatButton", "_clock", "_timeMinutesTensLabel", "_timeMinutesOnesLabel", "_timeSecondsTensLabel", "_timeSecondsOnesLabel", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek", "_windowshadeTime")]
+[node name="MasterPanel" type="PanelContainer" node_paths=PackedStringArray("WinampMenuButton", "ToggleEqualizerButton", "TogglePlaylistButton", "_masterLabel", "_positionSeekerSlider", "_volumeSlider", "_pannerAudioSlider", "_bitrateLabel", "_sampleRateLabel", "_shuffleButton", "_repeatButton", "_playbackClock", "_compactClock", "_draggableHitbox", "ExpandedControls", "Windowshade", "WindowshadeDragHitbox", "WindowshadeButtons", "_windowshadeSeek")]
 custom_minimum_size = Vector2(275, 116)
 offset_right = 275.0
 offset_bottom = 116.0
@@ -152,7 +154,7 @@ WindowshadeButtons = Array[NodePath]([NodePath("Controls/MinimizeButton")])
 WindowshadeTitlebarTextures = Array[AtlasTexture]([SubResource("shade_background")])
 WindowshadeInactiveOffset = 13
 _windowshadeSeek = NodePath("Windowshade/Seek")
-_windowshadeTime = NodePath("Windowshade/Time")
+_compactClock = NodePath("Windowshade/Time")
 WinampMenuButton = NodePath("Controls/WinampMenuButton")
 ToggleEqualizerButton = NodePath("Controls/ToggleEqualizerButton")
 TogglePlaylistButton = NodePath("Controls/TogglePlaylistButton")
@@ -164,11 +166,7 @@ _bitrateLabel = NodePath("TextDisplay/BitrateLabel")
 _sampleRateLabel = NodePath("TextDisplay/SampleRateLabel")
 _shuffleButton = NodePath("Controls/ShuffleModeButton")
 _repeatButton = NodePath("Controls/RepeatModeButton")
-_clock = NodePath("TextDisplay/Clock")
-_timeMinutesTensLabel = NodePath("TextDisplay/Clock/TimeMinutesTensLabel")
-_timeMinutesOnesLabel = NodePath("TextDisplay/Clock/TimeMinutesOnesLabel")
-_timeSecondsTensLabel = NodePath("TextDisplay/Clock/TimeSecondsTensLabel")
-_timeSecondsOnesLabel = NodePath("TextDisplay/Clock/TimeSecondsOnesLabel")
+_playbackClock = NodePath("TextDisplay/PlaybackClock")
 _draggableHitbox = NodePath("DraggableHitbox")
 
 [node name="SkinWindowShape" parent="." node_paths=PackedStringArray("Panel") instance=ExtResource("shape")]
@@ -412,7 +410,7 @@ text = "00"
 horizontal_alignment = 2
 script = ExtResource("label")
 
-[node name="Clock" type="Control" parent="TextDisplay"]
+[node name="PlaybackClock" type="Control" parent="TextDisplay" node_paths=PackedStringArray("_minutesTens", "_minutesOnes", "_secondsTens", "_secondsOnes")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -421,7 +419,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay/Clock"]
+script = ExtResource("clock")
+_minutesTens = NodePath("TimeMinutesTensLabel")
+_minutesOnes = NodePath("TimeMinutesOnesLabel")
+_secondsTens = NodePath("TimeSecondsTensLabel")
+_secondsOnes = NodePath("TimeSecondsOnesLabel")
+
+[node name="TimeMinutesTensLabel" type="Label" parent="TextDisplay/PlaybackClock"]
 layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 48.0
@@ -432,7 +436,7 @@ text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay/Clock"]
+[node name="TimeMinutesOnesLabel" type="Label" parent="TextDisplay/PlaybackClock"]
 layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 60.0
@@ -443,7 +447,7 @@ text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay/Clock"]
+[node name="TimeSecondsTensLabel" type="Label" parent="TextDisplay/PlaybackClock"]
 layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 78.0
@@ -454,7 +458,7 @@ text = "0"
 script = ExtResource("label")
 UseNumberFont = true
 
-[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay/Clock"]
+[node name="TimeSecondsOnesLabel" type="Label" parent="TextDisplay/PlaybackClock"]
 layout_mode = 0
 theme = ExtResource("number_theme")
 offset_left = 90.0
@@ -514,7 +518,7 @@ offset_bottom = 10.0
 mouse_filter = 2
 theme = ExtResource("text_theme")
 text = " 00:00"
-script = ExtResource("label")
+script = ExtResource("compact_clock")
 
 [node name="Visualization" type="TextureRect" parent="Windowshade"]
 layout_mode = 0

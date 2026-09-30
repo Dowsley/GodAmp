@@ -27,9 +27,6 @@ public partial class MasterPanel : WindowPanelContainer
     [Signal] public delegate void VolumeRequestedEventHandler(float value);
     [Signal] public delegate void BalanceRequestedEventHandler(float value);
 
-    [ExportGroup("Config")]
-    [Export] public double ClockBlinkEverySeconds = 1.0f;
-
     [ExportGroup("References")]
     [Export] private PlaybackController _playbackController = null!;
     [Export] private AudioController _audio = null!;
@@ -45,20 +42,13 @@ public partial class MasterPanel : WindowPanelContainer
     [Export] private Label _bitrateLabel = null!;
     [Export] private Label _sampleRateLabel = null!;
     [Export] private SkinSlider _windowshadeSeek = null!;
-    [Export] private Label _windowshadeTime = null!;
     [ExportSubgroup("Time display")]
-    [Export] private Control _clock = null!;
-    [Export] private Label _timeMinutesTensLabel = null!;
-    [Export] private Label _timeMinutesOnesLabel = null!;
-    [Export] private Label _timeSecondsTensLabel = null!;
-    [Export] private Label _timeSecondsOnesLabel = null!;
+    [Export] private PlaybackClock _playbackClock = null!;
+    [Export] private CompactPlaybackClock _compactClock = null!;
 
     private bool _dragging = false;
-    private double _clockBlinkTimer = 1.0f;
-    private bool _clockBlinking = false;
     private enum LabelDisplay { Track, Slider, Seek }
     private LabelDisplay _labelDisplay;
-    private int _displayedSecond = -1;
 
     /// <summary>Reflects the window owner's visibility state in the panel's controls.</summary>
     /// <param name="window">Window whose visibility was published.</param>
@@ -109,9 +99,10 @@ public partial class MasterPanel : WindowPanelContainer
             _positionSeekerSlider.Value = 0.0f;
         }
 
-        UpdateTimeDisplay();
+        double position = _playbackController.Position;
+        _playbackClock.UpdateDisplay(position, _playbackController.State == PlaybackState.Playing, delta);
+        _compactClock.UpdateDisplay(position);
         _windowshadeSeek.SetValueNoSignal(_positionSeekerSlider.Value);
-        _clockBlinkTimer += delta;
     }
 
     /// <summary>Reflects source metadata and seek availability when playback inputs change.</summary>
@@ -135,52 +126,6 @@ public partial class MasterPanel : WindowPanelContainer
             return;
         RefreshTrackTitle();
         RefreshTrackPresentation();
-    }
-
-    /// <summary>Updates expanded digits and compact bitmap time from the shared playback position.</summary>
-    private void UpdateTimeDisplay()
-    {
-        var playbackPosition = _playbackController.Position;
-        var time = TimeSpan.FromSeconds(playbackPosition);
-
-        int totalMinutes = (int)time.TotalMinutes;
-        int seconds = time.Seconds;
-
-        int wholeSeconds = (int)time.TotalSeconds;
-        if (_displayedSecond != wholeSeconds)
-        {
-            _displayedSecond = wholeSeconds;
-            _windowshadeTime.Text = $"{totalMinutes,3}:{seconds:00}";
-            _timeMinutesTensLabel.Text = (totalMinutes / 10).ToString();
-            _timeMinutesOnesLabel.Text = (totalMinutes % 10).ToString();
-            _timeSecondsTensLabel.Text = (seconds / 10).ToString();
-            _timeSecondsOnesLabel.Text = (seconds % 10).ToString();
-        }
-
-        if (_playbackController.State == PlaybackState.Playing)
-        {
-            SetClockAlpha(1.0f);
-        }
-        else
-        {
-            if (!(_clockBlinkTimer > ClockBlinkEverySeconds))
-                return;
-
-            float alpha = _clockBlinking ? 0.5f : 1.0f;
-            SetClockAlpha(alpha);
-
-            _clockBlinking = !_clockBlinking;
-            _clockBlinkTimer = 0.0;
-        }
-    }
-
-    /// <summary>Sets shared opacity for all expanded clock digits.</summary>
-    /// <param name="alpha">Opacity from zero (transparent) to one (opaque).</param>
-    private void SetClockAlpha(float alpha)
-    {
-        if (_clock.Modulate.A == alpha)
-            return;
-        _clock.Modulate = new Color(_clock.Modulate, alpha);
     }
 
     /// <summary>Reflects navigation policy without emitting another toggle request.</summary>
