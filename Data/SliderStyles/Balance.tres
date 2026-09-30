@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SkinSliderStyle" format=3]
+
+[ext_resource type="Script" path="res://Src/Presentation/Components/SkinSliderStyle.cs" id="script"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/BalanceSliderTrack.tres" id="track"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PannerAudioSliderGrabber.tres" id="thumb"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/PannerAudioSliderGrabberHighlight.tres" id="pressed"]
+
+[resource]
+script = ExtResource("script")
+Track = ExtResource("track")
+Thumb = ExtResource("thumb")
+PressedThumb = ExtResource("pressed")
+TrackFrameCount = 28
+TrackFrameStride = Vector2(0, 15)
+ThumbOrigin = Vector2(0, 1)
+Travel = 24
+Mapping = 1

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cpme6jm30nl1o"]
 
 [ext_resource type="Texture2D" uid="uid://c4flab18dxnq6" path="res://Data/SkinResources/MasterPanelBackground.tres" id="background"]
-[ext_resource type="Texture2D" uid="uid://08clhe1icnca" path="res://Data/SkinResources/PannerAudioSlider.tres" id="balance"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/Balance.tres" id="balance"]
 [ext_resource type="Script" uid="uid://bt8gtk7ckm4u3" path="res://Src/Presentation/MainPanel/PlaybackClock.cs" id="clock"]
 [ext_resource type="Texture2D" uid="uid://dwhqep2pu0u1m" path="res://Data/SkinResources/MasterPanelCloseButtonNormal.tres" id="close"]
 [ext_resource type="Texture2D" uid="uid://ultq8stxfd80" path="res://Data/SkinResources/MasterPanelCloseButtonPressed.tres" id="close_held"]
@@ -34,7 +34,8 @@
 [ext_resource type="Texture2D" uid="uid://b755oy6v2s5kj" path="res://Data/SkinResources/PreviousTrackButtonPressed.tres" id="previous_held"]
 [ext_resource type="Texture2D" uid="uid://iqkq0rtuvb6y" path="res://Data/SkinResources/RepeatModeButtonNormal.tres" id="repeat_off"]
 [ext_resource type="Texture2D" uid="uid://bdebbq0y5t8kf" path="res://Data/SkinResources/RepeatModeButtonPressed.tres" id="repeat_on"]
-[ext_resource type="Texture2D" uid="uid://b2t1kuia68x2n" path="res://Data/SkinResources/PositionSeekerGrabber.tres" id="seek"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/Seek.tres" id="seek"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/WindowshadeSeek.tres" id="shade_seek_style"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadeMainSheet.tres" id="shade_sheet"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinWindowShape.tscn" id="shape"]
 [ext_resource type="Texture2D" uid="uid://ggl7b471cdw5" path="res://Data/SkinResources/ShuffleModeButtonNormal.tres" id="shuffle_off"]
@@ -46,7 +47,7 @@
 [ext_resource type="Texture2D" uid="uid://yjpimygmljwp" path="res://Data/SkinResources/MasterPanelTitlebar.tres" id="titlebar"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="Script" uid="uid://cawkidse85sph" path="res://Src/Presentation/MainPanel/ClassicVisualization.cs" id="visualization"]
-[ext_resource type="Texture2D" uid="uid://b4ro2wogdqcf8" path="res://Data/SkinResources/VolumeSlider.tres" id="volume"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/Volume.tres" id="volume"]
 
 [sub_resource type="AtlasTexture" id="shade_background"]
 atlas = ExtResource("shade_sheet")
@@ -241,7 +242,7 @@ offset_right = 175.0
 offset_bottom = 70.0
 max_value = 1.0
 step = 0.01
-Sheet = ExtResource("volume")
+Style = ExtResource("volume")
 
 [node name="PannerAudioSlider" parent="Controls" unique_id=1016402517 instance=ExtResource("slider")]
 layout_mode = 0
@@ -252,8 +253,7 @@ offset_bottom = 70.0
 min_value = -1.0
 max_value = 1.0
 step = 0.01
-Layout = 1
-Sheet = ExtResource("balance")
+Style = ExtResource("balance")
 
 [node name="PositionSeeker" parent="Controls" unique_id=217633064 instance=ExtResource("slider")]
 layout_mode = 0
@@ -262,8 +262,7 @@ offset_top = 72.0
 offset_right = 264.0
 offset_bottom = 82.0
 step = 0.01
-Layout = 2
-Sheet = ExtResource("seek")
+Style = ExtResource("seek")
 
 [node name="ToggleEqualizerButton" parent="Controls" unique_id=587565053 instance=ExtResource("toggle")]
 layout_mode = 0
@@ -578,8 +577,7 @@ offset_top = 4.0
 offset_right = 243.0
 offset_bottom = 11.0
 step = 0.01
-Layout = 4
-Sheet = ExtResource("shade_sheet")
+Style = ExtResource("shade_seek_style")
 
 [node name="Restore" type="TextureButton" parent="Windowshade" unique_id=413086488]
 layout_mode = 0

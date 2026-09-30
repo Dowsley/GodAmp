@@ -1,4 +1,3 @@
-using System;
 using GodAmp.Skins;
 using Godot;
 
@@ -8,30 +7,13 @@ namespace GodAmp.Presentation.Components;
 [Tool]
 public partial class SkinSlider : Godot.Range
 {
-    /// <summary>Classic sprite layouts supported by this control.</summary>
-    public enum SliderLayout { Volume, Balance, Seek, Equalizer, WindowshadeSeek, WindowshadeVolume, WindowshadeBalance }
-
-    private const int LastFrame = 27;
-    private const int FrameStride = 15;
-    private const int EqualizerPositions = 64;
-    private const int EqualizerFramesPerRow = 14;
-    private const int SeekTravel = 219;
-    private const int BalanceHalfTravel = 12;
-    private const int VolumeTravel = 51;
-    private const int EqualizerTravel = 51;
-    private const int WindowshadeSeekTravel = 12;
-    private const int WindowshadeVolumeTravel = 94;
-    private const int WindowshadeBalanceTravel = 39;
-
     /// <summary>Emitted before pointer or keyboard interaction changes the value.</summary>
     [Signal] public delegate void DragStartedEventHandler();
     /// <summary>Emitted on release with whether the interaction changed the value.</summary>
     [Signal] public delegate void DragEndedEventHandler(bool valueChanged);
 
-    /// <summary>Selects the sheet layout and logical geometry.</summary>
-    [Export] public SliderLayout Layout { get; set; }
-    /// <summary>References a shared skin atlas whose backing sheet follows skin changes.</summary>
-    [Export] public AtlasTexture Sheet { get; set; } = null!;
+    /// <summary>Inspector-assigned artwork, animation and interaction geometry.</summary>
+    [Export] public SkinSliderStyle Style { get; set; } = null!;
     /// <summary>Controls whether mouse and keyboard input can change the value.</summary>
     [Export] public bool Editable
     {
@@ -53,40 +35,10 @@ public partial class SkinSlider : Godot.Range
     private float _grabOffset;
 
     /// <summary>Gets the thumb's logical rectangle, shared by rendering and pointer hit testing.</summary>
-    public Rect2 ThumbRect => Layout switch
-    {
-        SliderLayout.Equalizer => new Rect2(1, EqualizerTravel - (EqualizerPositions - 1 - EqualizerPosition) * (EqualizerTravel + 1) / EqualizerPositions, 11, 11),
-        SliderLayout.Seek => new Rect2(Mathf.FloorToInt((float)Ratio * SeekTravel), 0, 29, 10),
-        SliderLayout.Balance => new Rect2(BalanceHalfTravel + (int)((Ratio * 2 - 1) * BalanceHalfTravel), 1, 14, 11),
-        SliderLayout.WindowshadeSeek => new Rect2(1 + Mathf.FloorToInt((float)Ratio * WindowshadeSeekTravel), 0, 3, 7),
-        SliderLayout.WindowshadeVolume => new Rect2(Mathf.FloorToInt((float)Ratio * WindowshadeVolumeTravel), 0, 3, 7),
-        SliderLayout.WindowshadeBalance => new Rect2(Mathf.FloorToInt((float)Ratio * WindowshadeBalanceTravel), 0, 3, 7),
-        _ => new Rect2(Mathf.FloorToInt((float)Ratio * VolumeTravel), 1, 14, 11)
-    };
-
-    private int EqualizerPosition => Mathf.RoundToInt((1 - (float)Ratio) * (EqualizerPositions - 1));
+    public Rect2 ThumbRect => Style.GetThumbRect(Ratio);
 
     /// <summary>Gets the source track rectangle for the current value.</summary>
-    public Rect2 TrackRegion
-    {
-        get
-        {
-            if (Layout == SliderLayout.WindowshadeSeek)
-                return new Rect2(0, 36, 17, 7);
-            if (Layout == SliderLayout.Seek)
-                return new Rect2(0, 0, 248, 10);
-            if (Layout == SliderLayout.Equalizer)
-            {
-                int frame = LastFrame - EqualizerPosition * (LastFrame + 1) / EqualizerPositions;
-                return new Rect2(13 + frame % EqualizerFramesPerRow * FrameStride,
-                    frame < EqualizerFramesPerRow ? 164 : 229, 14, 63);
-            }
-            double amount = Layout == SliderLayout.Balance ? Math.Abs(Ratio * 2 - 1) : Ratio;
-            int row = Math.Clamp((int)(amount * LastFrame), 0, LastFrame);
-            return new Rect2(Layout == SliderLayout.Balance ? 9 : 0, row * FrameStride,
-                Layout == SliderLayout.Balance ? 38 : 68, 13);
-        }
-    }
+    public Rect2 TrackRegion => Style.GetTrackRegion(Ratio);
 
     /// <inheritdoc />
     public override void _Ready()
@@ -114,33 +66,20 @@ public partial class SkinSlider : Godot.Range
     /// <inheritdoc />
     public override void _Draw()
     {
-        if (Sheet?.Atlas == null)
+        if (Style?.Thumb?.Atlas == null)
             return;
-        if (Layout is SliderLayout.WindowshadeVolume or SliderLayout.WindowshadeBalance)
-        {
-            int frame = Math.Min(2, (int)(Ratio * 3));
-            int sourceX = Layout == SliderLayout.WindowshadeVolume ? 1 : 11;
-            DrawTextureRectRegion(Sheet.Atlas, ThumbRect, new Rect2(sourceX + frame * 3, 30, 3, 7));
-            return;
-        }
         Rect2 track = TrackRegion;
-        DrawTextureRectRegion(Sheet.Atlas, new Rect2(Vector2.Zero, track.Size), track);
-        if (!Editable && Layout is SliderLayout.Seek or SliderLayout.WindowshadeSeek)
+        if (Style.Track != null)
+            DrawTextureRectRegion(Style.Track.Atlas, new Rect2(Vector2.Zero, track.Size), track);
+        if (!Editable && Style.HideThumbWhenDisabled)
             return;
-        Rect2 source = Layout switch
-        {
-            SliderLayout.Equalizer => new Rect2(0, _dragging ? 176 : 164, 11, 11),
-            SliderLayout.Seek => new Rect2(_dragging ? 278 : 248, 0, 29, 10),
-            SliderLayout.WindowshadeSeek => new Rect2(17 + (ThumbRect.Position.X < 6 ? 0 : ThumbRect.Position.X < 9 ? 3 : 6), 36, 3, 7),
-            _ => new Rect2(_dragging ? 0 : 15, 422, 14, 11)
-        };
-        DrawTextureRectRegion(Sheet.Atlas, ThumbRect, source);
+        DrawTextureRectRegion(Style.GetThumbTexture(_dragging).Atlas, ThumbRect, Style.GetThumbRegion(Ratio, _dragging));
     }
 
     /// <inheritdoc />
     public override void _GuiInput(InputEvent input)
     {
-        if (!Editable)
+        if (!Editable || Style == null)
             return;
         if (input is InputEventMouseButton button)
         {
@@ -153,8 +92,8 @@ public partial class SkinSlider : Godot.Range
                     Rect2 thumb = ThumbRect;
                     Vector2 offset = button.Position - thumb.Position;
                     _grabOffset = thumb.HasPoint(button.Position)
-                        ? (Layout == SliderLayout.Equalizer ? offset.Y : offset.X)
-                        : (Layout == SliderLayout.Equalizer ? thumb.Size.Y : thumb.Size.X) / 2;
+                        ? (Style.Vertical ? offset.Y : offset.X)
+                        : (Style.Vertical ? thumb.Size.Y : thumb.Size.X) / 2;
                     if (!thumb.HasPoint(button.Position))
                         SetValueFromPointer(button.Position);
                 }
@@ -189,19 +128,7 @@ public partial class SkinSlider : Godot.Range
     /// <param name="position">Pointer coordinates in logical control pixels.</param>
     private void SetValueFromPointer(Vector2 position)
     {
-        float travel = Layout switch
-        {
-            SliderLayout.Seek => SeekTravel,
-            SliderLayout.Balance => BalanceHalfTravel * 2,
-            SliderLayout.Equalizer => EqualizerTravel,
-            SliderLayout.WindowshadeSeek => WindowshadeSeekTravel,
-            SliderLayout.WindowshadeVolume => WindowshadeVolumeTravel,
-            SliderLayout.WindowshadeBalance => WindowshadeBalanceTravel,
-            _ => VolumeTravel
-        };
-        float origin = Layout == SliderLayout.WindowshadeSeek ? 1 : 0;
-        float ratio = ((Layout == SliderLayout.Equalizer ? position.Y : position.X) - _grabOffset - origin) / travel;
-        Ratio = Mathf.Clamp(Layout == SliderLayout.Equalizer ? 1 - ratio : ratio, 0, 1);
+        Ratio = Style.GetRatioFromPointer(position, _grabOffset);
     }
 
     /// <summary>Applies one wheel or keyboard step and emits a complete interaction for seek handlers.</summary>

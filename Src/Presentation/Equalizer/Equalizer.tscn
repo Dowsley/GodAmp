@@ -19,6 +19,8 @@
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinToggleButton.tscn" id="toggle"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Equalizer/EqualizerBand.tscn" id="band"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Components/SkinSlider.tscn" id="slider"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/WindowshadeVolume.tres" id="shade_volume_style"]
+[ext_resource type="Resource" path="res://Data/SliderStyles/WindowshadeBalance.tres" id="shade_balance_style"]
 [ext_resource type="Texture2D" path="res://Data/SkinResources/WindowshadeEqualizerSheet.tres" id="shade_sheet"]
 
 [sub_resource type="AtlasTexture" id="shade_background"]
@@ -307,8 +309,7 @@ offset_right = 158.0
 offset_bottom = 11.0
 max_value = 1.0
 step = 0.01
-Layout = 5
-Sheet = ExtResource("shade_sheet")
+Style = ExtResource("shade_volume_style")
 
 [node name="Balance" parent="Windowshade" instance=ExtResource("slider")]
 layout_mode = 0
@@ -319,8 +320,7 @@ offset_bottom = 11.0
 min_value = -1.0
 max_value = 1.0
 step = 0.01
-Layout = 6
-Sheet = ExtResource("shade_sheet")
+Style = ExtResource("shade_balance_style")
 
 [node name="Restore" type="TextureButton" parent="Windowshade"]
 layout_mode = 0
