@@ -10,10 +10,11 @@ using Godot;
 
 namespace GodAmp.Playlists;
 
-/// <summary>Coordinates playlist file operations against the scene's playback queue.</summary>
+/// <summary>Requests playlist imports and saves PlaybackController's queue to playlist files.</summary>
 public partial class PlaylistController : Node
 {
     private const string DefaultExtension = ".m3u8";
+
     [Export] private PlaybackController _playback = null!;
     [Export] private AudioImportController _imports = null!;
     [Export] private OperationIssues _issues = null!;

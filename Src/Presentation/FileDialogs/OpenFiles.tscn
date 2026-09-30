@@ -1,7 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bmrlpn33wdba4"]
 
-[node name="OpenFiles" type="FileDialog"]
-title = "Open files"
+[node name="OpenFiles" type="FileDialog" unique_id=1286799245]
+oversampling_override = 1.0
+title = "Open File(s)"
+position = Vector2i(0, 36)
 file_mode = 1
 access = 2
 use_native_dialog = true

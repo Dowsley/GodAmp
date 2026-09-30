@@ -7,7 +7,7 @@ using Godot;
 namespace GodAmp.Presentation.FileDialogs;
 
 /// <summary>Owns temporary native pickers and publishes selections to scene-wired feature owners.</summary>
-public partial class FilePickers : Node
+public partial class FilePickerController : Node
 {
     [Signal] public delegate void FilesSelectedEventHandler(string[] paths, bool replace);
     [Signal] public delegate void FolderSelectedEventHandler(string path, bool replace);
