@@ -131,12 +131,6 @@ script = ExtResource("cursor_binding")
 ControlPaths = Array[NodePath]([NodePath("../TextDisplay/MasterLabel")])
 Role = 8
 
-[sub_resource type="StyleBoxTexture" id="menu_normal_style"]
-texture = ExtResource("menu_normal")
-
-[sub_resource type="StyleBoxTexture" id="menu_pressed_style"]
-texture = ExtResource("menu_pressed")
-
 [sub_resource type="StyleBoxEmpty" id="empty_style"]
 
 [sub_resource type="Theme" id="shade_controls_theme"]
@@ -242,15 +236,6 @@ texture_pressed = ExtResource("close_held")
 
 [node name="WinampMenuButton" parent="Controls" instance=ExtResource("menu")]
 layout_mode = 0
-offset_left = 6.0
-offset_top = 3.0
-offset_right = 15.0
-offset_bottom = 12.0
-theme_override_styles/normal = SubResource("menu_normal_style")
-theme_override_styles/hover = SubResource("menu_normal_style")
-theme_override_styles/pressed = SubResource("menu_pressed_style")
-theme_override_styles/focus = SubResource("empty_style")
-flat = false
 
 [node name="VolumeSlider" parent="Controls" instance=ExtResource("slider")]
 layout_mode = 0

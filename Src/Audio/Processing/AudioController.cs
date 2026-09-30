@@ -68,8 +68,8 @@ public partial class AudioController : Node
             : throw new InvalidOperationException($"Audio bus '{_busName}' requires {typeof(T).Name}.");
     }
 
-    /// <summary>Sets linear output volume, ignoring nonfinite input and clamping to zero through one.</summary>
-    /// <param name="value">Requested linear output level.</param>
+    /// <summary>Sets volume slider position, ignoring nonfinite input and clamping to zero through one.</summary>
+    /// <param name="value">Requested normalized position on the decibel volume curve.</param>
     public void SetVolume(float value)
     {
         if (_state.SetVolume(value)) Publish();
@@ -113,7 +113,7 @@ public partial class AudioController : Node
 
     private void Apply()
     {
-        _player.VolumeLinear = Volume;
+        _player.VolumeLinear = _state.OutputGain;
         _panner.Pan = Balance;
         _preamp.VolumeDb = PreampDb;
         for (int i = 0; i < BandGains.Count; i++)

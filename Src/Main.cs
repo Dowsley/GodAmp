@@ -1,19 +1,17 @@
 using GodAmp.Settings;
-using GodAmp.Presentation.Playlist;
 using GodAmp.Desktop;
 using GodAmp.Media.Importing;
 using Godot;
 
 namespace GodAmp;
 
-/// <summary>Coordinates application lifetime and forwards engine-root input to feature owners.</summary>
+/// <summary>Coordinates application lifetime and forwards file drops from the engine-created root window.</summary>
 public partial class Main : HBoxContainer
 {
     [ExportGroup("Config")]
-    [Export] public string DefaultSongsPath = null!;
+    [Export(PropertyHint.Dir)] public string DefaultSongsPath = null!;
 
     [ExportGroup("References")]
-    [Export] private Playlist _playlist = null!;
     [Export] private AudioImportController _audioImportController = null!;
     [Export] private WindowManager _windowManager = null!;
 
@@ -37,13 +35,4 @@ public partial class Main : HBoxContainer
     /// <param name="paths">Files, playlists and directories provided by the native window.</param>
     private void OnFilesDropped(string[] paths) =>
         _audioImportController.ImportDrop(paths);
-
-    /// <inheritdoc />
-    public override void _UnhandledKeyInput(InputEvent @event)
-    {
-        if (_playlist.HandleJumpShortcut(@event))
-        {
-            GetViewport().SetInputAsHandled();
-        }
-    }
 }

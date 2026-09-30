@@ -156,8 +156,8 @@ public sealed class SettingsStore : IDisposable
         return ReadAudioNumber(VolumeKey, AudioSettings.DefaultVolume);
     }
 
-    /// <summary>Stores the audio owner's linear output level in memory.</summary>
-    /// <param name="volume">Validated output level.</param>
+    /// <summary>Stores the audio owner's normalized volume slider position in memory.</summary>
+    /// <param name="volume">Validated slider position.</param>
     public void SetVolume(float volume)
     {
         SetSetting(VolumeKey, volume);

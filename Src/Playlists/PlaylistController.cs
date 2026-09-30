@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using GodAmp.Media.Importing;
-using GodAmp.Operations;
+using GodAmp.Diagnostics;
 using GodAmp.Playback;
 using GodAmp.Playlists.Serialization;
 using GodAmp.Media;

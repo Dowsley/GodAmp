@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 
-namespace GodAmp.Operations;
+namespace GodAmp.Diagnostics;
 
 /// <summary>Owns operation diagnostics for the scene and publishes changes to status presentation.</summary>
 public partial class OperationIssues : Node

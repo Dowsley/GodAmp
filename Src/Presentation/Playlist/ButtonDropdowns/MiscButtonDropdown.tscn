@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://d3yiu5g14air5" path="res://Data/SkinResources/MiscOptionsButtonPressed.tres" id="8_6x2fh"]
 
 [node name="MiscButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container", "_sortMenu", "_optionsMenu")]
+visible = false
 script = ExtResource("1_v6fbn")
 _container = NodePath("FocusButtonContainer")
 _sortMenu = NodePath("SortMenu")

@@ -48,7 +48,6 @@ public partial class Playlist : WindowPanelContainer
     [Export] private FileInfoDialog _fileInfo = null!;
     [Export] private PopupMenu _contextMenu = null!;
     [Export] private JumpToTrackDialog _search = null!;
-    [Export] private Shortcut _jumpShortcut = null!;
 
     [ExportSubgroup("Button dropdowns")]
     [Export] public ButtonDropdown AddButtonDropdown = null!;
@@ -326,24 +325,6 @@ public partial class Playlist : WindowPanelContainer
 
     /// <summary>Opens a search over the shared queue without changing its order or selection.</summary>
     public void OpenSearch() => _search.Open(_playbackController.Entries);
-
-    /// <summary>Handles the scene-configured search shortcut after focused controls have processed input.</summary>
-    /// <param name="input">An unhandled event from a player window.</param>
-    /// <returns>Whether the search dialog was opened.</returns>
-    public bool HandleJumpShortcut(InputEvent input)
-    {
-        if (input is not InputEventKey { Pressed: true, Echo: false } || !_jumpShortcut.MatchesEvent(input))
-            return false;
-        OpenSearch();
-        return true;
-    }
-
-    /// <inheritdoc />
-    public override void _UnhandledKeyInput(InputEvent @event)
-    {
-        if (HandleJumpShortcut(@event))
-            GetViewport().SetInputAsHandled();
-    }
 
     /// <summary>Handles row-local keyboard commands without intercepting dialogs or other windows.</summary>
     private void OnKeyboardRequested(long entryId, InputEventKey key)

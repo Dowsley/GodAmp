@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GodAmp.Audio;
 using GodAmp.Media;
-using GodAmp.Operations;
+using GodAmp.Diagnostics;
 using GodAmp.Playback.Queue;
 using Godot;
 

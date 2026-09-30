@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://4luussjo5dp7" path="res://Data/SkinResources/LoadListButtonPressed.tres" id="8_k7yhl"]
 
 [node name="ListOptionsButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
+visible = false
 script = ExtResource("1_atgfb")
 _container = NodePath("FocusButtonContainer")
 

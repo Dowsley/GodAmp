@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using GodAmp.Operations;
+using GodAmp.Diagnostics;
 using GodAmp.Media.Sources;
 using GodAmp.Playlists;
 using GodAmp.Playlists.Serialization;

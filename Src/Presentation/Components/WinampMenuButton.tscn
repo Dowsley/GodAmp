@@ -1,12 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://i0q31hsu8ojj"]
+[gd_scene load_steps=7 format=3 uid="uid://i0q31hsu8ojj"]
 
 [ext_resource type="Script" uid="uid://bolhoxd1h4jeq" path="res://Src/Presentation/Components/WinampMenuButton.cs" id="1_10mdb"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonNormal.tres" id="menu_normal"]
+[ext_resource type="Texture2D" path="res://Data/SkinResources/MenuButtonPressed.tres" id="menu_pressed"]
+
+[sub_resource type="StyleBoxTexture" id="menu_normal_style"]
+texture = ExtResource("menu_normal")
+
+[sub_resource type="StyleBoxTexture" id="menu_pressed_style"]
+texture = ExtResource("menu_pressed")
+
+[sub_resource type="StyleBoxEmpty" id="empty_style"]
 
 [node name="WinampMenuButton" type="MenuButton" node_paths=PackedStringArray("_scaleSubmenu", "_skinSubmenu")]
 offset_left = 6.0
 offset_top = 3.0
 offset_right = 15.0
 offset_bottom = 12.0
+theme_override_styles/normal = SubResource("menu_normal_style")
+theme_override_styles/hover = SubResource("menu_normal_style")
+theme_override_styles/pressed = SubResource("menu_pressed_style")
+theme_override_styles/focus = SubResource("empty_style")
+flat = false
 script = ExtResource("1_10mdb")
 _scaleSubmenu = NodePath("ScaleSubmenu")
 _skinSubmenu = NodePath("SkinSubmenu")

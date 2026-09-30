@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using GodAmp.Media.Sources;
-using GodAmp.Operations;
+using GodAmp.Diagnostics;
 
 namespace GodAmp.Media.Metadata;
 

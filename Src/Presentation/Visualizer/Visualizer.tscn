@@ -148,7 +148,6 @@ stretch_mode = 1
 [node name="AudioVisualizer" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("2_2g1mo")]
 layout_mode = 1
 size_flags_vertical = 3
-mouse_filter = 2
 
 [node name="VisualizerOptionsButton" parent="VBoxContainer/AllContent/Middle/MiddleTexture" instance=ExtResource("14_blgew")]
 layout_mode = 1

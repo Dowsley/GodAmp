@@ -36,7 +36,6 @@
 [ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/PlaylistFooter.tscn" id="footer"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/FileInfo/FileInfoDialog.tscn" id="file_info"]
 [ext_resource type="PackedScene" path="res://Src/Presentation/Playlist/Search/JumpToTrackDialog.tscn" id="search"]
-[ext_resource type="Shortcut" path="res://Src/Presentation/Playlist/Search/JumpToTrackShortcut.tres" id="search_shortcut"]
 
 [sub_resource type="AtlasTexture" id="shade_left"]
 atlas = ExtResource("shade_sheet")
@@ -127,7 +126,6 @@ _footer = NodePath("VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/Con
 _fileInfo = NodePath("FileInfoDialog")
 _contextMenu = NodePath("ContextMenu")
 _search = NodePath("JumpToTrackDialog")
-_jumpShortcut = ExtResource("search_shortcut")
 TrackLabelScene = ExtResource("2_ecqcu")
 _trackEntryContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer/MarginContainer/PlaylistTrackEntryContainer")
 _scrollContainer = NodePath("VBoxContainer/AllContent/ContentContainer/MarginContainer/ScrollContainer")
@@ -369,8 +367,6 @@ texture_pressed = ExtResource("22_kvkyn")
 stretch_mode = 5
 
 [node name="Footer" parent="VBoxContainer/AllContent/TilableBottomEdge/HBoxContainer/ControlsArea" instance=ExtResource("footer")]
-layout_mode = 0
-anchors_preset = 0
 
 [node name="DraggableHitbox" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 14)
@@ -379,19 +375,14 @@ size_flags_vertical = 0
 mouse_filter = 2
 
 [node name="AddButtonDropdown" parent="." instance=ExtResource("9_bcdvx")]
-visible = false
 
 [node name="RemoveButtonDropdown" parent="." instance=ExtResource("10_ibn1u")]
-visible = false
 
 [node name="SelectButtonDropdown" parent="." instance=ExtResource("11_esdbs")]
-visible = false
 
 [node name="MiscButtonDropdown" parent="." instance=ExtResource("12_bltap")]
-visible = false
 
 [node name="ListOptionsButtonDropdown" parent="." instance=ExtResource("13_esdbs")]
-visible = false
 
 [node name="ResizeLayer" type="Control" parent="."]
 layout_mode = 2

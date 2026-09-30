@@ -1,4 +1,4 @@
-namespace GodAmp.Operations;
+namespace GodAmp.Diagnostics;
 
 /// <summary>The stage or capability associated with an operation failure.</summary>
 public enum OperationIssueKind { Discovery, Access, UnsupportedFormat, Metadata, Decoding }

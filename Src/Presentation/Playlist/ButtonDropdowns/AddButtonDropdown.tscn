@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bqkd471yf2dxf" path="res://Data/SkinResources/AddFileButtonPressed.tres" id="8_0oq7g"]
 
 [node name="AddButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container")]
+visible = false
 script = ExtResource("1_ljfcj")
 _container = NodePath("FocusButtonContainer")
 

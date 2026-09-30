@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://jj6s4qsr3px5" path="res://Data/SkinResources/RemoveSelectionButtonPressed.tres" id="10_g5q4n"]
 
 [node name="RemoveButtonDropdown" type="Node2D" node_paths=PackedStringArray("_container", "_miscMenu")]
+visible = false
 script = ExtResource("1_yp7ol")
 _container = NodePath("FocusButtonContainer")
 _miscMenu = NodePath("MiscMenu")

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GodAmp.Playback;
-using GodAmp.Operations;
+using GodAmp.Diagnostics;
 using GodAmp.Settings;
 using Godot;
 

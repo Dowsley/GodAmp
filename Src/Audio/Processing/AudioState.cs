@@ -12,6 +12,8 @@ public sealed class AudioState
     /// <summary>Highest supported preamp and equalizer gain in decibels.</summary>
     public const float MaximumGainDb = 12;
 
+    private const float MinimumVolumeDb = -60;
+
     private readonly float[] _bandGains = new float[AudioSettings.EqualizerBandCount];
     private readonly ReadOnlyCollection<float> _readOnlyGains;
     private float _volume = AudioSettings.DefaultVolume;
@@ -21,8 +23,10 @@ public sealed class AudioState
     /// <summary>Creates neutral processing state at the default output volume.</summary>
     public AudioState() => _readOnlyGains = Array.AsReadOnly(_bandGains);
 
-    /// <summary>Linear output level between zero and one.</summary>
+    /// <summary>Normalized volume slider position between zero and one.</summary>
     public float Volume => _volume;
+    /// <summary>Linear amplitude gain for the 60 dB slider range, with exact silence at zero.</summary>
+    public float OutputGain => Volume == 0 ? 0 : MathF.Pow(10, MinimumVolumeDb * (1 - Volume) / 20);
     /// <summary>Stereo pan between minus one (left) and one (right).</summary>
     public float Balance => _balance;
     /// <summary>Preamp gain in decibels.</summary>
@@ -49,7 +53,7 @@ public sealed class AudioState
     public AudioSettings Snapshot() => new(Volume, Balance, PreampDb, EqualizerEnabled, [.. _bandGains]);
 
     /// <summary>Updates output level, ignoring nonfinite values and bounding finite input.</summary>
-    /// <param name="value">Requested linear volume.</param>
+    /// <param name="value">Requested normalized volume slider position.</param>
     /// <returns>Whether the effective volume changed.</returns>
     public bool SetVolume(float value) => SetBounded(ref _volume, value, 0, 1);
 

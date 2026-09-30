@@ -239,7 +239,7 @@ public partial class MasterPanel : WindowPanelContainer
     }
 
     /// <summary>Requests shared volume and displays feedback during an active slider interaction.</summary>
-    /// <param name="value">Linear volume from zero to one.</param>
+    /// <param name="value">Normalized volume slider position from zero to one.</param>
     private void OnVolumeSliderValueChanged(float value)
     {
         EmitSignal(SignalName.VolumeRequested, value);
