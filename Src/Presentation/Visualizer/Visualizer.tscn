@@ -210,4 +210,5 @@ mouse_filter = 2
 Panel = NodePath("../..")
 
 [connection signal="VizChanged" from="VBoxContainer/AllContent/Middle/MiddleTexture/VisualizerOptionsButton" to="VBoxContainer/AllContent/Middle/MiddleTexture/AudioVisualizer" method="SwitchStrategy"]
+[connection signal="visibility_changed" from="." to="." method="RefreshPlaybackState"]
 [connection signal="pressed" from="VBoxContainer/HeaderContainer/TopRightCornerTexture/CloseButton" to="." method="OnCloseButtonPressed"]

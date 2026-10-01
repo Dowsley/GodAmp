@@ -225,6 +225,7 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="ResizeStarted" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="OnWindowResizeStarted"]
 [connection signal="SizeRequested" from="PlaylistWindow/Playlist/ResizeLayer/ResizeHandle" to="WindowManager" method="SetLogicalSize"]
 [connection signal="files_dropped" from="VisualizerWindow" to="AudioImportController" method="ImportDrop"]
+[connection signal="visibility_changed" from="VisualizerWindow" to="VisualizerWindow/Visualizer" method="RefreshPlaybackState"]
 [connection signal="CommandRequested" from="VisualizerWindow/PlayerShortcuts" to="PlayerCommandRouter" method="Execute"]
 [connection signal="CloseButtonClicked" from="VisualizerWindow/Visualizer" to="WindowManager" method="HideVisualizer"]
 [connection signal="DragEnded" from="VisualizerWindow/Visualizer" to="WindowManager" method="OnWindowDragEnd"]

@@ -18,10 +18,11 @@ public partial class Visualizer : WindowPanelContainer
         _vizOptsButton.Initialize(_audioVisualizer.StrategyTypeMap.Values);
     }
 
-    /// <summary>Runs visualization rendering while the playback owner reports active playback.</summary>
+    /// <summary>Runs simulation and rendering only while the window is visible and playback is active.</summary>
     public void RefreshPlaybackState()
     {
-        _audioVisualizer.ProcessMode = _playback.State == PlaybackState.Playing
-            ? ProcessModeEnum.Inherit : ProcessModeEnum.Disabled;
+        if (!IsNodeReady())
+            return;
+        _audioVisualizer.SetActive(WindowRef.Visible && IsVisibleInTree() && _playback.State == PlaybackState.Playing);
     }
 }

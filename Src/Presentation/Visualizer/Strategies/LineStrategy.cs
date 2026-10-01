@@ -14,6 +14,7 @@ public partial class LineStrategy : VisualizerStrategy
 
     [Export] private Line2D _line = null!;
     private Vector2[] _points = null!;
+    private double _elapsedSeconds;
 
     public override void Initialize(Vector2 viewportSize, AudioEffectSpectrumAnalyzerInstance spectrum)
     {
@@ -25,11 +26,13 @@ public partial class LineStrategy : VisualizerStrategy
     public override void Update(double delta)
     {
         FrameCount++;
+        _elapsedSeconds += delta;
         if (FrameCount % UpdateEveryNFrames != 0)
             return;
 
-        _line.DefaultColor = FinalColor;
-        UpdateAudioReactivity(delta, _sampleCount);
+        UpdateAudioReactivity(_elapsedSeconds, _sampleCount);
+        _elapsedSeconds = 0;
+        _line.DefaultColor = Color.FromHsv(ColorHue, 0.8f, 1);
         TimeOffset = FixedRotationValue * (1.0f + SmoothedDirection * RotationSpeedFactor);
         UpdateWaveform();
     }

@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Src/Presentation/Visualizer/Strategies/VisualizerSquare.cs" id="script"]
+
+[sub_resource type="PhysicsMaterial" id="physics"]
+friction = 0.0
+bounce = 0.9
+
+[sub_resource type="RectangleShape2D" id="shape"]
+resource_local_to_scene = true
+size = Vector2(50, 50)
+
+[node name="VisualizerSquare" type="RigidBody2D" node_paths=PackedStringArray("_artwork", "_collision")]
+physics_material_override = SubResource("physics")
+can_sleep = false
+linear_damp = 0.02
+angular_damp = 0.03
+script = ExtResource("script")
+_artwork = NodePath("Artwork")
+_collision = NodePath("Collision")
+
+[node name="Artwork" type="ColorRect" parent="."]
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("shape")

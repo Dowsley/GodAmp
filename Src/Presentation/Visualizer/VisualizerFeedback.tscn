@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" uid="uid://ty4sblrnaka7" path="res://Data/Materials/AudioVisualizer.tres" id="material"]
+
+[node name="VisualizerFeedback" type="SubViewport"]
+disable_3d = true
+handle_input_locally = false
+gui_disable_input = true
+size = Vector2i(576, 324)
+render_target_update_mode = 0
+
+[node name="PostProcess" type="CanvasLayer" parent="."]
+
+[node name="Pass" type="ColorRect" parent="PostProcess"]
+material = ExtResource("material")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

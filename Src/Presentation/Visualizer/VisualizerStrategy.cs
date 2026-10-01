@@ -59,7 +59,11 @@ public abstract partial class VisualizerStrategy : Node2D
 
     /// <summary>Advances strategy-specific rendering for one animation frame.</summary>
     /// <param name="delta">Elapsed seconds since the previous frame.</param>
-    public abstract void Update(double delta);
+    public virtual void Update(double delta) { }
+
+    /// <summary>Advances strategies that use the physics simulation on a fixed engine tick.</summary>
+    /// <param name="delta">Elapsed seconds since the previous physics tick.</param>
+    public virtual void PhysicsUpdate(double delta) { }
 
     /// <summary>Maps a sample boundary onto the visualization's logarithmic frequency range.</summary>
     /// <param name="index">Boundary index from zero through sampleCount.</param>

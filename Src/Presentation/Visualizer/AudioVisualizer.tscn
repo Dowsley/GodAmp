@@ -1,9 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://c6bj7p04vlkle"]
+[gd_scene format=3 uid="uid://c6bj7p04vlkle"]
 
-[ext_resource type="Script" uid="uid://r7gpn38se4hj" path="res://Src/Presentation/Visualizer/AudioVisualizer.cs" id="1_neykf"]
-[ext_resource type="Material" uid="uid://ty4sblrnaka7" path="res://Data/Materials/AudioVisualizer.tres" id="3_l5oub"]
+[ext_resource type="Script" uid="uid://r7gpn38se4hj" path="res://Src/Presentation/Visualizer/AudioVisualizer.cs" id="script"]
+[ext_resource type="PackedScene" path="res://Src/Presentation/Visualizer/VisualizerFeedback.tscn" id="feedback"]
 
-[node name="AudioVisualizer" type="Control" node_paths=PackedStringArray("_containerA", "_containerB", "_viewportA", "_viewportB", "_rectA", "_rectB", "_strategyContainerA", "_strategyContainerB")]
+[sub_resource type="World2D" id="simulation_world"]
+resource_local_to_scene = true
+
+[node name="AudioVisualizer" type="Control" node_paths=PackedStringArray("_viewportA", "_viewportB", "_passA", "_passB", "_display", "_strategyContainer")]
+process_mode = 4
 clip_contents = true
 layout_mode = 3
 anchors_preset = 15
@@ -12,19 +16,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_neykf")
+script = ExtResource("script")
 _strategyTypeDirectory = "res://Data/StrategyTypes"
-_containerA = NodePath("ContainerA")
-_containerB = NodePath("ContainerB")
-_viewportA = NodePath("ContainerA/SubViewport")
-_viewportB = NodePath("ContainerB/SubViewport")
-_rectA = NodePath("ContainerA/SubViewport/ColorRect")
-_rectB = NodePath("ContainerB/SubViewport/ColorRect")
-_strategyContainerA = NodePath("ContainerA/SubViewport/StrategyContainerA")
-_strategyContainerB = NodePath("ContainerB/SubViewport/StrategyContainerB")
+_viewportA = NodePath("BufferA")
+_viewportB = NodePath("BufferB")
+_passA = NodePath("BufferA/PostProcess/Pass")
+_passB = NodePath("BufferB/PostProcess/Pass")
+_display = NodePath("Display")
+_strategyContainer = NodePath("BufferA/Strategy")
 
-[node name="ContainerA" type="SubViewportContainer" parent="."]
-z_index = 1
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,36 +33,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="SubViewport" type="SubViewport" parent="ContainerA"]
-handle_input_locally = false
-gui_disable_input = true
-size = Vector2i(576, 324)
-render_target_clear_mode = 1
-render_target_update_mode = 1
-
-[node name="Background" type="ColorRect" parent="ContainerA/SubViewport"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
 color = Color(0, 0, 0, 1)
 
-[node name="StrategyContainerA" type="Node2D" parent="ContainerA/SubViewport"]
-unique_name_in_owner = true
+[node name="BufferA" parent="." instance=ExtResource("feedback")]
+world_2d = SubResource("simulation_world")
 
-[node name="ColorRect" type="ColorRect" parent="ContainerA/SubViewport"]
-material = ExtResource("3_l5oub")
+[node name="Background" type="ColorRect" parent="BufferA"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
 
-[node name="ContainerB" type="SubViewportContainer" parent="."]
+[node name="Strategy" type="Node2D" parent="BufferA"]
+
+[node name="BufferB" parent="." instance=ExtResource("feedback")]
+
+[node name="Display" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,33 +59,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="SubViewport" type="SubViewport" parent="ContainerB"]
-handle_input_locally = false
-gui_disable_input = true
-size = Vector2i(576, 324)
-render_target_clear_mode = 1
-render_target_update_mode = 1
-
-[node name="Background" type="ColorRect" parent="ContainerB/SubViewport"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-color = Color(0, 0, 0, 1)
-
-[node name="StrategyContainerB" type="Node2D" parent="ContainerB/SubViewport"]
-unique_name_in_owner = true
-
-[node name="ColorRect" type="ColorRect" parent="ContainerB/SubViewport"]
-material = ExtResource("3_l5oub")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
+expand_mode = 1
 
 [connection signal="resized" from="." to="." method="OnResized"]
