@@ -59,10 +59,6 @@ public partial class SkinSlider : Godot.Range
         SkinLoader.Instance.SkinChanged -= QueueRedraw;
     }
 
-    /// <summary>Invalidates artwork after a range value change.</summary>
-    /// <param name="_">Updated value supplied by the scene's Range signal.</param>
-    private void OnValueChanged(double _) => QueueRedraw();
-
     /// <inheritdoc />
     public override void _Draw()
     {

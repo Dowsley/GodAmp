@@ -54,10 +54,10 @@ layout_mode = 2
 _playbackController = NodePath("../PlaybackController")
 _audio = NodePath("../AudioController")
 
-[node name="PlaybackIndicators" parent="MasterPanel/Controls" index="0" node_paths=PackedStringArray("Playback")]
+[node name="PlaybackIndicators" parent="MasterPanel/Controls" parent_id_path=PackedInt32Array(1833787973, 1060938245) index="0" unique_id=636464533 node_paths=PackedStringArray("Playback")]
 Playback = NodePath("../../../PlaybackController")
 
-[node name="Visualization" parent="MasterPanel/Controls" index="1" node_paths=PackedStringArray("Player", "_audio")]
+[node name="Visualization" parent="MasterPanel/Controls" parent_id_path=PackedInt32Array(1833787973, 1060938245) index="1" unique_id=132093246 node_paths=PackedStringArray("Player", "_audio")]
 Player = NodePath("../../../TrackPlayer")
 _audio = NodePath("../../../AudioController")
 
@@ -95,6 +95,14 @@ _audio = NodePath("../../AudioController")
 
 [node name="Graph" parent="EqualizerWindow/Equalizer/Controls" index="1" node_paths=PackedStringArray("_audio")]
 _audio = NodePath("../../../../AudioController")
+
+[node name="Background" parent="EqualizerWindow/Equalizer/Controls/Graph" index="0"]
+layout_mode = 0
+
+[node name="PreampLine" parent="EqualizerWindow/Equalizer/Controls/Graph" index="1"]
+layout_mode = 0
+offset_top = 0.0
+offset_bottom = 1.0
 
 [node name="PlaylistWindow" type="Window" parent="." unique_id=299316854]
 canvas_item_default_texture_filter = 0
@@ -175,8 +183,8 @@ _visualizer = NodePath("../VisualizerWindow/Visualizer")
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh"]
 [connection signal="CurrentEntryChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshCurrentEntry"]
 [connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel" method="RefreshMetadata"]
-[connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh" unbinds=1]
 [connection signal="MetadataChanged" from="PlaybackController" to="PlaylistWindow/Playlist" method="RefreshMetadata"]
+[connection signal="MetadataChanged" from="PlaybackController" to="MasterPanel/Controls/PlaybackIndicators" method="Refresh" unbinds=1]
 [connection signal="ModesChanged" from="PlaybackController" to="MasterPanel" method="RefreshModes"]
 [connection signal="OpenTracksRequested" from="PlaybackController" to="FilePickerController" method="OpenReplacementTracks"]
 [connection signal="PlaybackFailed" from="PlaybackController" to="OperationIssues" method="ReportPlaybackFailure"]
