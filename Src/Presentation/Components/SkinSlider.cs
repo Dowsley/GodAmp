@@ -1,4 +1,4 @@
-using GodAmp.Skins;
+using System.Collections.Generic;
 using Godot;
 
 namespace GodAmp.Presentation.Components;
@@ -13,7 +13,21 @@ public partial class SkinSlider : Godot.Range
     [Signal] public delegate void DragEndedEventHandler(bool valueChanged);
 
     /// <summary>Inspector-assigned artwork, animation and interaction geometry.</summary>
-    [Export] public SkinSliderStyle Style { get; set; } = null!;
+    [Export] public SkinSliderStyle Style
+    {
+        get => _style;
+        set
+        {
+            if (_style == value)
+                return;
+            if (IsInsideTree())
+                UnsubscribeStyle();
+            _style = value;
+            if (IsInsideTree())
+                SubscribeStyle();
+            QueueRedraw();
+        }
+    }
     /// <summary>Controls whether mouse and keyboard input can change the value.</summary>
     [Export] public bool Editable
     {
@@ -30,6 +44,8 @@ public partial class SkinSlider : Godot.Range
     }
 
     private bool _editable = true;
+    private SkinSliderStyle _style = null!;
+    private readonly HashSet<AtlasTexture> _observedTextures = [];
     private bool _dragging;
     private double _valueBeforeDrag;
     private float _grabOffset;
@@ -41,22 +57,64 @@ public partial class SkinSlider : Godot.Range
     public Rect2 TrackRegion => Style.GetTrackRegion(Ratio);
 
     /// <inheritdoc />
-    public override void _Ready()
+    public override void _EnterTree()
     {
+        SubscribeStyle();
         if (Engine.IsEditorHint())
             return;
-        /* The hosting window and autoload live outside this reusable control scene. */
+        /* The hosting window lives outside this reusable control scene. */
         GetWindow().FocusExited += FinishDrag;
-        SkinLoader.Instance.SkinChanged += QueueRedraw;
     }
 
     /// <inheritdoc />
     public override void _ExitTree()
     {
+        UnsubscribeStyle();
         if (Engine.IsEditorHint())
             return;
         GetWindow().FocusExited -= FinishDrag;
-        SkinLoader.Instance.SkinChanged -= QueueRedraw;
+    }
+
+    /// <summary>Observes the assigned style while this control belongs to a scene tree.</summary>
+    private void SubscribeStyle()
+    {
+        if (Style != null)
+            Style.Changed += OnStyleChanged;
+        OnStyleChanged();
+    }
+
+    /// <summary>Releases resource subscriptions when replacing the style or leaving the tree.</summary>
+    private void UnsubscribeStyle()
+    {
+        if (Style != null)
+            Style.Changed -= OnStyleChanged;
+        UnsubscribeTextures();
+    }
+
+    /// <summary>Refreshes artwork subscriptions after inspector edits or texture replacement.</summary>
+    private void OnStyleChanged()
+    {
+        UnsubscribeTextures();
+        ObserveTexture(Style?.Track);
+        ObserveTexture(Style?.Thumb);
+        ObserveTexture(Style?.PressedThumb);
+        QueueRedraw();
+    }
+
+    /// <summary>Observes each atlas once, including artwork shared between slider states.</summary>
+    /// <param name="texture">Optional artwork whose region or backing sheet can change.</param>
+    private void ObserveTexture(AtlasTexture? texture)
+    {
+        if (texture != null && _observedTextures.Add(texture))
+            texture.Changed += QueueRedraw;
+    }
+
+    /// <summary>Releases the atlas references held by the control's active subscriptions.</summary>
+    private void UnsubscribeTextures()
+    {
+        foreach (AtlasTexture texture in _observedTextures)
+            texture.Changed -= QueueRedraw;
+        _observedTextures.Clear();
     }
 
     /// <inheritdoc />

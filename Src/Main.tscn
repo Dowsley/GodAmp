@@ -96,14 +96,6 @@ _audio = NodePath("../../AudioController")
 [node name="Graph" parent="EqualizerWindow/Equalizer/Controls" index="1" node_paths=PackedStringArray("_audio")]
 _audio = NodePath("../../../../AudioController")
 
-[node name="Background" parent="EqualizerWindow/Equalizer/Controls/Graph" index="0"]
-layout_mode = 0
-
-[node name="PreampLine" parent="EqualizerWindow/Equalizer/Controls/Graph" index="1"]
-layout_mode = 0
-offset_top = 0.0
-offset_bottom = 1.0
-
 [node name="PlaylistWindow" type="Window" parent="." unique_id=299316854]
 canvas_item_default_texture_filter = 0
 oversampling_override = 1.0

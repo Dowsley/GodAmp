@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace GodAmp.Presentation.Components;
@@ -12,39 +13,66 @@ public partial class SkinSliderStyle : Resource
 
     /// <summary>First track frame; omitted for sliders whose background belongs to the panel.</summary>
     [ExportGroup("Track")]
-    [Export] public AtlasTexture? Track { get; set; }
+    [Export] public AtlasTexture? Track { get => _track; set => SetField(ref _track, value); }
     /// <summary>Total number of track animation frames in the sheet.</summary>
-    [Export(PropertyHint.Range, "1,256")] public int TrackFrameCount { get; set; } = 1;
+    [Export(PropertyHint.Range, "1,256")] public int TrackFrameCount { get => _trackFrameCount; set => SetField(ref _trackFrameCount, value); }
     /// <summary>Number of frames in each row of the track animation.</summary>
-    [Export(PropertyHint.Range, "1,256")] public int TrackColumns { get; set; } = 1;
+    [Export(PropertyHint.Range, "1,256")] public int TrackColumns { get => _trackColumns; set => SetField(ref _trackColumns, value); }
     /// <summary>Horizontal column spacing and vertical row spacing in source pixels.</summary>
-    [Export] public Vector2 TrackFrameStride { get; set; }
+    [Export] public Vector2 TrackFrameStride { get => _trackFrameStride; set => SetField(ref _trackFrameStride, value); }
 
     /// <summary>First normal thumb frame; its region size defines the pointer hitbox.</summary>
     [ExportGroup("Thumb")]
-    [Export] public AtlasTexture Thumb { get; set; } = null!;
+    [Export] public AtlasTexture Thumb { get => _thumb; set => SetField(ref _thumb, value); }
     /// <summary>Optional pressed artwork using the same frame arrangement as the normal thumb.</summary>
-    [Export] public AtlasTexture? PressedThumb { get; set; }
+    [Export] public AtlasTexture? PressedThumb { get => _pressedThumb; set => SetField(ref _pressedThumb, value); }
     /// <summary>Number of thumb variants selected by value or position thresholds.</summary>
-    [Export(PropertyHint.Range, "1,256")] public int ThumbFrameCount { get; set; } = 1;
+    [Export(PropertyHint.Range, "1,256")] public int ThumbFrameCount { get => _thumbFrameCount; set => SetField(ref _thumbFrameCount, value); }
     /// <summary>Source-pixel offset between successive thumb variants.</summary>
-    [Export] public Vector2 ThumbFrameStride { get; set; }
+    [Export] public Vector2 ThumbFrameStride { get => _thumbFrameStride; set => SetField(ref _thumbFrameStride, value); }
     /// <summary>Optional local-axis positions at which the thumb changes to the next frame.</summary>
-    [Export] public float[] ThumbPositionThresholds { get; set; } = [];
+    [Export] public float[] ThumbPositionThresholds { get => _thumbPositionThresholds; set => SetField(ref _thumbPositionThresholds, value); }
     /// <summary>Hides the thumb while seeking is unavailable.</summary>
-    [Export] public bool HideThumbWhenDisabled { get; set; }
+    [Export] public bool HideThumbWhenDisabled { get => _hideThumbWhenDisabled; set => SetField(ref _hideThumbWhenDisabled, value); }
 
     /// <summary>Local position of the thumb at the beginning of its travel.</summary>
     [ExportGroup("Geometry")]
-    [Export] public Vector2 ThumbOrigin { get; set; }
+    [Export] public Vector2 ThumbOrigin { get => _thumbOrigin; set => SetField(ref _thumbOrigin, value); }
     /// <summary>Distance between the thumb's endpoint positions in logical pixels.</summary>
-    [Export(PropertyHint.Range, "1,1024")] public int Travel { get; set; } = 1;
+    [Export(PropertyHint.Range, "1,1024")] public int Travel { get => _travel; set => SetField(ref _travel, value); }
     /// <summary>Uses the Y axis for thumb movement and pointer input.</summary>
-    [Export] public bool Vertical { get; set; }
+    [Export] public bool Vertical { get => _vertical; set => SetField(ref _vertical, value); }
     /// <summary>Controls animation selection and thumb-position rounding.</summary>
-    [Export] public ValueMapping Mapping { get; set; }
+    [Export] public ValueMapping Mapping { get => _mapping; set => SetField(ref _mapping, value); }
     /// <summary>Number of discrete artwork positions for quantized inverted mapping.</summary>
-    [Export(PropertyHint.Range, "2,256")] public int PositionCount { get; set; } = 2;
+    [Export(PropertyHint.Range, "2,256")] public int PositionCount { get => _positionCount; set => SetField(ref _positionCount, value); }
+
+    private AtlasTexture? _track;
+    private int _trackFrameCount = 1;
+    private int _trackColumns = 1;
+    private Vector2 _trackFrameStride;
+    private AtlasTexture _thumb = null!;
+    private AtlasTexture? _pressedThumb;
+    private int _thumbFrameCount = 1;
+    private Vector2 _thumbFrameStride;
+    private float[] _thumbPositionThresholds = [];
+    private bool _hideThumbWhenDisabled;
+    private Vector2 _thumbOrigin;
+    private int _travel = 1;
+    private bool _vertical;
+    private ValueMapping _mapping;
+    private int _positionCount = 2;
+
+    /// <summary>Notifies resource consumers when an authored property changes.</summary>
+    /// <param name="field">Backing storage for the exported property.</param>
+    /// <param name="value">Replacement property value.</param>
+    private void SetField<T>(ref T field, T value)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+            return;
+        field = value;
+        EmitChanged();
+    }
 
     /// <summary>Gets the thumb's local rectangle, including format-specific pixel rounding.</summary>
     /// <param name="ratio">Normalized slider value from zero to one.</param>

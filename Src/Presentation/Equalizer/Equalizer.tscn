@@ -140,6 +140,7 @@ _curvePalette = ExtResource("curve_palette")
 
 [node name="Background" type="TextureRect" parent="Controls/Graph"]
 show_behind_parent = true
+layout_mode = 0
 offset_right = 113.0
 offset_bottom = 19.0
 mouse_filter = 2
@@ -147,6 +148,7 @@ texture = ExtResource("graph_background")
 
 [node name="PreampLine" type="TextureRect" parent="Controls/Graph"]
 show_behind_parent = true
+layout_mode = 0
 offset_top = 9.0
 offset_right = 113.0
 offset_bottom = 10.0
