@@ -2,9 +2,9 @@ using Godot;
 
 namespace GodAmp.Presentation.Playlist;
 
-/// <summary>Transfers queue occurrence IDs only between rows in the same playlist container.</summary>
+/// <summary>Identifies the playlist owner and queue occurrences participating in a drag.</summary>
 public partial class PlaylistDragData : RefCounted
 {
-    public ulong ContainerId { get; init; }
+    public ulong PlaylistId { get; init; }
     public long[] EntryIds { get; init; } = [];
 }

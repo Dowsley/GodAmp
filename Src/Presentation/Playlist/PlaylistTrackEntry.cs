@@ -1,4 +1,3 @@
-using System.Linq;
 using GodAmp.Skins;
 using GodAmp.Presentation.Formatting;
 using Godot;
@@ -12,7 +11,6 @@ public partial class PlaylistTrackEntry : PanelContainer
     [Signal] public delegate void ContextRequestedEventHandler(long entryId);
     [Signal] public delegate void KeyboardRequestedEventHandler(long entryId, InputEventKey key);
     [Signal] public delegate void ActivatedEventHandler(long entryId);
-    [Signal] public delegate void MoveRequestedEventHandler(long[] entryIds, long targetId, bool insertAfter);
 
     [Export] private Label _trackTitleLabel = null!;
     [Export] private Label _durationLabel = null!;
@@ -153,36 +151,12 @@ public partial class PlaylistTrackEntry : PanelContainer
         key.Keycode == Key.F10 && key.ShiftPressed || key.Keycode == Key.Key3 && key.AltPressed ||
         key.IsCommandOrControlPressed() && key.Keycode is Key.A or Key.I;
 
-    public override Variant _GetDragData(Vector2 atPosition)
+    /// <summary>Shows the owner's drag preview and suppresses click selection on release.</summary>
+    /// <param name="entryCount">Number of queue occurrences included in the drag.</param>
+    public void ShowDragPreview(int entryCount)
     {
         _dragStarted = true;
-        var parent = GetParent();
-        long[] selectedIds = IsSelected
-            ? [.. parent.GetChildren().OfType<PlaylistTrackEntry>().Where(row => row.IsSelected).Select(row => row.EntryId)]
-            : [EntryId];
-        var data = new PlaylistDragData
-        {
-            ContainerId = parent.GetInstanceId(),
-            EntryIds = selectedIds
-        };
-
-        var preview = new Label { Text = $"Move {selectedIds.Length} track(s)" };
+        var preview = new Label { Text = $"Move {entryCount} track(s)" };
         SetDragPreview(preview);
-        return data;
-    }
-
-    public override bool _CanDropData(Vector2 atPosition, Variant data)
-    {
-        return data.VariantType == Variant.Type.Object && data.AsGodotObject() is PlaylistDragData drag &&
-            drag.ContainerId == GetParent().GetInstanceId();
-    }
-
-    public override void _DropData(Vector2 atPosition, Variant data)
-    {
-        if (!_CanDropData(atPosition, data))
-            return;
-        var drag = (PlaylistDragData)data.AsGodotObject();
-        bool insertAfter = atPosition.Y > Size.Y * 0.5f;
-        EmitSignal(SignalName.MoveRequested, drag.EntryIds, EntryId, insertAfter);
     }
 }

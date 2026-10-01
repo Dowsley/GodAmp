@@ -119,7 +119,10 @@ public partial class Playlist : WindowPanelContainer
                 row.ContextRequested += OnContextRequested;
                 row.KeyboardRequested += OnKeyboardRequested;
                 row.Activated += OnEntryActivated;
-                row.MoveRequested += OnMoveRequested;
+                row.SetDragForwarding(
+                    Callable.From<Vector2, Variant>(_ => CreateDragData(row)),
+                    Callable.From<Vector2, Variant, bool>((_, data) => CanDropEntries(data)),
+                    Callable.From<Vector2, Variant>((position, data) => DropEntries(row, position, data)));
                 row.Setup(title, entry.Track.Duration, entry.Id, false);
             }
             else
@@ -190,7 +193,7 @@ public partial class Playlist : WindowPanelContainer
         row.ContextRequested -= OnContextRequested;
         row.KeyboardRequested -= OnKeyboardRequested;
         row.Activated -= OnEntryActivated;
-        row.MoveRequested -= OnMoveRequested;
+        row.SetDragForwarding(default, default, default);
     }
 
     private int EntryIndex(long id)
@@ -375,7 +378,40 @@ public partial class Playlist : WindowPanelContainer
 
     private void OnEntryActivated(long entryId) => EmitSignal(SignalName.EntryActivated, entryId);
 
+    /// <summary>Snapshots the owner's selection in queue order for a row drag.</summary>
+    /// <param name="row">Row where the drag starts; an unselected row moves independently.</param>
+    /// <returns>A payload scoped to this playlist and containing stable queue occurrence IDs.</returns>
+    private Variant CreateDragData(PlaylistTrackEntry row)
+    {
+        long[] entryIds = _selectedEntries.Contains(row.EntryId)
+            ? [.. _playbackController.Entries.Where(entry => _selectedEntries.Contains(entry.Id)).Select(entry => entry.Id)]
+            : [row.EntryId];
+        row.ShowDragPreview(entryIds.Length);
+        return new PlaylistDragData { PlaylistId = GetInstanceId(), EntryIds = entryIds };
+    }
+
+    /// <summary>Restricts row reordering to payloads created by this playlist.</summary>
+    /// <param name="data">Payload offered by Godot's drag-and-drop system.</param>
+    /// <returns>Whether the payload belongs to this playlist owner.</returns>
+    private bool CanDropEntries(Variant data) => data.VariantType == Variant.Type.Object &&
+        data.AsGodotObject() is PlaylistDragData drag && drag.PlaylistId == GetInstanceId();
+
+    /// <summary>Resolves the insertion side of a row and applies an accepted drag.</summary>
+    /// <param name="row">Row receiving the drop.</param>
+    /// <param name="position">Pointer position in the receiving row's coordinates.</param>
+    /// <param name="data">Payload offered by Godot's drag-and-drop system.</param>
+    private void DropEntries(PlaylistTrackEntry row, Vector2 position, Variant data)
+    {
+        if (!CanDropEntries(data))
+            return;
+        var drag = (PlaylistDragData)data.AsGodotObject();
+        OnMoveRequested(drag.EntryIds, row.EntryId, position.Y > row.Size.Y * 0.5f);
+    }
+
     /// <summary>Forwards a drag request using occurrence identities and retains the moved selection.</summary>
+    /// <param name="entryIds">Queue occurrences captured when dragging started.</param>
+    /// <param name="targetId">Occurrence receiving the drop.</param>
+    /// <param name="insertAfter">Whether to insert after the target instead of before it.</param>
     private void OnMoveRequested(long[] entryIds, long targetId, bool insertAfter)
     {
         if (EntryIndex(targetId) < 0 || entryIds.Contains(targetId))
